@@ -2,6 +2,7 @@
     "name": "server",
     "version": "0.0.1",
     "dependencies": {
+        "gl-matrix": "^3.3.0",
         "http": "^0.0.1-security",
         "shared": "0.0.1",
         "socket.io": "^4.0.0",
@@ -14,7 +15,7 @@
     },
     "scripts": {
         "build": "tsc --build",
-        "start:dev":"tsc-watch --onSuccess 'node ./dist/index.js'",
+        "start:dev": "tsc-watch --onSuccess 'node ./dist/index.js'",
         "start": "node ./dist/index.js"
     }
 }

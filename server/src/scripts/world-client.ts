@@ -6,31 +6,41 @@ export const world_client = (() => {
   const _TIMEOUT = 600.0;
 
   class WorldClient {
+    entity: any;
+    client: any;
+    #timeout: number;
+    entityCache: any = {};
+    terrain_: any;
+    onDeath_: any;
+    fsm_: any;
+    deathTimer_: number;
+    timeout_: number;
+    
     constructor(client, entity) {
-      this.entity_ = entity;
+      this.entity = entity;
 
       // Hack
-      this.entity_.onEvent_ = (t, d) => this.OnEntityEvent_(t, d);
+      this.entity.onEvent_ = (t, d) => this.OnEntityEvent_(t, d);
 
-      this.client_ = client;
-      this.client_.onMessage = (e, d) => this.OnMessage_(e, d);
-      this.client_.Send('world.player', this.entity_ .CreatePlayerPacket_());
-      this.client_.Send('world.stats', this.entity_ .CreateStatsPacket_());
+      this.client = client;
+      this.client.onMessage = (e, d) => this.OnMessage_(e, d);
+      this.client.Send('world.player', this.entity .CreatePlayerPacket_());
+      this.client.Send('world.stats', this.entity .CreateStatsPacket_());
 
-      this.timeout_ = _TIMEOUT;
+      this.#timeout = _TIMEOUT;
 
-      this.entityCache_ = {};
+      this.entityCache = {};
 
       // Hack
       entity.parent_ = this;
     }
 
     Destroy() {
-      this.client_.Disconnect();
-      this.client_ = null;
+      this.client.Disconnect();
+      this.client = null;
 
-      this.entity_.Destroy();
-      this.entity_ = null;
+      this.entity.Destroy();
+      this.entity = null;
     }
 
     OnDeath() {}
@@ -42,10 +52,10 @@ export const world_client = (() => {
     }
 
     OnMessage_(evt, data) {
-      this.timeout_ = _TIMEOUT;
+      this.#timeout = _TIMEOUT;
 
       if (evt == 'world.update') {
-        this.entity_.UpdateTransform(data);
+        this.entity.UpdateTransform(data);
         return true;
       }
   
@@ -55,7 +65,7 @@ export const world_client = (() => {
       }
   
       if (evt == 'action.attack') {
-        this.entity_.OnActionAttack();
+        this.entity.OnActionAttack();
         return true;
       }
   
@@ -70,19 +80,19 @@ export const world_client = (() => {
     OnDamageEvent_(_) {}
 
     OnInventoryChanged_(inventory) {
-      this.entity_.UpdateInventory(inventory);
+      this.entity.UpdateInventory(inventory);
   
-      // Todo: Merge this into entityCache_ path.
-      const nearby = this.entity_.FindNear(50, true);
+      // Todo: Merge this into entityCache path.
+      const nearby = this.entity.FindNear(50, true);
 
       for (let n of nearby) {
-        n.parent_.client_.Send('world.inventory', [this.entity_.ID, inventory]);
+        n.parent_.client.Send('world.inventory', [this.entity.ID, inventory]);
       }
     }
 
     OnChatMessage_(message) {
       const chatMessage = {
-        name: this.entity_.accountInfo_.name,
+        name: this.entity.accountInfo_.name,
         text: message,
       };
 
@@ -90,16 +100,16 @@ export const world_client = (() => {
     }
 
     BroadcastChat(chatMessage) {  
-      const nearby = this.entity_.FindNear(50, true);
+      const nearby = this.entity.FindNear(50, true);
   
       for (let i = 0; i < nearby.length; ++i) {
         const n = nearby[i];
-        n.parent_.client_.Send('chat.message', chatMessage);
+        n.parent_.client.Send('chat.message', chatMessage);
       }
     }
 
     get IsDead() {
-      return this.timeout_ <= 0.0;
+      return this.#timeout <= 0.0;
     }
 
     OnUpdate_(timeElapsed) {}
@@ -111,9 +121,9 @@ export const world_client = (() => {
     }
 
     Update(timeElapsed) {
-      this.timeout_ -= timeElapsed;
+      this.#timeout -= timeElapsed;
 
-      this.entity_.Update(timeElapsed);
+      this.entity.Update(timeElapsed);
 
       this.OnUpdate_(timeElapsed);
     }
@@ -121,8 +131,11 @@ export const world_client = (() => {
 
 
   class WorldNetworkClient extends WorldClient {
+    entity: any;
+    entityCache: any;
     constructor(client, entity) {
       super(client, entity);
+      this.entity
     }
 
     OnUpdate_(timeElapsed) {
@@ -130,15 +143,15 @@ export const world_client = (() => {
 
     OnUpdateClientState_() {
       const _Filter = (e) => {
-        return e.ID != this.entity_.ID;
+        return e.ID != this.entity.ID;
       };
 
-      const nearby = this.entity_.FindNear(500).filter(e => _Filter(e));
+      const nearby = this.entity.FindNear(500).filter(e => _Filter(e));
 
       const updates = [{
-          id: this.entity_.ID,
-          stats: this.entity_.CreateStatsPacket_(),
-          events: this.entity_.CreateEventsPacket_(),
+          id: this.entity.ID,
+          stats: this.entity.CreateStatsPacket_(),
+          events: this.entity.CreateEventsPacket_(),
       }];
       const newCache_ = {};
 
@@ -150,9 +163,10 @@ export const world_client = (() => {
             transform: n.CreateTransformPacket_(),
             stats: n.CreateStatsPacket_(),
             events: n.CreateEventsPacket_(),
+            desc: null,
         };
 
-        if (!(n.ID in this.entityCache_)) {
+        if (!(n.ID in this.entityCache)) {
           cur.desc = n.GetDescription();
         }
 
@@ -160,17 +174,20 @@ export const world_client = (() => {
         updates.push(cur);
       }
 
-      this.entityCache_ = newCache_;
+      this.entityCache = newCache_;
 
-      this.client_.Send('world.update', updates);
+      this.client.Send('world.update', updates);
     }
   };
 
 
   class AIStateMachine {
+    currentState_: any;
+    entity: any;
+    terrain_: any;
     constructor(entity, terrain) {
       this.currentState_ = null;
-      this.entity_ = entity;
+      this.entity = entity;
       this.terrain_ = terrain;
     }
 
@@ -186,7 +203,7 @@ export const world_client = (() => {
 
       this.currentState_ = state;
       this.currentState_.parent_ = this;
-      this.currentState_.entity_ = this.entity_;
+      this.currentState_.entity = this.entity;
       this.currentState_.terrain_ = this.terrain_;
       state.Enter(prevState);
     }
@@ -199,6 +216,11 @@ export const world_client = (() => {
   };
 
   class AIState {
+    timer_: number;
+    entity: any;
+    parent_: any;
+    target_: any;
+    terrain_: any;
     constructor() {}
     Exit() {}
     Enter() {}
@@ -206,7 +228,7 @@ export const world_client = (() => {
   }
 
   class AIState_JustSitThere extends AIState {
-    constructor() {
+    constructor(target?:any) {
       super();
 
       this.timer_ = 0.0;
@@ -216,7 +238,7 @@ export const world_client = (() => {
       const _IsPlayer = (e) => {
         return !e.isAI;
       };
-      const nearby = this.entity_.FindNear(50.0).filter(e => e.Health > 0).filter(_IsPlayer);
+      const nearby = this.entity.FindNear(50.0).filter(e => e.Health > 0).filter(_IsPlayer);
 
       if (nearby.length > 0) {
         this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
@@ -225,7 +247,7 @@ export const world_client = (() => {
 
     Update(timeElapsed) {
       this.timer_ += timeElapsed;
-      this.entity_.SetState('idle');
+      this.entity.SetState('idle');
 
       if (this.timer_ > 5.0) {
         this.UpdateLogic_();
@@ -241,29 +263,29 @@ export const world_client = (() => {
     }
 
     UpdateMovement_(timeElapsed) {
-      this.entity_.state_ = 'walk';
+      this.entity.state_ = 'walk';
 
       const direction = vec3.create();
       const forward = vec3.fromValues(0, 0, 1);
 
-      vec3.sub(direction, this.target_.position_, this.entity_.position_);
+      vec3.sub(direction, this.target_.position_, this.entity.position_);
       direction[1] = 0.0;
 
       vec3.normalize(direction, direction);
-      quat.rotationTo(this.entity_.rotation_, forward, direction);
+      quat.rotationTo(this.entity.rotation_, forward, direction);
 
       const movement = vec3.clone(direction);
       vec3.scale(movement, movement, timeElapsed * 10.0);
 
-      vec3.add(this.entity_.position_, this.entity_.position_, movement);
+      vec3.add(this.entity.position_, this.entity.position_, movement);
 
-      this.entity_.position_[1] = this.terrain_.Get(...this.entity_.position_)[0];
-      this.entity_.UpdateGridClient_();
+      this.entity.position_[1] = this.terrain_.Get(...this.entity.position_)[0];
+      this.entity.UpdateGridClient_();
 
-      const distance = vec3.distance(this.entity_.position_, this.target_.position_);
+      const distance = vec3.distance(this.entity.position_, this.target_.position_);
 
       if (distance < 10.0) {
-        this.entity_.OnActionAttack();
+        this.entity.OnActionAttack();
         this.parent_.SetState(new AIState_WaitAttackDone(this.target_));
       } else if (distance > 100.0) {
         this.parent_.SetState(new AIState_JustSitThere());
@@ -288,8 +310,8 @@ export const world_client = (() => {
     }
 
     Update(_) {
-      this.entity_.state_ = 'attack';
-      if (this.entity_.action_) {
+      this.entity.state_ = 'attack';
+      if (this.entity.action_) {
         return;
       }
 
@@ -312,7 +334,7 @@ export const world_client = (() => {
       this.terrain_ = terrain;
       this.onDeath_ = onDeath;
       // Haha sorry
-      this.entity_.isAI = true;
+      this.entity.isAI = true;
 
       this.fsm_ = new AIStateMachine(entity, this.terrain_);
       this.fsm_.SetState(new AIState_JustSitThere());
@@ -334,7 +356,7 @@ export const world_client = (() => {
       // Never times out
       this.timeout_ = 1000.0;
 
-      if (this.entity_.Health > 0) {
+      if (this.entity.Health > 0) {
         this.fsm_.Update(timeElapsed);
       } else {
         this.deathTimer_ += timeElapsed;
