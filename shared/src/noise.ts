@@ -1,4 +1,4 @@
-import {simplex} from './simplex-noise.mjs';
+import {simplex} from './simplex-noise';
 
 
 export const noise = (function() {

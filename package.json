@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "workspaces": [
+        "client",
+        "server",
+        "shared"
+    ],
+    "dependencies": {
+        "typescript": "^4.2.3"
+    },
+    "scripts": {
+        "server": "yarn workspace server",
+        "client": "yarn workspace client",
+        "shared": "yarn workspace shared",
+        "start:server:dev": "yarn server start:dev",
+        "start:client:dev": "yarn client start:dev",
+        "start:shared:dev": "yarn shared start:dev"
+    }
+}
