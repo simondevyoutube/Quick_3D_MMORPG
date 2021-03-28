@@ -135,13 +135,14 @@ export const login_queue = (() => {
     }
   };
 
-
+  // onLogin, OnLogin is confusing. Rename once I know the purpose. 
   class LoginQueue {
     #clients: any;
-    
+    #onLogin: any;
+
     constructor(onLogin) {
       this.#clients = {};
-      this.OnLogin = onLogin;
+      this.#onLogin = onLogin;
     }
   
     Add(client) {
@@ -152,7 +153,7 @@ export const login_queue = (() => {
     *OnLogin(client, params) {
       delete this.#clients[client.ID];
   
-      this.OnLogin(client, params);
+      this.#onLogin(client, params);
     }
   };
 
