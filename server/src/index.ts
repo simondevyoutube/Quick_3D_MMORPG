@@ -2,7 +2,7 @@ import {test} from 'shared';
 import * as http from 'http';
 import * as socket_io from 'socket.io';
 
-import {world_server} from './scripts/world-server';
+import {WorldServer} from './scripts/world-server';
 
 
 function Main() {
@@ -19,7 +19,7 @@ function Main() {
     console.log(`listening on: ${port} : ${test}`);
   });
 
-  const _WORLD = new world_server.WorldServer(io);
+  const _WORLD = new WorldServer(io);
   _WORLD.Run();
 }
 

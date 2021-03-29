@@ -1,6 +1,7 @@
-export const spline = (function() {
 
-  class _CubicHermiteSpline {
+  class CubicHermiteSpline {
+    _points: any[];
+    _lerp: any;
     constructor(lerp) {
       this._points = [];
       this._lerp = lerp;
@@ -36,7 +37,9 @@ export const spline = (function() {
     }
   };
 
-  class _LinearSpline {
+  class LinearSpline {
+    _points: any[];
+    _lerp: any;
     constructor(lerp) {
       this._points = [];
       this._lerp = lerp;
@@ -69,8 +72,5 @@ export const spline = (function() {
     }
   }
 
-  return {
-    CubicHermiteSpline: _CubicHermiteSpline,
-    LinearSpline: _LinearSpline,
-  };
-})();
+
+export {CubicHermiteSpline, LinearSpline}

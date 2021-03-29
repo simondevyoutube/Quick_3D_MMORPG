@@ -1,36 +1,49 @@
-export const login_queue = (() => {
+import { EVENT_TYPES, STATE_TYPES } from "shared/src/constants";
+import type {IOnMessageArgs, TEvt} from "shared/src/globaltypes";
 
-  class FiniteStateMachine {
-    #currentState: State;
-    #onEvent: (evt: any, data?: any) => any;
+interface IState {}
+
+interface IOnEvent {
+  (evt: string, data?: any): void
+}
+
+interface IFiniteStateMachine {
+    _currentState: IState,
+    onEvent(evt: TEvt, data?: any): any;
+    Broadcast(evt: string): void,
+    OnMessage: IOnEvent
+}
+  class FiniteStateMachine implements IFiniteStateMachine {
+    _currentState;
+    onEvent;
     
 
-    constructor(onEvent) {
-      this.#currentState = null;
-      this.#onEvent = onEvent;
+    constructor(onEvent: any) {
+      this._currentState = new State({});
+      this.onEvent = onEvent;
     }
   
-    get State() {
-      return this.#currentState;
+    get currentState() {
+      return this._currentState;
     }
   
-    Broadcast(evt) {
-      this.#onEvent(evt);
+    Broadcast(evt: string) {
+      this.onEvent(evt);
     }
 
-    OnMessage(evt, data) {
-      return this.#currentState.OnMessage(evt, data);
+    OnMessage(evt: string, data?: any) {
+      return this._currentState?.OnMessage?.(evt, data);
     }
 
-    SetState(state) {
-      const prevState = this.#currentState;
+    SetState(state: State) {
+      const prevState = this._currentState;
       
       if (prevState) {
         prevState.OnExit();
       }
   
-      this.#currentState = state;
-      this.#currentState.setParent(this);
+      this._currentState = state;
+      this._currentState.setParent(this);
       state.OnEnter(prevState);
     }
   };
@@ -38,12 +51,14 @@ export const login_queue = (() => {
   
   class State {
     #parent: any;
-    #params: {
+    params: {
       accountName?: string
     };
-    constructor() {}
+    constructor(params: any) {
+      this.params = params;
+    }
 
-    Broadcast(evt) {
+    Broadcast(evt: {topic: EVENT_TYPES, params: any}) {
       this.#parent.Broadcast(evt);
     }
 
@@ -55,41 +70,39 @@ export const login_queue = (() => {
       return this.#parent;
     }
 
-    setParams(newParams) {
-      this.#params = newParams;
+    setParams(newParams: any) {
+      this.params = newParams;
     }
 
     getParams() {
-      return this.#params;
+      return this.params;
     }
   
-    OnEnter() {
+    OnEnter(state?: State) {
     }
   
-    OnMessage(evt, data) {
+    OnMessage(evt: string, data: any) {
     }
   
     OnExit() {
     }
   };
   
-
+  interface ILoginParams {
+    accountName?: string
+  }
   class Login_Await extends State {
-    #params: {
-      accountName?: string
-    };
-    constructor() {
-      super();
-      this.setParams({});
+    constructor(params: ILoginParams) {
+      super(params);
     }
   
-    OnMessage(evt, data) {
-      if (evt != 'login.commit') {
+    OnMessage(evt: string, data: any) {
+      if (evt != EVENT_TYPES.LOGIN_COMMIT) {
         return false;
       }
   
-      this.#params.accountName = data;
-      this.getParent().SetState(new Login_Confirm(this.#params));
+      this.params.accountName = data;
+      this.getParent().SetState(new Login_Confirm(this.params));
 
       return true;
     }
@@ -97,14 +110,14 @@ export const login_queue = (() => {
   
   
   class Login_Confirm extends State {
-    constructor(params) {
-      super();
+    constructor(params: any) {
+      super(params);
       this.setParams({...params});
     }
   
     OnEnter() {
       console.log('login confirmed: ' + this.getParams().accountName);
-      this.Broadcast({topic: 'login.complete', params: this.getParams()});
+      this.Broadcast({topic: EVENT_TYPES.LOGIN_COMMIT, params: this.getParams()});
     }
   
     OnMessage() {
@@ -112,52 +125,51 @@ export const login_queue = (() => {
     }
   };
 
-
   class LoginClient {
-    #onLogin: (any) => any;
+    #onLogin: (evt: string, data?: any) => any;
     #fsm: FiniteStateMachine;
 
-    constructor(client, onLogin) {
+    constructor(client: any, onLogin: (evt: string, data: any) => any) {
       this.#onLogin = onLogin;
 
-      client.onMessage = (e, d) => this.OnMessage_(e, d);
+      client.onMessage = (e: string, d: any) => this.OnMessage_(e, d);
 
-      this.#fsm = new FiniteStateMachine((e) => { this.OnEvent(e); });
-      this.#fsm.SetState(new Login_Await());
+      this.#fsm = new FiniteStateMachine((e: TEvt) => { this.OnEvent(e); });
+      this.#fsm.SetState(new Login_Await({}));
     }
 
-    OnEvent(evt) {
+    OnEvent(evt: TEvt) {
       this.#onLogin?.(evt.params);
     }
 
-    OnMessage_(topic, data) {
+    OnMessage_(topic: string, data?: any) {
       return this.#fsm.OnMessage(topic, data);
     }
   };
 
+  interface IClient {
+    ID: string
+  }
   // onLogin, OnLogin is confusing. Rename once I know the purpose. 
   class LoginQueue {
     #clients: any;
     #onLogin: any;
 
-    constructor(onLogin) {
+    constructor(onLogin: any) {
       this.#clients = {};
       this.#onLogin = onLogin;
     }
   
-    Add(client) {
+    Add(client: IClient) {
       this.#clients[client.ID] = new LoginClient(
           client, (e) => { this.OnLogin(client, e); });
     }
   
-    *OnLogin(client, params) {
+    *OnLogin(client: IClient, params: any) {
       delete this.#clients[client.ID];
   
       this.#onLogin(client, params);
     }
   };
 
-  return {
-      LoginQueue: LoginQueue,
-  };
-})();
+  export {LoginQueue}

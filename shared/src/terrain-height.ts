@@ -1,23 +1,16 @@
 
-import {terrain_constants} from './terrain-constants.mjs';
-import {noise} from './noise.mjs';
+import {NOISE_PARAMS} from './terrain-constants';
+import {Noise} from './noise';
 
+class HeightGenerator {
+  noise_: Noise;
+  constructor() {
+    this.noise_ = new Noise(NOISE_PARAMS);
+  }
 
-export const terrain_height = (() => {
+  Get(x, y, z) {
+    return [this.noise_.Get(x, y, z), 1];
+  }
+};
 
-
-  class HeightGenerator {
-    constructor() {
-      this.noise_ = new noise.Noise(terrain_constants.NOISE_PARAMS);
-    }
-
-    Get(x, y, z) {
-      return [this.noise_.Get(x, y, z), 1];
-    }
-  };
-
-
-  return {
-      HeightGenerator: HeightGenerator,
-  };
-})();
+export {HeightGenerator}

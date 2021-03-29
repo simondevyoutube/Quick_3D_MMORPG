@@ -1,3 +1,4 @@
+'use strict';
 /*
  * A fast javascript implementation of simplex noise by Jonas Wagner
 
@@ -29,9 +30,8 @@ Better rank ordering method by Stefan Gustavson in 2012.
  */
 // (function() {
 
-export const simplex = (function() {
 
-  'use strict';
+
 
   var F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
   var G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
@@ -410,7 +410,7 @@ export const simplex = (function() {
   }
   SimplexNoise._buildPermutationTable = buildPermutationTable;
 
-  function alea() {
+  function alea(input: any) {
     // Johannes Baagøe <baagoe@baagoe.com>, 2010
     var s0 = 0;
     var s1 = 0;
@@ -472,8 +472,5 @@ export const simplex = (function() {
   // if (typeof module !== 'undefined') {
   //   module.exports = SimplexNoise;
   // }
-  return {
-    SimplexNoise: SimplexNoise
-  };
 
-})();
+  export {SimplexNoise}
