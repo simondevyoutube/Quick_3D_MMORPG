@@ -1,15 +1,17 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js';
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
+// Not sure why latest three.js package is missing these. Might be making a huge mistake updating. lol
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
-import 'https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js';
+import { io, Socket } from 'socket.io-client';
+import { STATE_TYPES } from 'shared/src/constants';
 
 
 const _CHARACTER_MODELS = {
   zombie: {
     base: 'mremireh_o_desbiens.fbx',
-    path: './resources/characters/zombie/',
+    path: '../resources/characters/zombie/',
     animations: {
       idle: 'idle.fbx',
       walk: 'walk.fbx',
@@ -20,7 +22,7 @@ const _CHARACTER_MODELS = {
   },
   guard: {
     base: 'castle_guard_01.fbx',
-    path: './resources/characters/guard/',
+    path: '../resources/characters/guard/',
     animations: {
       idle: 'Sword And Shield Idle.fbx',
       walk: 'Sword And Shield Walk.fbx',
@@ -33,6 +35,11 @@ const _CHARACTER_MODELS = {
 
 
 class FloatingName {
+  params_: any;
+  element_: HTMLCanvasElement;
+  context2d_: CanvasRenderingContext2D;
+  sprite_: THREE.Sprite;
+
   constructor(params) {
     this.params_ = params;
     this.Init_();
@@ -61,7 +68,7 @@ class FloatingName {
     const map = new THREE.CanvasTexture(this.context2d_.canvas);
 
     this.sprite_ = new THREE.Sprite(
-        new THREE.SpriteMaterial({map: map, color: 0xffffff}));
+      new THREE.SpriteMaterial({ map: map, color: 0xffffff }));
     this.sprite_.scale.set(20, 10, 1)
     this.sprite_.position.y += modelData.nameOffset;
     this.params_.parent.add(this.sprite_);
@@ -70,10 +77,15 @@ class FloatingName {
 
 
 class OurLoadingManager {
+  loader_: any;
+  files_: Set<any>;
+  onLoad: () => void;
+
+
   constructor(loader) {
     this.loader_ = loader;
     this.files_ = new Set();
-    this.onLoad = () => {};
+    this.onLoad = () => { };
   }
 
   load(file, cb) {
@@ -92,6 +104,8 @@ class OurLoadingManager {
 
 
 class BasicCharacterControllerProxy {
+  animations_: any;
+
   constructor(animations) {
     this.animations_ = animations;
   }
@@ -103,6 +117,14 @@ class BasicCharacterControllerProxy {
 
 
 class AnimatedMesh {
+  params_: any;
+  group_: any;
+  target_: any;
+  animations_: any;
+  mixer_: any;
+  onLoad: () => void;
+  manager_: OurLoadingManager;
+
   constructor(params) {
     this.params_ = params;
     this.group_ = new THREE.Group();
@@ -110,7 +132,7 @@ class AnimatedMesh {
     this.target_ = null;
     this.animations_ = {};
     this.mixer_ = null;
-    this.onLoad = () => {};
+    this.onLoad = () => { };
     this.Load_();
   }
 
@@ -138,7 +160,8 @@ class AnimatedMesh {
 
   Load_() {
     const modelData = _CHARACTER_MODELS[this.params_.desc.character.class];
-    const loader = new FBXLoader();
+    // kadajett. Had to add param null. expected "manager"
+    const loader = new FBXLoader(null);
     loader.setPath(modelData.path);
     loader.load(modelData.base, (fbx) => {
       fbx.scale.setScalar(0.1);
@@ -154,7 +177,7 @@ class AnimatedMesh {
       const _OnLoad = (animName, anim) => {
         const clip = anim.animations[0];
         const action = this.mixer_.clipAction(clip);
-  
+
         this.animations_[animName] = {
           clip: clip,
           action: action,
@@ -164,22 +187,22 @@ class AnimatedMesh {
       // LoadingManager seems to be broken when you attempt to load multiple
       // resources multiple times, only first onLoad is called.
       // So roll our own.
-      const loader = new FBXLoader();
+      const loader = new FBXLoader(null);
       loader.setPath(modelData.path);
 
       this.manager_ = new OurLoadingManager(loader);
       this.manager_.load(
-          modelData.animations.idle,
-          (a) => { _OnLoad('idle', a); });
+        modelData.animations.idle,
+        (a) => { _OnLoad(STATE_TYPES.IDLE, a); });
       this.manager_.load(
-          modelData.animations.walk,
-          (a) => { _OnLoad('walk', a); });
+        modelData.animations.walk,
+        (a) => { _OnLoad(STATE_TYPES.WALK, a); });
       this.manager_.load(
-          modelData.animations.run,
-          (a) => { _OnLoad('run', a); });
+        modelData.animations.run,
+        (a) => { _OnLoad(STATE_TYPES.RUN, a); });
       this.manager_.load(
-          modelData.animations.dance,
-          (a) => { _OnLoad('dance', a); });
+        modelData.animations.dance,
+        (a) => { _OnLoad(STATE_TYPES.DANCE, a); });
       this.manager_.onLoad = () => {
         this.onLoad();
       };
@@ -195,6 +218,18 @@ class AnimatedMesh {
 
 
 class BasicCharacterController {
+  params_: any;
+  decceleration_: THREE.Vector3;
+  acceleration_: THREE.Vector3;
+  velocity_: THREE.Vector3;
+  position_: THREE.Vector3;
+  quaternion_: THREE.Quaternion;
+  loaded_: boolean;
+  _input: BasicCharacterControllerInput;
+  target_: AnimatedMesh;
+  stateMachine_: CharacterFSM;
+  _keys: []
+
   constructor(params) {
     this._Init(params);
   }
@@ -211,15 +246,15 @@ class BasicCharacterController {
     this._input = new BasicCharacterControllerInput();
 
     this.target_ = new AnimatedMesh({
-        scene: params.scene,
-        desc: params.desc,
+      scene: params.scene,
+      desc: params.desc,
     });
     this.target_.onLoad = () => {
       this.loaded_ = true;
-      this.stateMachine_.SetState('idle');
+      this.stateMachine_.SetState(STATE_TYPES.IDLE);
     }
     this.stateMachine_ = new CharacterFSM(
-        new BasicCharacterControllerProxy(this.target_.animations_));
+      new BasicCharacterControllerProxy(this.target_.animations_));
   }
 
   get IsLoaded() {
@@ -243,9 +278,9 @@ class BasicCharacterController {
 
   CreateTransformPacket() {
     return [
-        this.stateMachine_.currentState_.Name,
-        this.position_.toArray(),
-        this.quaternion_.toArray(),
+      this.stateMachine_.currentState_.Name,
+      this.position_.toArray(),
+      this.quaternion_.toArray(),
     ];
   }
 
@@ -258,13 +293,13 @@ class BasicCharacterController {
 
     const velocity = this.velocity_;
     const frameDecceleration = new THREE.Vector3(
-        velocity.x * this.decceleration_.x,
-        velocity.y * this.decceleration_.y,
-        velocity.z * this.decceleration_.z
+      velocity.x * this.decceleration_.x,
+      velocity.y * this.decceleration_.y,
+      velocity.z * this.decceleration_.z
     );
     frameDecceleration.multiplyScalar(timeInSeconds);
     frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(
-        Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+      Math.abs(frameDecceleration.z), Math.abs(velocity.z));
 
     velocity.add(frameDecceleration);
 
@@ -278,7 +313,7 @@ class BasicCharacterController {
       acc.multiplyScalar(2.0);
     }
 
-    if (this.stateMachine_.currentState_.Name == 'dance') {
+    if (this.stateMachine_.currentState_.Name == STATE_TYPES.DANCE) {
       acc.multiplyScalar(0.0);
     }
 
@@ -325,9 +360,27 @@ class BasicCharacterController {
   }
 };
 
+interface IKeys {
+  forward: boolean,
+  backward: boolean,
+  left: boolean,
+  right: boolean,
+  space: boolean,
+  shift: boolean,
+}
+
+interface ICustomKeyboardEvent extends KeyboardEvent {
+  currentTarget: HTMLElement & {
+    activeElement: HTMLElement
+  }
+  keyCode: number
+}
+
 class BasicCharacterControllerInput {
+  _keys: IKeys;
+
   constructor() {
-    this._Init();    
+    this._Init();
   }
 
   _Init() {
@@ -339,12 +392,14 @@ class BasicCharacterControllerInput {
       space: false,
       shift: false,
     };
-    document.addEventListener('keydown', (e) => this.OnKeyDown_(e), false);
+    document.addEventListener('keydown', (e) => this.OnKeyDown_(e as ICustomKeyboardEvent), false);
     document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
   }
 
-  OnKeyDown_(event) {
-    if (event.currentTarget.activeElement != document.body) {
+  // extract this typedef into a shared interface
+  OnKeyDown_(event: ICustomKeyboardEvent) {
+    const activeElement = event?.currentTarget?.activeElement;
+    if (activeElement != document.body) {
       return;
     }
     switch (event.keyCode) {
@@ -373,7 +428,7 @@ class BasicCharacterControllerInput {
     if (event.currentTarget.activeElement != document.body) {
       return;
     }
-    switch(event.keyCode) {
+    switch (event.keyCode) {
       case 87: // w
         this._keys.forward = false;
         break;
@@ -398,6 +453,9 @@ class BasicCharacterControllerInput {
 
 
 class FiniteStateMachine {
+  currentState_: any;
+  _states: any;
+
   constructor() {
     this._states = {};
     this.currentState_ = null;
@@ -409,7 +467,7 @@ class FiniteStateMachine {
 
   SetState(name) {
     const prevState = this.currentState_;
-    
+
     if (prevState) {
       if (prevState.Name == name) {
         return;
@@ -432,6 +490,8 @@ class FiniteStateMachine {
 
 
 class CharacterFSM extends FiniteStateMachine {
+  _proxy: any;
+
   constructor(proxy) {
     super();
     this._proxy = proxy;
@@ -439,26 +499,30 @@ class CharacterFSM extends FiniteStateMachine {
   }
 
   _Init() {
-    this._AddState('idle', IdleState);
-    this._AddState('walk', WalkState);
-    this._AddState('run', RunState);
-    this._AddState('dance', DanceState);
+    this._AddState(STATE_TYPES.IDLE, IdleState);
+    this._AddState(STATE_TYPES.WALK, WalkState);
+    this._AddState(STATE_TYPES.RUN, RunState);
+    this._AddState(STATE_TYPES.DANCE, DanceState);
   }
 };
 
 
 class State {
+  _parent: any;
   constructor(parent) {
     this._parent = parent;
   }
 
-  Enter() {}
-  Exit() {}
-  Update() {}
+  Enter(_) { }
+  Exit() { }
+  Update(a, b) { }
 };
 
 
 class DanceState extends State {
+  _FinishedCallback: () => void;
+  _CleanupCallback: any;
+
   constructor(parent) {
     super(parent);
 
@@ -468,18 +532,18 @@ class DanceState extends State {
   }
 
   get Name() {
-    return 'dance';
+    return STATE_TYPES.DANCE;
   }
 
   Enter(prevState) {
-    const curAction = this._parent._proxy.animations_['dance'].action;
+    const curAction = this._parent._proxy.animations_[STATE_TYPES.DANCE].action;
     const mixer = curAction.getMixer();
     mixer.addEventListener('finished', this._FinishedCallback);
 
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
 
-      curAction.reset();  
+      curAction.reset();
       curAction.setLoop(THREE.LoopOnce, 1);
       curAction.clampWhenFinished = true;
       curAction.crossFadeFrom(prevAction, 0.2, true);
@@ -491,12 +555,12 @@ class DanceState extends State {
 
   _Finished() {
     this._Cleanup();
-    this._parent.SetState('idle');
+    this._parent.SetState(STATE_TYPES.IDLE);
   }
 
   _Cleanup() {
-    const action = this._parent._proxy.animations_['dance'].action;
-    
+    const action = this._parent._proxy.animations_[STATE_TYPES.DANCE].action;
+
     action.getMixer().removeEventListener('finished', this._CleanupCallback);
   }
 
@@ -515,17 +579,17 @@ class WalkState extends State {
   }
 
   get Name() {
-    return 'walk';
+    return STATE_TYPES.WALK;
   }
 
   Enter(prevState) {
-    const curAction = this._parent._proxy.animations_['walk'].action;
+    const curAction = this._parent._proxy.animations_[STATE_TYPES.WALK].action;
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
 
       curAction.enabled = true;
 
-      if (prevState.Name == 'run') {
+      if (prevState.Name == STATE_TYPES.RUN) {
         const ratio = curAction.getClip().duration / prevAction.getClip().duration;
         curAction.time = prevAction.time * ratio;
       } else {
@@ -551,12 +615,12 @@ class WalkState extends State {
 
     if (input._keys.forward || input._keys.backward) {
       if (input._keys.shift) {
-        this._parent.SetState('run');
+        this._parent.SetState(STATE_TYPES.RUN);
       }
       return;
     }
 
-    this._parent.SetState('idle');
+    this._parent.SetState(STATE_TYPES.IDLE);
   }
 };
 
@@ -567,17 +631,17 @@ class RunState extends State {
   }
 
   get Name() {
-    return 'run';
+    return STATE_TYPES.RUN;
   }
 
   Enter(prevState) {
-    const curAction = this._parent._proxy.animations_['run'].action;
+    const curAction = this._parent._proxy.animations_[STATE_TYPES.RUN].action;
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
 
       curAction.enabled = true;
 
-      if (prevState.Name == 'walk') {
+      if (prevState.Name == STATE_TYPES.WALK) {
         const ratio = curAction.getClip().duration / prevAction.getClip().duration;
         curAction.time = prevAction.time * ratio;
       } else {
@@ -603,12 +667,12 @@ class RunState extends State {
 
     if (input._keys.forward || input._keys.backward) {
       if (!input._keys.shift) {
-        this._parent.SetState('walk');
+        this._parent.SetState(STATE_TYPES.WALK);
       }
       return;
     }
 
-    this._parent.SetState('idle');
+    this._parent.SetState(STATE_TYPES.IDLE);
   }
 };
 
@@ -619,11 +683,11 @@ class IdleState extends State {
   }
 
   get Name() {
-    return 'idle';
+    return STATE_TYPES.IDLE;
   }
 
   Enter(prevState) {
-    const idleAction = this._parent._proxy.animations_['idle'].action;
+    const idleAction = this._parent._proxy.animations_[STATE_TYPES.IDLE].action;
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
       idleAction.time = 0.0;
@@ -645,15 +709,20 @@ class IdleState extends State {
       return;
     }
     if (input._keys.forward || input._keys.backward) {
-      this._parent.SetState('walk');
+      this._parent.SetState(STATE_TYPES.WALK);
     } else if (input._keys.space) {
-      this._parent.SetState('dance');
+      this._parent.SetState(STATE_TYPES.DANCE);
     }
   }
 };
 
 
 class ThirdPersonCamera {
+  params_: any;
+  _camera: any;
+  _currentPosition: THREE.Vector3;
+  _currentLookat: THREE.Vector3;
+
   constructor(params) {
     this.params_ = params;
     this._camera = params.camera;
@@ -694,6 +763,11 @@ class ThirdPersonCamera {
 
 
 class PlayerEntity {
+  params_: any;
+  controls_: BasicCharacterController;
+  thirdPersonCamera_: ThirdPersonCamera;
+  updateTimer_: number;
+
   constructor(params) {
     this.params_ = params;
     this.Init_();
@@ -723,8 +797,8 @@ class PlayerEntity {
     const p = data[1];
     const q = data[2];
     this.controls_.SetTransform(
-        new THREE.Vector3(...p),
-        new THREE.Quaternion(...q)
+      new THREE.Vector3(...p),
+      new THREE.Quaternion(...q)
     );
   }
 
@@ -748,14 +822,20 @@ class PlayerEntity {
 
 
 class NetworkCharacterController {
+  name_: any;
+  target_: any;
+  params_: any;
+  stateMachine_: CharacterFSM;
+
+
   constructor(params) {
     this._Init(params);
   }
 
   Destroy() {
-    this.name_.Destroy();
+    this.name_?.Destroy?.();
     this.name_ = null;
-    this.target_.Destroy();
+    this.target_?.Destroy?.();
     this.target_ = null;
   }
 
@@ -763,18 +843,18 @@ class NetworkCharacterController {
     this.params_ = params;
 
     this.target_ = new AnimatedMesh({
-        scene: params.scene,
-        desc: params.desc,
+      scene: params.scene,
+      desc: params.desc,
     });
     this.target_.onLoad = () => {
       this.stateMachine_ = new CharacterFSM(
-          new BasicCharacterControllerProxy(this.target_.animations_));
-      this.stateMachine_.SetState('idle');
+        new BasicCharacterControllerProxy(this.target_.animations_));
+      this.stateMachine_.SetState(STATE_TYPES.IDLE);
     }
 
     this.name_ = new FloatingName({
-        parent: this.target_.group_,
-        desc: params.desc,
+      parent: this.target_.group_,
+      desc: params.desc,
     });
   }
 
@@ -803,8 +883,18 @@ class NetworkCharacterController {
   }
 };
 
+interface ITransformUpdate {
+  time: number,
+  transform: []
+}
 
 class NetworkEntity {
+  params_: any;
+  transformUpdates_: ITransformUpdate[];
+  lastFrame_: any;
+  targetFrame_: any;
+  controller_: any;
+
   constructor(params) {
     this.params_ = params;
     this.transformUpdates_ = [];
@@ -814,7 +904,7 @@ class NetworkEntity {
   }
 
   Destroy() {
-    this.controller_.Destroy();
+    this.controller_?.Destroy?.();
   }
 
   Init_() {
@@ -822,16 +912,16 @@ class NetworkEntity {
 
   CreateFromDesc(desc, transform) {
     this.controller_ = new NetworkCharacterController({
-        scene: this.params_.scene,
-        desc: desc,
+      scene: this.params_.scene,
+      desc: desc,
     });
     this.controller_.position.set(...transform[1]);
     this.controller_.quaternion.set(...transform[2]);
-    this.targetFrame_ = {time: 0.1, transform: transform};
-}
+    this.targetFrame_ = { time: 0.1, transform: transform };
+  }
 
   UpdateTransform(data) {
-    this.transformUpdates_.push({time: 0.1, transform: data});
+    this.transformUpdates_.push({ time: 0.1, transform: data });
   }
 
   Update(timeElapsed) {
@@ -840,7 +930,7 @@ class NetworkEntity {
     this.ApplyLCT_(timeElapsed);
   }
 
-  ApplyLCT_(timeElapsed) {    
+  ApplyLCT_(timeElapsed) {
     if (this.transformUpdates_.length == 0) {
       return;
     }
@@ -850,7 +940,7 @@ class NetworkEntity {
     }
 
     while (this.transformUpdates_.length > 0 &&
-        this.transformUpdates_[0].time <= 0.0) {
+      this.transformUpdates_[0].time <= 0.0) {
       this.lastFrame_ = {
         transform: [
           this.targetFrame_.transform[0],
@@ -880,16 +970,20 @@ class NetworkEntity {
 
 
 class Chatbox {
+  params_: any;
+  element_: HTMLInputElement;
+  OnChat: (msg) => void;
+
   constructor(params) {
     this.params_ = params;
-    this.OnChat = () => {};
-    this.Init_(); 
+    this.OnChat = () => { };
+    this.Init_();
   }
 
   Init_() {
-    this.element_ = document.getElementById('chat-input');
+    this.element_ = document.getElementById('chat-input') as HTMLInputElement;
     this.element_.addEventListener(
-        'keydown', (e) => this.OnKeyDown_(e), false);
+      'keydown', (e) => this.OnKeyDown_(e), false);
   }
 
   OnKeyDown_(evt) {
@@ -914,6 +1008,16 @@ class Chatbox {
 
 
 class BasicMMODemo {
+  threejs_: THREE.WebGLRenderer;
+  camera_: THREE.PerspectiveCamera;
+  scene_: THREE.Scene;
+  entities_: any;
+  chatbox_: Chatbox;
+  previousRAF_: any;
+  socket_: Socket<any>;
+  playerID_: string;
+
+
   constructor() {
     this._Initialize();
   }
@@ -930,7 +1034,7 @@ class BasicMMODemo {
     this.threejs_.setSize(window.innerWidth, window.innerHeight);
 
     document.getElementById('container').appendChild(
-        this.threejs_.domElement);
+      this.threejs_.domElement);
 
     window.addEventListener('resize', () => {
       this.OnWindowResize_();
@@ -962,8 +1066,8 @@ class BasicMMODemo {
     light.shadow.camera.bottom = -100;
     this.scene_.add(light);
 
-    light = new THREE.AmbientLight(0x101010);
-    this.scene_.add(light);
+    let light2 = new THREE.AmbientLight(0x101010);
+    this.scene_.add(light2);
 
     const controls = new OrbitControls(
       this.camera_, this.threejs_.domElement);
@@ -972,21 +1076,21 @@ class BasicMMODemo {
 
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './resources/posx.jpg',
-        './resources/negx.jpg',
-        './resources/posy.jpg',
-        './resources/negy.jpg',
-        './resources/posz.jpg',
-        './resources/negz.jpg',
+      '../resources/posx.jpg',
+      '../resources/negx.jpg',
+      '../resources/posy.jpg',
+      '../resources/negy.jpg',
+      '../resources/posz.jpg',
+      '../resources/negz.jpg',
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene_.background = texture;
 
     const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 10, 10),
-        new THREE.MeshStandardMaterial({
-            color: 0x808080,
-          }));
+      new THREE.PlaneGeometry(100, 100, 10, 10),
+      new THREE.MeshStandardMaterial({
+        color: 0x808080,
+      }));
     plane.castShadow = false;
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
@@ -996,7 +1100,7 @@ class BasicMMODemo {
 
     this.entities_ = {};
 
-    this.chatbox_ = new Chatbox();
+    this.chatbox_ = new Chatbox(null);
     this.chatbox_.OnChat = (txt) => { this.OnChat_(txt); };
 
     this.previousRAF_ = null;
@@ -1005,27 +1109,27 @@ class BasicMMODemo {
 
   GenerateRandomName_() {
     const names1 = [
-        'Aspiring', 'Nameless', 'Cautionary', 'Excited',
-        'Modest', 'Maniacal', 'Caffeinated', 'Sleepy',
-        'Passionate', 'Masochistic', 'Aging', 'Pedantic',
-        'Talkative',
+      'Aspiring', 'Nameless', 'Cautionary', 'Excited',
+      'Modest', 'Maniacal', 'Caffeinated', 'Sleepy',
+      'Passionate', 'Masochistic', 'Aging', 'Pedantic',
+      'Talkative',
     ];
     const names2 = [
-        'Coder', 'Mute', 'Giraffe', 'Snowman',
-        'Machinist', 'Fondler', 'Typist',
-        'Noodler', 'Arborist', 'Peeper', 'Ghost',
+      'Coder', 'Mute', 'Giraffe', 'Snowman',
+      'Machinist', 'Fondler', 'Typist',
+      'Noodler', 'Arborist', 'Peeper', 'Ghost',
     ];
     const n1 = names1[
-        Math.floor(Math.random() * names1.length)];
+      Math.floor(Math.random() * names1.length)];
     const n2 = names2[
-        Math.floor(Math.random() * names2.length)];
+      Math.floor(Math.random() * names2.length)];
     return n1 + ' ' + n2;
   }
 
   SetupSocket_() {
     this.socket_ = io('ws://localhost:3000', {
-        reconnection: false,
-        transports: ['websocket'],
+      reconnection: false,
+      transports: ['websocket'],
     });
 
     this.socket_.on("connect", () => {
@@ -1051,9 +1155,9 @@ class BasicMMODemo {
     if (e == 'world.player') {
       this.playerID_ = d.id;
       const e = new PlayerEntity({
-          scene: this.scene_,
-          camera: this.camera_,
-          socket: this.socket_
+        scene: this.scene_,
+        camera: this.camera_,
+        socket: this.socket_
       });
       e.CreateFromDesc(d.desc);
       e.UpdateTransform(d.transform);
@@ -1067,7 +1171,7 @@ class BasicMMODemo {
 
       for (let u of updates) {
         if ('desc' in u) {
-          const e = new NetworkEntity({scene: this.scene_});
+          const e = new NetworkEntity({ scene: this.scene_ });
           e.CreateFromDesc(u.desc, u.transform);
           this.entities_[u.id] = e;
         } else {

@@ -6,7 +6,8 @@
         "sourceMap": true,
         "composite": true,
         "rootDir": "src",
-        "outDir": "dist"
+        "outDir": "dist",
+        "lib": ["dom"]
     },
     "include": [
         "src/*.ts"
