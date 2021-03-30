@@ -4,8 +4,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
-import { io, Socket } from 'socket.io-client';
-import { STATE_TYPES } from 'shared/src/constants';
+import { io } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
+import { EVENT_TYPES, STATE_TYPES } from 'shared/src/constants';
 
 
 const _CHARACTER_MODELS = {
@@ -813,7 +814,7 @@ class PlayerEntity {
     if (this.updateTimer_ <= 0.0 && this.controls_.IsLoaded) {
       this.updateTimer_ = 0.1;
       this.params_.socket.emit(
-        'world.update',
+        EVENT_TYPES.WORLD_UPDATE,
         this.controls_.CreateTransformPacket(),
       );
     }
@@ -1014,7 +1015,7 @@ class BasicMMODemo {
   entities_: any;
   chatbox_: Chatbox;
   previousRAF_: any;
-  socket_: Socket<any>;
+  socket_: Socket;
   playerID_: string;
 
 
@@ -1132,10 +1133,11 @@ class BasicMMODemo {
       transports: ['websocket'],
     });
 
-    this.socket_.on("connect", () => {
+    // The socket.io TS definition is wrong I think. This is a hack. 
+    (this.socket_ as { on: (type: EVENT_TYPES, cb: () => void) => void }).on(EVENT_TYPES.CONNECT, () => {
       console.log(this.socket_.id);
       const randomName = this.GenerateRandomName_();
-      this.socket_.emit('login.commit', randomName);
+      this.socket_.emit(EVENT_TYPES.LOGIN_COMMIT, randomName);
     });
 
     this.socket_.on("disconnect", () => {
@@ -1148,11 +1150,11 @@ class BasicMMODemo {
   }
 
   OnChat_(txt) {
-    this.socket_.emit('chat.msg', txt);
+    this.socket_.emit(EVENT_TYPES.CHAT_MSG, txt);
   }
 
   OnMessage_(e, d) {
-    if (e == 'world.player') {
+    if (e == EVENT_TYPES.WORLD_PLAYER) {
       this.playerID_ = d.id;
       const e = new PlayerEntity({
         scene: this.scene_,
@@ -1163,7 +1165,7 @@ class BasicMMODemo {
       e.UpdateTransform(d.transform);
       this.entities_[d.id] = e;
       console.log('entering world: ' + d.id);
-    } else if (e == 'world.update') {
+    } else if (e == EVENT_TYPES.WORLD_UPDATE) {
       const updates = d;
       const alive = {};
 

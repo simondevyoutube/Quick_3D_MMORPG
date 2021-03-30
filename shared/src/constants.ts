@@ -1,10 +1,19 @@
 enum STATE_TYPES {
+    ATTACK = 'attack',
+    DANCE = 'dance',
     DEATH = 'death',
     IDLE = 'idle',
-    ATTACK = 'attack',
-    WALK = 'walk',
     RUN = 'run',
-    DANCE = 'dance',
+    WALK = 'walk',
+}
+
+enum ANIM_TYPES {
+    ATTACK = 'Attack',
+    DANCE = 'Dance',
+    DEATH = 'Death',
+    IDLE = 'Idle',
+    RUN = 'Run',
+    WALK = 'Walk',
 }
 
 enum EVENT_TYPES {
@@ -23,37 +32,56 @@ enum EVENT_TYPES {
     LOAD_CHARACTER = 'load.character',
     LOAD_WEAPON = 'load.weapon',
     LOGIN_COMMIT = 'login.commit',
+    NETWORK_INVENTORY = 'network.inventory',
     PLAYER_ACTION = 'player.action',
     STATS_NETWORK = 'stats.network',
     WORLD_INVENTORY = 'world.inventory',
     WORLD_PLAYER = 'world.player',
     WORLD_STATS = 'world.stats',
     WORLD_UPDATE = 'world.update',
+    CONNECT = 'connect',
+    NETWORK_UPDATE = 'network.update',
+    EVENTS_NETWORK = 'events.network',
 }
 
 enum KNOWN_ENTITIES {
-    INVENTORY_CONTROLLER = 'InventoryController',
     DATABASE = 'database',
+    INVENTORY_CONTROLLER = 'InventoryController',
     INVENTORY_DATABASE_CONTROLLER = 'InventoryDatabaseController',
-    LEVEL_UP_SPAWNER = 'level-up-spawner'
+    LEVEL_UP_SPAWNER = 'level-up-spawner',
+    SPAWNERS = 'spawners',
+    LOADER = 'loader',
+    SCENERY = 'scenery',
+    TERRAIN = 'terrain',
+    UI = 'ui',
+    NETWORK = 'network'
 }
 
 enum NAMED_COMPONENTS {
     LEVEL_UP_SPAWNER = 'LevelUpComponentSpawner',
+    PLAYER_SPAWNER = 'PlayerSpawner',
+    NETWORK_ENTITY_SPAWNER = 'NetworkEntitySpawner',
+    UI_CONTROLLER = 'UIController',
+    THREEJS_CONTROLLER = 'ThreeJSController',
+    NETWORK_CONTROLLER = 'NetworkController',
+}
 
+enum INVENTORY_TYPES {
+    DEFAULT_PREFIX = 'inventory-',
+    EQUIP_PREFIX = 'inventory-equip-'
 }
 
 enum CLASS_TYPES_ENUM {
-    SORCEROR = 'sorceror',
     PALADIN = 'paladin',
+    SORCEROR = 'sorceror',
     WARROK = 'warrok',
-    ZOMBIE = 'zombie'
+    ZOMBIE = 'zombie',
 }
 
 enum WEAPON_TYPES_ENUM {
     AXE = 'weapon.axe1',
+    HAMMER = 'weapon.hammer1',
     SWORD = 'weapon.sword1',
-    HAMMER = 'weapon.hammer1'
 }
 
 const CLASS_TYPES = [CLASS_TYPES_ENUM.SORCEROR, CLASS_TYPES_ENUM.PALADIN];
@@ -66,22 +94,29 @@ const _TIMEOUT:number = 600.0;
 
 enum DOM_IDS {
     HEALTH_BAR = 'health-bar',
-    STATS_STRENGTH = 'stats-strength',
     STATS_BENCHPRESS = 'stats-benchpress',
     STATS_CURL = 'stats-curl',
     STATS_EXPERIENCE = 'stats-experience',
-    STATS_WISDOMNESS = 'stats-wisdomness'
+    STATS_STRENGTH = 'stats-strength',
+    STATS_WISDOMNESS = 'stats-wisdomness',
+    LOGIN_INPUT = 'login-input',
+    LOGIN_UI = 'login-ui',
+    LOGIN_BUTTON = 'login-button',
+    THREEJS = 'threejs',
+    QUEST_UI = 'quest-ui',
 }
 
 export {
     _TIMEOUT,
     ATTACK_TYPES,
-    CLASS_TYPES,
     CLASS_TYPES_ENUM,
+    CLASS_TYPES,
+    DOM_IDS,
     EVENT_TYPES,
+    INVENTORY_TYPES,
     KNOWN_ENTITIES,
+    NAMED_COMPONENTS,
     STATE_TYPES,
     WEAPON_TYPES_ENUM,
-    NAMED_COMPONENTS,
-    DOM_IDS
+    ANIM_TYPES,
 }

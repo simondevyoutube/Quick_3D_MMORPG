@@ -92,7 +92,7 @@ export const threejs_component = (() => {
       this.threejs_.shadowMap.type = THREE.PCFSoftShadowMap;
       this.threejs_.setPixelRatio(window.devicePixelRatio);
       this.threejs_.setSize(window.innerWidth, window.innerHeight);
-      this.threejs_.domElement.id = 'threejs';
+      this.threejs_.domElement.id = DOM_IDS.THREEJS;
   
       document.getElementById('container').appendChild(this.threejs_.domElement);
   

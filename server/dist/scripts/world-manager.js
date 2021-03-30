@@ -72,7 +72,7 @@ class WorldManager {
         this.entities_.push(e);
     }
     Add(client, params) {
-        const models = ['sorceror', 'paladin'];
+        const models = [CLASS_TYPES_ENUM.SORCEROR, 'paladin'];
         const randomClass = models[Math.floor(Math.random() * models.length)];
         // Hack
         const e = new WorldEntity({

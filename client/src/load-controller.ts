@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
-import {SkeletonUtils} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/utils/SkeletonUtils.js';
+
+
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
+import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader';
+import {SkeletonUtils} from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 import { Component } from "./entity";
 
@@ -10,6 +12,8 @@ import { Component } from "./entity";
 export const load_controller = (() => {
 
   class LoadController extends Component {
+    textures_: {};
+    models_: {};
     constructor() {
       super();
 

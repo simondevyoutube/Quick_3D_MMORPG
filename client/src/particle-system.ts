@@ -202,6 +202,7 @@ class ParticleSystem {
   geometry_: any;
   points_: any;
   emitters_: any[];
+  
   constructor(params) {
     const uniforms = {
       diffuseTexture: {

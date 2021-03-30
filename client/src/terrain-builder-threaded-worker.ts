@@ -1,30 +1,31 @@
 import * as THREE from 'three';
 
-import {texture_splatter} from './texture-splatter.js' ;
+import { texture_splatter } from './texture-splatter';
 
-import {math} from '/shared/math.mjs';
-import {noise} from '/shared/noise.mjs';
-import {terrain_height} from '/shared/terrain-height.mjs' ;
+import { math } from 'shared/src/math';
+import { Noise } from 'shared/src/noise';
+import { HeightGenerator } from 'shared/src/terrain-height';
 
 
 class _TerrainBuilderThreadedWorker {
+  _params: any;
   constructor() {
   }
 
   Init(params) {
     this._params = params;
     this._params.offset = new THREE.Vector3(
-        params.offset[0], params.offset[1], params.offset[2]);
-    this._params.noise = new noise.Noise(params.noiseParams);
-    this._params.heightGenerators = [new terrain_height.HeightGenerator()];
+      params.offset[0], params.offset[1], params.offset[2]);
+    this._params.noise = new Noise(params.noiseParams);
+    this._params.heightGenerators = [new HeightGenerator()];
 
-    this._params.biomeGenerator = new noise.Noise(params.biomesParams);
-    this._params.colourNoise = new noise.Noise(params.colourNoiseParams);
+    this._params.biomeGenerator = new Noise(params.biomesParams);
+    this._params.colourNoise = new Noise(params.colourNoiseParams);
     this._params.colourGenerator = new texture_splatter.TextureSplatter(
-        {
-          biomeGenerator: this._params.biomeGenerator,
-          colourNoise: this._params.colourNoise
-        });
+      {
+        biomeGenerator: this._params.biomeGenerator,
+        colourNoise: this._params.colourNoise
+      });
   }
 
   _GenerateHeight(v) {
@@ -104,22 +105,22 @@ class _TerrainBuilderThreadedWorker {
     for (let i = 0; i < resolution; i++) {
       for (let j = 0; j < resolution; j++) {
         indices.push(
-            i * (resolution + 1) + j,
-            (i + 1) * (resolution + 1) + j + 1,
-            i * (resolution + 1) + j + 1);
+          i * (resolution + 1) + j,
+          (i + 1) * (resolution + 1) + j + 1,
+          i * (resolution + 1) + j + 1);
         indices.push(
-            (i + 1) * (resolution + 1) + j,
-            (i + 1) * (resolution + 1) + j + 1,
-            i * (resolution + 1) + j);
+          (i + 1) * (resolution + 1) + j,
+          (i + 1) * (resolution + 1) + j + 1,
+          i * (resolution + 1) + j);
       }
     }
 
     const normals = new Array(up.length).fill(0.0);
 
-    for (let i = 0, n = indices.length; i < n; i+= 3) {
+    for (let i = 0, n = indices.length; i < n; i += 3) {
       const i1 = indices[i] * 3;
-      const i2 = indices[i+1] * 3;
-      const i3 = indices[i+2] * 3;
+      const i2 = indices[i + 1] * 3;
+      const i3 = indices[i + 2] * 3;
 
       _N1.fromArray(positions, i1);
       _N2.fromArray(positions, i2);
@@ -133,13 +134,13 @@ class _TerrainBuilderThreadedWorker {
       normals[i2] += _D1.x;
       normals[i3] += _D1.x;
 
-      normals[i1+1] += _D1.y;
-      normals[i2+1] += _D1.y;
-      normals[i3+1] += _D1.y;
+      normals[i1 + 1] += _D1.y;
+      normals[i2 + 1] += _D1.y;
+      normals[i3 + 1] += _D1.y;
 
-      normals[i1+2] += _D1.z;
-      normals[i2+2] += _D1.z;
-      normals[i3+2] += _D1.z;
+      normals[i1 + 2] += _D1.z;
+      normals[i2 + 2] += _D1.z;
+      normals[i3 + 2] += _D1.z;
     }
 
     // Fix the skirt
@@ -167,19 +168,19 @@ class _TerrainBuilderThreadedWorker {
       _ApplyFix(x, resolution, x, resolution - 1);
     }
 
-    for (let i = 0, n = normals.length; i < n; i+=3) {
+    for (let i = 0, n = normals.length; i < n; i += 3) {
       _N.fromArray(normals, i);
       _N.normalize();
       normals[i] = _N.x;
-      normals[i+1] = _N.y;
-      normals[i+2] = _N.z;
+      normals[i + 1] = _N.y;
+      normals[i + 2] = _N.z;
     }
 
-    for (let i = 0, n = indices.length; i < n; i+=3) {
-      const splats = [];
+    for (let i = 0, n = indices.length; i < n; i += 3) {
+      const splats: object[] = [];
       const i1 = indices[i] * 3;
-      const i2 = indices[i+1] * 3;
-      const i3 = indices[i+2] * 3;
+      const i2 = indices[i + 1] * 3;
+      const i3 = indices[i + 2] * 3;
       const indexes = [i1, i2, i3];
       for (let j = 0; j < 3; j++) {
         const j1 = indexes[j];
@@ -192,7 +193,7 @@ class _TerrainBuilderThreadedWorker {
 
       const splatStrengths = {};
       for (let k in splats[0]) {
-        splatStrengths[k] = {key: k, strength: 0.0};
+        splatStrengths[k] = { key: k, strength: 0.0 };
       }
       for (let curSplat of splats) {
         for (let k in curSplat) {
@@ -200,8 +201,8 @@ class _TerrainBuilderThreadedWorker {
         }
       }
 
-      let typeValues = Object.values(splatStrengths);
-      typeValues.sort((a, b) => {
+      let typeValues: any = Object.values(splatStrengths) as {}[];
+      typeValues.sort((a: any, b: any) => {
         if (a.strength < b.strength) {
           return 1;
         }
@@ -212,15 +213,15 @@ class _TerrainBuilderThreadedWorker {
       });
 
       const w1 = indices[i] * 4;
-      const w2 = indices[i+1] * 4;
-      const w3 = indices[i+2] * 4;
+      const w2 = indices[i + 1] * 4;
+      const w3 = indices[i + 2] * 4;
 
       for (let s = 0; s < 3; s++) {
         let total = (
-            splats[s][typeValues[0].key].strength +
-            splats[s][typeValues[1].key].strength +
-            splats[s][typeValues[2].key].strength +
-            splats[s][typeValues[3].key].strength);
+          splats?.[s]?.[typeValues?.[0]?.key]?.strength +
+          splats[s][typeValues?.[1].key].strength +
+          splats[s][typeValues[2].key].strength +
+          splats[s][typeValues[3].key].strength);
         const normalization = 1.0 / total;
 
         splats[s][typeValues[0].key].strength *= normalization;
@@ -262,10 +263,10 @@ class _TerrainBuilderThreadedWorker {
 
     function _Unindex(src, stride) {
       const dst = [];
-      for (let i = 0, n = indices.length; i < n; i+= 3) {
+      for (let i = 0, n = indices.length; i < n; i += 3) {
         const i1 = indices[i] * stride;
-        const i2 = indices[i+1] * stride;
-        const i3 = indices[i+2] * stride;
+        const i2 = indices[i + 1] * stride;
+        const i3 = indices[i + 2] * stride;
 
         for (let j = 0; j < stride; j++) {
           dst.push(src[i1 + j]);
@@ -290,19 +291,19 @@ class _TerrainBuilderThreadedWorker {
 
     const bytesInFloat32 = 4;
     const positionsArray = new Float32Array(
-        new SharedArrayBuffer(bytesInFloat32 * uiPositions.length));
+      new SharedArrayBuffer(bytesInFloat32 * uiPositions.length));
     const coloursArray = new Float32Array(
-        new SharedArrayBuffer(bytesInFloat32 * uiColours.length));
+      new SharedArrayBuffer(bytesInFloat32 * uiColours.length));
     const normalsArray = new Float32Array(
-        new SharedArrayBuffer(bytesInFloat32 * uiNormals.length));
+      new SharedArrayBuffer(bytesInFloat32 * uiNormals.length));
     const coordsArray = new Float32Array(
-        new SharedArrayBuffer(bytesInFloat32 * uiCoords.length));
+      new SharedArrayBuffer(bytesInFloat32 * uiCoords.length));
     const uvsArray = new Float32Array(
-        new SharedArrayBuffer(bytesInFloat32 * uiUVs.length));
+      new SharedArrayBuffer(bytesInFloat32 * uiUVs.length));
     const weights1Array = new Float32Array(
-        new SharedArrayBuffer(bytesInFloat32 * uiWeights2.length));
+      new SharedArrayBuffer(bytesInFloat32 * uiWeights2.length));
     const weights2Array = new Float32Array(
-        new SharedArrayBuffer(bytesInFloat32 * uiWeights2.length));
+      new SharedArrayBuffer(bytesInFloat32 * uiWeights2.length));
 
     positionsArray.set(uiPositions, 0);
     coloursArray.set(uiColours, 0);
@@ -331,6 +332,6 @@ self.onmessage = (msg) => {
     _CHUNK.Init(msg.data.params);
 
     const rebuiltData = _CHUNK.Rebuild();
-    self.postMessage({subject: 'build_chunk_result', data: rebuiltData});
+    self.postMessage({ subject: 'build_chunk_result', data: rebuiltData }, null);
   }
 }

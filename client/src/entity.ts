@@ -8,6 +8,7 @@ class Entity {
     _handlers: {};
     parent_: any;
     dead_: boolean;
+  Account: any;
     
     constructor() {
       this._name = null;
@@ -124,7 +125,7 @@ class Entity {
 
   class Component {
     parent_: any;
-    constructor() {
+    constructor(params?) {
       this.parent_ = null;
     }
 

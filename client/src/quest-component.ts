@@ -1,3 +1,4 @@
+import { DOM_IDS, EVENT_TYPES, KNOWN_ENTITIES, NAMED_COMPONENTS } from "shared/src/constants";
 import { Component } from "./entity";
 
 
@@ -10,12 +11,12 @@ export const quest_component = (() => {
     constructor() {
       super();
 
-      const e = document.getElementById('quest-ui');
+      const e = document.getElementById(DOM_IDS.QUEST_UI);
       e.style.visibility = 'hidden';
     }
 
     InitComponent() {
-      this._RegisterHandler('input.picked', (m) => this._OnPicked(m));
+      this._RegisterHandler(EVENT_TYPES.INPUT_PICKED, (m) => this._OnPicked(m));
     }
 
     _OnPicked(msg) {
@@ -29,12 +30,12 @@ export const quest_component = (() => {
     }
 
     _AddQuestToJournal(quest) {
-      const ui = this.FindEntity('ui').GetComponent('UIController');
+      const ui = this.FindEntity(KNOWN_ENTITIES.UI).GetComponent(NAMED_COMPONENTS.UI_CONTROLLER);
       ui.AddQuest(quest);
     }
   };
 
   return {
-      QuestComponent: QuestComponent,
+    QuestComponent: QuestComponent,
   };
 })();

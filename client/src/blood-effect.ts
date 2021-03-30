@@ -2,9 +2,7 @@ import * as THREE from 'three';
 
 import { ParticleEmitter, ParticleSystem } from "./particle-system";
 import { Component } from "./entity";
-
-export const blood_effect = (() => {
-
+import { CLASS_TYPES_ENUM, EVENT_TYPES, STATE_TYPES } from 'shared/src/constants';
   class BloodEffectEmitter extends ParticleEmitter {
     parent_: any;
     blend_: number;
@@ -138,7 +136,7 @@ export const blood_effect = (() => {
     }
 
     InitComponent() {
-      this._RegisterHandler('events.network', (m) => { this.OnEvents_(m); });
+      this._RegisterHandler(EVENT_TYPES.EVENTS_NETWORK, (m) => { this.OnEvents_(m); });
       this._RegisterHandler(EVENT_TYPES.LOAD_CHARACTER, (m) => this.OnCharacterLoaded_(m));
     }
 
@@ -152,14 +150,14 @@ export const blood_effect = (() => {
       }
 
       for (let e of msg.value) {
-        if (e.type != 'attack') {
+        if (e.type != STATE_TYPES.ATTACK) {
           continue;
         }
 
         // Another hack
         const hc = e.attacker.GetComponent('HealthComponent');
 
-        if (hc.stats_.desc.character.class != 'sorceror') {
+        if (hc.stats_.desc.character.class != CLASS_TYPES_ENUM.SORCEROR) {
           this.EmitBloodFX_();
         } else {
           this.EmitFireFX_();
@@ -168,6 +166,7 @@ export const blood_effect = (() => {
     }
 
     EmitFireFX_() {
+      // dem hips
       const targets = ['Head', 'Hips'];
       for (let t of targets) {
         const b = this.bones_[t];
@@ -237,7 +236,6 @@ export const blood_effect = (() => {
     }
   }
 
-  return {
-    BloodEffect: BloodEffect,
-  };
-})();
+
+
+export {BloodEffect, FireFXEmitter, BloodEffectEmitter}

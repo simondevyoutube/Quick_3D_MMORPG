@@ -1,32 +1,31 @@
 
+// LoadingManager seems to be broken when you attempt to load multiple
+// resources multiple times, only first onLoad is called.
+// So roll our own.
+class OurLoadingManager {
+  loader_: any;
+  files_: Set<unknown>;
+  onLoad: () => void;
+  constructor(loader) {
+    this.loader_ = loader;
+    this.files_ = new Set();
+    this.onLoad = () => { };
+  }
 
-export const loading_manager = (() => {
+  load(file, cb) {
+    this.files_.add(file);
 
-  // LoadingManager seems to be broken when you attempt to load multiple
-  // resources multiple times, only first onLoad is called.
-  // So roll our own.
-  class OurLoadingManager {
-    constructor(loader) {
-      this.loader_ = loader;
-      this.files_ = new Set();
-      this.onLoad = () => {};
-    }
-  
-    load(file, cb) {
-      this.files_.add(file);
-  
-      this.loader_.load(file, (result) => {
-        this.files_.delete(file);
-        cb(result);
-  
-        if (this.files_.size == 0) {
-          this.onLoad();
-        }
-      });
-    }
-  };
+    this.loader_.load(file, (result) => {
+      this.files_.delete(file);
+      cb(result);
 
-  return {
-      OurLoadingManager: OurLoadingManager,
-  };
-})();
+      if (this.files_.size == 0) {
+        this.onLoad();
+      }
+    });
+  }
+};
+
+export {
+  OurLoadingManager
+}

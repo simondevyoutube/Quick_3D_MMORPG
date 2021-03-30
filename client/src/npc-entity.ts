@@ -1,14 +1,19 @@
 import * as THREE from 'three';
 
-import {entity} from './entity.js';
-import {player_entity} from './player-entity.js'
-
-import {defs} from '/shared/defs.mjs';
-
-
-export const npc_entity = (() => {
+import { Component } from './entity';
+import {CharacterFSM, BasicCharacterControllerProxy} from './player-entity'
+import {CHARACTER_MODELS} from 'shared/src/defs';
+import { ANIM_TYPES, EVENT_TYPES, KNOWN_ENTITIES, STATE_TYPES } from 'shared/src/constants';
 
   class NPCController extends Component {
+    params_: any;
+    group_: any;
+    animations_: {};
+    queuedState_: any;
+    stateMachine_: any;
+    target_: any;
+    bones_: {};
+    mixer_: THREE.AnimationMixer;
     constructor(params) {
       super();
       this.params_ = params;
@@ -61,9 +66,9 @@ export const npc_entity = (() => {
 
       // hack: should propogate attacks through the events on server
       // Right now, they're inferred from whatever animation we're running, blech
-      if (s == 'attack' && this.stateMachine_._currentState.Name != 'attack') {
+      if (s == STATE_TYPES.ATTACK && this.stateMachine_._currentState.Name != STATE_TYPES.ATTACK) {
         this.Broadcast({
-            topic: 'action.attack',
+            topic: EVENT_TYPES.ACTION_ATTACK,
         });
       }
 
@@ -71,7 +76,7 @@ export const npc_entity = (() => {
     }
 
     OnDeath_(msg) {
-      this.SetState('death');
+      this.SetState(STATE_TYPES.DEATH);
     }
 
     OnPosition_(m) {
@@ -84,9 +89,9 @@ export const npc_entity = (() => {
 
     LoadModels_() {
       const classType = this.params_.desc.character.class;
-      const modelData = defs.CHARACTER_MODELS[classType];
+      const modelData = CHARACTER_MODELS[classType];
 
-      const loader = this.FindEntity('loader').GetComponent('LoadController');
+      const loader = this.FindEntity(KNOWN_ENTITIES.LOADER).GetComponent('LoadController');
       loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
         this.target_ = glb.scene;
         this.target_.scale.setScalar(modelData.scale);
@@ -129,23 +134,23 @@ export const npc_entity = (() => {
           return null;
         };
 
-        this.animations_['idle'] = _FindAnim('Idle');
-        this.animations_['walk'] = _FindAnim('Walk');
-        this.animations_['run'] = _FindAnim('Run');
-        this.animations_['death'] = _FindAnim('Death');
-        this.animations_['attack'] = _FindAnim('Attack');
-        this.animations_['dance'] = _FindAnim('Dance');
+        this.animations_[STATE_TYPES.IDLE] = _FindAnim(ANIM_TYPES.IDLE);
+        this.animations_[STATE_TYPES.WALK] = _FindAnim(ANIM_TYPES.WALK)
+        this.animations_[STATE_TYPES.RUN] = _FindAnim(ANIM_TYPES.RUN)
+        this.animations_[STATE_TYPES.DEATH] = _FindAnim(ANIM_TYPES.DEATH);
+        this.animations_[STATE_TYPES.ATTACK] = _FindAnim(ANIM_TYPES.ATTACK);
+        this.animations_[STATE_TYPES.DANCE] = _FindAnim(ANIM_TYPES.DANCE);
 
         this.target_.visible = true;
 
-        this.stateMachine_ = new player_entity.CharacterFSM(
-            new player_entity.BasicCharacterControllerProxy(this.animations_));
+        this.stateMachine_ = new CharacterFSM(
+            new BasicCharacterControllerProxy(this.animations_));
 
         if (this.queuedState_) {
           this.stateMachine_.SetState(this.queuedState_)
           this.queuedState_ = null;
         } else {
-          this.stateMachine_.SetState('idle');
+          this.stateMachine_.SetState(STATE_TYPES.IDLE);
         }
 
         this.Broadcast({
@@ -168,8 +173,7 @@ export const npc_entity = (() => {
     }
   };
 
-  return {
-    NPCController: NPCController,
-  };
 
-})();
+export {
+  NPCController
+}

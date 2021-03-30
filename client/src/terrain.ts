@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import {entity} from './entity.js';
+import { Component } from './entity';
 import {quadtree} from './quadtree.js';
 import {terrain_shader} from './terrain-shader.js';
 import {terrain_builder_threaded} from './terrain-builder-threaded.js';
@@ -11,7 +11,7 @@ import {utils} from './utils.js';
 import {terrain_constants} from '/shared/terrain-constants.mjs';
 import {terrain_height} from '/shared/terrain-height.mjs';
 
-import {noise} from '/shared/noise.mjs';
+import {noise} from 'shared/src/noise';
 
 
 export const terrain = (function() {

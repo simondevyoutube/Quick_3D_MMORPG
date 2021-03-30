@@ -191,7 +191,7 @@ class AIState_JustSitThere extends AIState {
     }
     Update(timeElapsed) {
         this.timer_ += timeElapsed;
-        this.entity.SetState('idle');
+        this.entity.SetState(STATE_TYPES.IDLE);
         if (this.timer_ > 5.0) {
             this.UpdateLogic_();
             this.timer_ = 0.0;
@@ -205,7 +205,7 @@ class AIState_FollowToAttack extends AIState {
         this.target_ = target;
     }
     UpdateMovement_(timeElapsed) {
-        this.entity.state_ = 'walk';
+        this.entity.state_ = STATE_TYPES.WALK;
         const direction = vec3.create();
         const forward = vec3.fromValues(0, 0, 1);
         vec3.sub(direction, this.target_.position_, this.entity.position_);
@@ -241,7 +241,7 @@ class AIState_WaitAttackDone extends AIState {
         this.target_ = target;
     }
     Update(_) {
-        this.entity.state_ = 'attack';
+        this.entity.state_ = STATE_TYPES.ATTACK;
         if (this.entity.action_) {
             return;
         }

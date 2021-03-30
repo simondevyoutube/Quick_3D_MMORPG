@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {entity} from './entity.js';
+import { Component } from './entity';
 
 
 export const third_person_camera = (() => {
@@ -20,7 +20,7 @@ export const third_person_camera = (() => {
       idealOffset.applyQuaternion(this._params.target._rotation);
       idealOffset.add(this._params.target._position);
 
-      const terrain = this.FindEntity('terrain').GetComponent('TerrainChunkManager');
+      const terrain = this.FindEntity(KNOWN_ENTITIES.TERRAIN).GetComponent('TerrainChunkManager');
       idealOffset.y = Math.max(idealOffset.y, terrain.GetHeight(idealOffset)[0] + 5.0);
 
       return idealOffset;

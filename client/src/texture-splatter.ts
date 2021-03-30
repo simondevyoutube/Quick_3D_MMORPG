@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 
-import {math} from '/shared/math.mjs';
+import {math} from 'shared/src/math';
 import {spline} from '/shared/spline.mjs';
 import {terrain_constants} from '/shared/terrain-constants.mjs';
 

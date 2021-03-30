@@ -1,4 +1,4 @@
-import { EVENT_TYPES, KNOWN_ENTITIES } from 'shared/src/constants';
+import { EVENT_TYPES, INVENTORY_TYPES, KNOWN_ENTITIES } from 'shared/src/constants';
 import { Component } from './entity';
 
 class InventoryDatabaseController extends Component {
@@ -20,8 +20,8 @@ class InventoryDatabaseController extends Component {
 
 class UIInventoryController extends Component {
   inventory_: any;
-  constructor() {
-    super();
+  constructor(params) {
+    super(params);
   }
 
   InitEntity() {
@@ -81,7 +81,7 @@ class UIInventoryController extends Component {
   SetItemAtSlot_(slot, itemName) {
     const div = document.getElementById(slot);
     const item = this.GetItemDefinition_(itemName);
-    if (item) {
+    if (item?.renderParams?.icon) {
       const path = './resources/icons/weapons/' + item.renderParams.icon;
       div.style.backgroundImage = "url('" + path + "')";
     } else {
@@ -93,7 +93,7 @@ class UIInventoryController extends Component {
 
 class InventoryController extends Component {
   inventory_: {};
-  constructor() {
+  constructor(params?) {
     super();
 
     this.inventory_ = this.CreateEmpty_();
@@ -102,14 +102,14 @@ class InventoryController extends Component {
   CreateEmpty_() {
     const inventory = {};
     for (let i = 1; i <= 24; ++i) {
-      inventory['inventory-' + i] = {
+      inventory[INVENTORY_TYPES.DEFAULT_PREFIX + i] = {
         type: 'inventory',
         value: null,
       };
     }
 
     for (let i = 1; i <= 8; ++i) {
-      inventory['inventory-equip-' + i] = {
+      inventory[INVENTORY_TYPES.EQUIP_PREFIX + i] = {
         type: 'equip',
         value: null,
       };
@@ -123,7 +123,7 @@ class InventoryController extends Component {
 
   InitComponent() {
     // Hack
-    this._RegisterHandler('network.inventory', (m) => this.OnNetworkUpdate_(m));
+    this._RegisterHandler(EVENT_TYPES.NETWORK_INVENTORY, (m) => this.OnNetworkUpdate_(m));
   }
 
   OnNetworkUpdate_(msg) {

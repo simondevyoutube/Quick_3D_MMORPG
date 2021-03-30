@@ -1,45 +1,44 @@
-import {entity} from './entity.js';
+import { Component } from './entity';
+
+class SpatialGridController extends Component {
+  grid_: any;
+  client_: any;
+  constructor(params) {
+    super(params);
+
+    this.grid_ = params.grid;
+  }
+
+  Destroy() {
+    this.grid_.Remove(this.client_);
+    this.client_ = null;
+  }
 
 
-export const spatial_grid_controller = (() => {
+  InitComponent() {
+    const pos = [
+      this.parent_._position.x,
+      this.parent_._position.z,
+    ];
 
-  class SpatialGridController extends Component {
-    constructor(params) {
-      super();
+    this.client_ = this.grid_.NewClient(pos, [1, 1]);
+    this.client_.entity = this.parent_;
+    this._RegisterHandler('update.position', (m) => this._OnPosition(m));
+  }
 
-      this.grid_ = params.grid;
-    }
+  _OnPosition(msg) {
+    this.client_.position = [msg.value.x, msg.value.z];
+    this.grid_.UpdateClient(this.client_);
+  }
 
-    Destroy() {
-      this.grid_.Remove(this.client_);
-      this.client_ = null;
-    }
+  FindNearbyEntities(range) {
+    const results = this.grid_.FindNear(
+      [this.parent_._position.x, this.parent_._position.z], [range, range]);
 
-    InitComponent() {
-      const pos = [
-          this.parent_._position.x,
-          this.parent_._position.z,
-      ];
+    return results.filter(c => c.entity != this.parent_);
+  }
+};
 
-      this.client_ = this.grid_.NewClient(pos, [1, 1]);
-      this.client_.entity = this.parent_;
-      this._RegisterHandler('update.position', (m) => this._OnPosition(m));
-    }
-
-    _OnPosition(msg) {
-      this.client_.position = [msg.value.x, msg.value.z];
-      this.grid_.UpdateClient(this.client_);
-    }
-
-    FindNearbyEntities(range) {
-      const results = this.grid_.FindNear(
-          [this.parent_._position.x, this.parent_._position.z], [range, range]);
-          
-      return results.filter(c => c.entity != this.parent_);
-    }
-  };
-
-  return {
-      SpatialGridController: SpatialGridController,
-  };
-})();
+export {
+  SpatialGridController
+}
