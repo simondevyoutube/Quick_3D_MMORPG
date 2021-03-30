@@ -7,7 +7,7 @@ import { ui_controller } from './ui-controller.js';
 
 export const network_controller = (() => {
 
-  class NetworkController extends entity.Component {
+  class NetworkController extends Component {
     constructor(params) {
       super();
 

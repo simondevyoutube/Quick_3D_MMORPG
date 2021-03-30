@@ -20,7 +20,7 @@ import {blood_effect} from './blood-effect.js';
 
 export const spawners = (() => {
 
-  class PlayerSpawner extends entity.Component {
+  class PlayerSpawner extends Component {
     constructor(params) {
       super();
       this.params_ = params;
@@ -80,7 +80,7 @@ export const spawners = (() => {
     }
   };
 
-  class NetworkEntitySpawner extends entity.Component {
+  class NetworkEntitySpawner extends Component {
     constructor(params) {
       super();
       this.params_ = params;

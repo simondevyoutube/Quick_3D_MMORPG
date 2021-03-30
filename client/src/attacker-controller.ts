@@ -1,28 +1,31 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {entity} from './entity.js';
+import {Component} from './entity';
+import {EVENT_TYPES} from 'shared/src/constants'
 
 
 export const attack_controller = (() => {
 
-  class AttackController extends entity.Component {
+  class AttackController extends Component {
+    action_: any;
+
     constructor() {
       super();
       this.action_ = null;
     }
 
     InitComponent() {
-      this._RegisterHandler('player.action', (m) => { this._OnAnimAction(m); });
+      this._RegisterHandler(EVENT_TYPES.PLAYER_ACTION, (m: {action: EVENT_TYPES}) => { this._OnAnimAction(m); });
     }
 
     _OnAnimAction(m) {
-      if (m.action != 'attack') {
+      if (m.action != EVENT_TYPES.ATTACK) {
         this.action_ = m.action;
         return;
       } else if (m.action != this.action_) {
         this.action_ = m.action;
         this.Broadcast({
-            topic: 'action.attack',
+            topic: EVENT_TYPES.ACTION_ATTACK,
         });
       }
     }

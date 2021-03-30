@@ -1,11 +1,17 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {particle_system} from "./particle-system.js";
-import {entity} from "./entity.js";
+import { ParticleEmitter, ParticleSystem } from "./particle-system";
+import { Component } from "./entity";
 
 export const blood_effect = (() => {
 
-  class BloodEffectEmitter extends particle_system.ParticleEmitter {
+  class BloodEffectEmitter extends ParticleEmitter {
+    parent_: any;
+    blend_: number;
+    emitterLife_: number;
+    alphaSpline_: any;
+    colourSpline_: any;
+    sizeSpline_: any;
     constructor(parent) {
       super();
       this.parent_ = parent;
@@ -25,9 +31,9 @@ export const blood_effect = (() => {
       const radius = 1.0;
       const life = (Math.random() * 0.75 + 0.25) * 0.5;
       const p = new THREE.Vector3(
-          (Math.random() * 2 - 1) * radius,
-          (Math.random() * 2 - 1) * radius,
-          (Math.random() * 2 - 1) * radius);
+        (Math.random() * 2 - 1) * radius,
+        (Math.random() * 2 - 1) * radius,
+        (Math.random() * 2 - 1) * radius);
 
       const d = p.clone().normalize();
       p.copy(d);
@@ -36,21 +42,27 @@ export const blood_effect = (() => {
       d.multiplyScalar(0.0);
 
       return {
-          position: p,
-          size: (Math.random() * 0.5 + 0.5) * 1.0,
-          colour: new THREE.Color(),
-          alpha: 1.0,
-          life: life,
-          maxLife: life,
-          rotation: Math.random() * 2.0 * Math.PI,
-          velocity: d,
-          blend: this.blend_,
+        position: p,
+        size: (Math.random() * 0.5 + 0.5) * 1.0,
+        colour: new THREE.Color(),
+        alpha: 1.0,
+        life: life,
+        maxLife: life,
+        rotation: Math.random() * 2.0 * Math.PI,
+        velocity: d,
+        blend: this.blend_,
       };
     }
   };
 
 
-  class FireFXEmitter extends particle_system.ParticleEmitter {
+  class FireFXEmitter extends ParticleEmitter {
+    parent_: any;
+    blend_: number;
+    particles_: any;
+    alphaSpline_: any;
+    colourSpline_: any;
+    sizeSpline_: any;
     constructor(parent) {
       super();
       this.parent_ = parent;
@@ -74,9 +86,9 @@ export const blood_effect = (() => {
       const radius = 1.0;
       const life = (Math.random() * 0.75 + 0.25) * 1.5;
       const p = new THREE.Vector3(
-          (Math.random() * 2 - 1) * radius,
-          (Math.random() * 2 - 1) * radius,
-          (Math.random() * 2 - 1) * radius);
+        (Math.random() * 2 - 1) * radius,
+        (Math.random() * 2 - 1) * radius,
+        (Math.random() * 2 - 1) * radius);
 
       const d = p.clone().normalize();
       p.copy(d);
@@ -85,34 +97,38 @@ export const blood_effect = (() => {
       d.multiplyScalar(3.0);
 
       return {
-          position: p,
-          size: (Math.random() * 0.5 + 0.5) * 1.0,
-          colour: new THREE.Color(),
-          alpha: 1.0,
-          life: life,
-          maxLife: life,
-          rotation: Math.random() * 2.0 * Math.PI,
-          velocity: d,
-          blend: this.blend_,
+        position: p,
+        size: (Math.random() * 0.5 + 0.5) * 1.0,
+        colour: new THREE.Color(),
+        alpha: 1.0,
+        life: life,
+        maxLife: life,
+        rotation: Math.random() * 2.0 * Math.PI,
+        velocity: d,
+        blend: this.blend_,
       };
     }
   };
 
 
-  class BloodEffect extends entity.Component {
+  class BloodEffect extends Component {
+    params_: any;
+    bloodFX_: ParticleSystem;
+    fireFX_: ParticleSystem;
+    bones_: any;
     constructor(params) {
       super();
       this.params_ = params;
 
-      this.bloodFX_ = new particle_system.ParticleSystem({
-          camera: params.camera,
-          parent: params.scene,
-          texture: './resources/textures/whitePuff14.png',
+      this.bloodFX_ = new ParticleSystem({
+        camera: params.camera,
+        parent: params.scene,
+        texture: './resources/textures/whitePuff14.png',
       });
-      this.fireFX_ = new particle_system.ParticleSystem({
-          camera: params.camera,
-          parent: params.scene,
-          texture: './resources/textures/fire.png',
+      this.fireFX_ = new ParticleSystem({
+        camera: params.camera,
+        parent: params.scene,
+        texture: './resources/textures/fire.png',
       });
     }
 
@@ -123,7 +139,7 @@ export const blood_effect = (() => {
 
     InitComponent() {
       this._RegisterHandler('events.network', (m) => { this.OnEvents_(m); });
-      this._RegisterHandler('load.character', (m) => this.OnCharacterLoaded_(m));
+      this._RegisterHandler(EVENT_TYPES.LOAD_CHARACTER, (m) => this.OnCharacterLoaded_(m));
     }
 
     OnCharacterLoaded_(msg) {
@@ -159,12 +175,12 @@ export const blood_effect = (() => {
         emitter.alphaSpline_.AddPoint(0.0, 0.0);
         emitter.alphaSpline_.AddPoint(0.5, 1.0);
         emitter.alphaSpline_.AddPoint(1.0, 0.0);
-        
+
         emitter.colourSpline_.AddPoint(0.0, new THREE.Color(0x00FF00));
         emitter.colourSpline_.AddPoint(0.3, new THREE.Color(0x00FF00));
         emitter.colourSpline_.AddPoint(0.4, new THREE.Color(0xdeec42));
         emitter.colourSpline_.AddPoint(1.0, new THREE.Color(0xf4a776));
-        
+
         emitter.sizeSpline_.AddPoint(0.0, 0.5);
         emitter.sizeSpline_.AddPoint(0.5, 3.0);
         emitter.sizeSpline_.AddPoint(1.0, 0.5);
@@ -177,10 +193,10 @@ export const blood_effect = (() => {
         emitter.alphaSpline_.AddPoint(0.0, 0.0);
         emitter.alphaSpline_.AddPoint(0.7, 1.0);
         emitter.alphaSpline_.AddPoint(1.0, 0.0);
-        
+
         emitter.colourSpline_.AddPoint(0.0, new THREE.Color(0x000000));
         emitter.colourSpline_.AddPoint(1.0, new THREE.Color(0x000000));
-        
+
         emitter.sizeSpline_.AddPoint(0.0, 0.5);
         emitter.sizeSpline_.AddPoint(0.5, 4.0);
         emitter.sizeSpline_.AddPoint(1.0, 10.0);
@@ -200,10 +216,10 @@ export const blood_effect = (() => {
         emitter.alphaSpline_.AddPoint(0.0, 0.0);
         emitter.alphaSpline_.AddPoint(0.7, 1.0);
         emitter.alphaSpline_.AddPoint(1.0, 0.0);
-        
+
         emitter.colourSpline_.AddPoint(0.0, new THREE.Color(0xbb2909));
         emitter.colourSpline_.AddPoint(1.0, new THREE.Color(0x701a08));
-        
+
         emitter.sizeSpline_.AddPoint(0.0, 0.5);
         emitter.sizeSpline_.AddPoint(0.5, 1.0);
         emitter.sizeSpline_.AddPoint(1.0, 0.5);
@@ -212,7 +228,7 @@ export const blood_effect = (() => {
         emitter.blend_ = 1.0;
 
         this.bloodFX_.AddEmitter(emitter);
-      }      
+      }
     }
 
     Update(timeElapsed) {
@@ -220,7 +236,7 @@ export const blood_effect = (() => {
       this.fireFX_.Update(timeElapsed);
     }
   }
-  
+
   return {
     BloodEffect: BloodEffect,
   };

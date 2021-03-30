@@ -1,7 +1,7 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {particle_system} from "./particle-system.js";
-import {entity} from "./entity.js";
+import { Component } from "./entity";
 
 export const sorceror_effect = (() => {
 
@@ -49,7 +49,7 @@ export const sorceror_effect = (() => {
     }
   };
 
-  class SorcerorEffect extends entity.Component {
+  class SorcerorEffect extends Component {
     constructor(params) {
       super();
       this.params_ = params;
@@ -67,7 +67,7 @@ export const sorceror_effect = (() => {
 
     InitComponent() {
       this._RegisterHandler('action.attack', (m) => { this.OnAttack_(m); });
-      this._RegisterHandler('load.character', (m) => this.OnCharacterLoaded_(m));
+      this._RegisterHandler(EVENT_TYPES.LOAD_CHARACTER, (m) => this.OnCharacterLoaded_(m));
     }
 
     OnCharacterLoaded_(msg) {

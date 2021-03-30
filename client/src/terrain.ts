@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {entity} from './entity.js';
 import {quadtree} from './quadtree.js';
@@ -16,7 +16,7 @@ import {noise} from '/shared/noise.mjs';
 
 export const terrain = (function() {
 
-  class TerrainChunkManager extends entity.Component {
+  class TerrainChunkManager extends Component {
     constructor(params) {
       super();
       this._Init(params);

@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {entity} from './entity.js';
 import {player_entity} from './player-entity.js'
@@ -8,7 +8,7 @@ import {defs} from '/shared/defs.mjs';
 
 export const npc_entity = (() => {
 
-  class NPCController extends entity.Component {
+  class NPCController extends Component {
     constructor(params) {
       super();
       this.params_ = params;
@@ -48,7 +48,7 @@ export const npc_entity = (() => {
     }
 
     InitComponent() {
-      this._RegisterHandler('health.death', (m) => { this.OnDeath_(m); });
+      this._RegisterHandler(EVENT_TYPES.HEALTH_DEATH, (m) => { this.OnDeath_(m); });
       this._RegisterHandler('update.position', (m) => { this.OnPosition_(m); });
       this._RegisterHandler('update.rotation', (m) => { this.OnRotation_(m); });
     }
@@ -149,7 +149,7 @@ export const npc_entity = (() => {
         }
 
         this.Broadcast({
-            topic: 'load.character',
+            topic: EVENT_TYPES.LOAD_CHARACTER,
             model: this.group_,
             bones: this.bones_,
         });

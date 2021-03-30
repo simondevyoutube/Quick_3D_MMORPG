@@ -1,14 +1,17 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
+import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader';
 
-import {entity} from './entity.js';
+import {Component} from './entity';
+import { EVENT_TYPES } from 'shared/src/constants';
 
 
 export const gltf_component = (() => {
 
-  class StaticModelComponent extends entity.Component {
+  class StaticModelComponent extends Component {
+    _params: any;
+    _target: any;
     constructor(params) {
       super();
       this._Init(params);
@@ -104,7 +107,11 @@ export const gltf_component = (() => {
   };
 
 
-  class AnimatedModelComponent extends entity.Component {
+  class AnimatedModelComponent extends Component {
+    _target: any;
+    _params: any;
+    _parent: any;
+    _mixer: any;
     constructor(params) {
       super();
       this._Init(params);
@@ -199,7 +206,7 @@ export const gltf_component = (() => {
 
       this._parent._mesh = this._target;
       this.Broadcast({
-          topic: 'load.character',
+          topic: EVENT_TYPES.LOAD_CHARACTER,
           model: this._target,
       });
     }
@@ -216,7 +223,7 @@ export const gltf_component = (() => {
       const loader = new FBXLoader();
       loader.setPath(this._params.resourcePath);
       loader.load(this._params.resourceName, (fbx) => {
-        this._OnLoaded(fbx);
+        this._OnLoaded(fbx, null);
       });
     }
 

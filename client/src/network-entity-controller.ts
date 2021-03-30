@@ -1,11 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {entity} from './entity.js';
 
 
 export const network_entity_controller = (() => {
 
-  class NetworkEntityController extends entity.Component {
+  class NetworkEntityController extends Component {
     constructor() {
       super();
       this.transformUpdates_ = [];

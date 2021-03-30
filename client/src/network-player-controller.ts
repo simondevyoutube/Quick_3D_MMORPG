@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {entity} from './entity.js';
 
@@ -6,7 +6,7 @@ import {entity} from './entity.js';
 
 export const network_player_controller = (() => {
 
-  class NetworkEntityController extends entity.Component {
+  class NetworkEntityController extends Component {
     constructor() {
       super();
       this.updateTimer_ = 0.0;
@@ -15,9 +15,9 @@ export const network_player_controller = (() => {
 
     InitComponent() {
       this._RegisterHandler(
-          'load.character', (m) => { this.OnLoaded_(m); });
+          EVENT_TYPES.LOAD_CHARACTER, (m) => { this.OnLoaded_(m); });
       this._RegisterHandler(
-          'inventory.equip', (m) => { this.OnEquipChanged_(m); });
+          EVENT_TYPES.INVENTORY_EQUIP, (m) => { this.OnEquipChanged_(m); });
       this._RegisterHandler(
           'network.update', (m) => { this.OnUpdate_(m); });
       this._RegisterHandler(
@@ -30,7 +30,7 @@ export const network_player_controller = (() => {
     }
 
     OnEquipChanged_(msg) {
-      const inventory = this.GetComponent('InventoryController').CreatePacket();
+      const inventory = this.GetComponent(KNOWN_ENTITIES.INVENTORY_CONTROLLER).CreatePacket();
       
       this.net_.SendInventoryChange_(inventory);
     }

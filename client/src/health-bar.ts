@@ -1,13 +1,10 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {entity} from './entity.js';
+import { Component } from './entity';
 
-import {math} from '/shared/math.mjs';
+import { math } from 'shared/src/math';
 
-
-export const health_bar = (() => {
-
-  const _VS = `
+const _VS = `
 varying vec2 vUV;
 
 void main() {
@@ -17,7 +14,7 @@ void main() {
 }
 `;
 
-  const _PS = `
+const _PS = `
 uniform vec3 colour;
 uniform float health;
 
@@ -28,7 +25,14 @@ void main() {
 }
 `;
 
-class HealthBar extends entity.Component {
+class HealthBar extends Component {
+  params_: any;
+  material_: any;
+  geometry_: any;
+  bar_: THREE.Mesh<any, any>;
+  realHealth_: number;
+  animHealth_: number;
+  
   constructor(params) {
     super();
     this.params_ = params;
@@ -49,7 +53,7 @@ class HealthBar extends entity.Component {
         value: 1.0,
       },
     };
-    this.material_ = new THREE.ShaderMaterial( {
+    this.material_ = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: _VS,
       fragmentShader: _PS,
@@ -79,7 +83,7 @@ class HealthBar extends entity.Component {
 
   OnHealth_(msg) {
     const healthPercent = (msg.health / msg.maxHealth);
-    
+
     this.realHealth_ = healthPercent;
   }
 
@@ -125,17 +129,14 @@ class HealthBar extends entity.Component {
     positions.push(p4.x, p4.y, p4.z);
 
     this.geometry_.setAttribute(
-        'position', new THREE.Float32BufferAttribute(positions, 3));
+      'position', new THREE.Float32BufferAttribute(positions, 3));
     this.geometry_.setAttribute(
-        'uv', new THREE.Float32BufferAttribute(uvs, 2));
+      'uv', new THREE.Float32BufferAttribute(uvs, 2));
     this.geometry_.setIndex(
-        new THREE.BufferAttribute(new Uint32Array(indices), 1));
+      new THREE.BufferAttribute(new Uint32Array(indices), 1));
 
     this.geometry_.attributes.position.needsUpdate = true;
   }
 };
 
-  return {
-    HealthBar: HealthBar,
-  };
-})();
+export { HealthBar }

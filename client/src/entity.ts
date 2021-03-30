@@ -1,9 +1,14 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-
-export const entity = (() => {
-
-  class Entity {
+class Entity {
+    _name: any;
+    _components: {};
+    _position: THREE.Vector3;
+    _rotation: THREE.Quaternion;
+    _handlers: {};
+    parent_: any;
+    dead_: boolean;
+    
     constructor() {
       this._name = null;
       this._components = {};
@@ -118,6 +123,7 @@ export const entity = (() => {
   };
 
   class Component {
+    parent_: any;
     constructor() {
       this.parent_ = null;
     }
@@ -160,9 +166,4 @@ export const entity = (() => {
     }
   };
 
-  return {
-    Entity: Entity,
-    Component: Component,
-  };
-
-})();
+export {Entity, Component}

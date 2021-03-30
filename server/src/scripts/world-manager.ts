@@ -6,6 +6,7 @@ import { WorldEntity } from './world-entity';
 import { SpatialHashGrid } from 'shared/src/spatial-hash-grid';
 import { HeightGenerator } from 'shared/src/terrain-height';
 import { CHARACTER_MODELS } from 'shared/src/defs';
+import {CLASS_TYPES} from 'shared/src/constants'
 
 class MonsterSpawner {
   parent_: any;
@@ -101,7 +102,7 @@ class WorldManager {
   }
 
   Add(client, params) {
-    const models = ['sorceror', 'paladin'];
+    const models = CLASS_TYPES;
     const randomClass = models[
       Math.floor(Math.random() * models.length)];
 

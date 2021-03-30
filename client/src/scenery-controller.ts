@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {entity} from './entity.js';
 import {render_component} from './render-component.js';
@@ -92,7 +92,7 @@ export const scenery_controller = (() => {
     }
   }
 
-  class SceneryController extends entity.Component {
+  class SceneryController extends Component {
     constructor(params) {
       super();
       this.params_ = params;

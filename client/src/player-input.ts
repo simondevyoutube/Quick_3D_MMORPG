@@ -1,11 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {entity} from "./entity.js";
+import { Component } from "./entity";
 
 
 export const player_input = (() => {
 
-  class PickableComponent extends entity.Component {
+  class PickableComponent extends Component {
     constructor() {
       super();
     }
@@ -14,7 +14,7 @@ export const player_input = (() => {
     }
   };
 
-  class BasicCharacterControllerInput extends entity.Component {
+  class BasicCharacterControllerInput extends Component {
     constructor(params) {
       super();
       this._params = params;

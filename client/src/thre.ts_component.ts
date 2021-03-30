@@ -1,6 +1,6 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {entity} from "./entity.js";
+import { Component } from "./entity";
 
 export const threejs_component = (() => {
 
@@ -38,7 +38,7 @@ export const threejs_component = (() => {
     gl_FragColor = vec4(sky, 1.0);
   }`;
 
-  class ThreeJSController extends entity.Component {
+  class ThreeJSController extends Component {
     constructor() {
       super();
     }

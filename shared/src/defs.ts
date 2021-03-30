@@ -1,7 +1,59 @@
+import { CLASS_TYPES_ENUM, WEAPON_TYPES_ENUM } from "./constants";
+
+declare module ICharacter {
+
+  export interface Anchors {
+    rightHand: string;
+  }
+
+  export interface Attack {
+    timing: number;
+    cooldown: number;
+    type: string;
+    range: number;
+  }
+
+  export interface Inventory {
+    ['inventory-1']?: string;
+    ['inventory-2']?: string;
+    ['inventory-equip-1']?: string;
+  }
+
+  export interface Stats {
+    health: number;
+    maxHealth: number;
+    strength: number;
+    wisdomness: number;
+    benchpress: number;
+    curl: number;
+    experience: number;
+    level: number;
+  }
+
+  export interface RootObject {
+    base: string;
+    path: string;
+    anchors: Anchors;
+    nameOffset: number;
+    attack: Attack;
+    scale: number;
+    inventory: Inventory;
+    stats: Stats;
+    name: string;
+  }
+
+}
+
+interface ICharacterModels {
+  [CLASS_TYPES_ENUM.PALADIN]: ICharacter.RootObject,
+  [CLASS_TYPES_ENUM.SORCEROR]: ICharacter.RootObject,
+  [CLASS_TYPES_ENUM.WARROK]: ICharacter.RootObject,
+  [CLASS_TYPES_ENUM.ZOMBIE]: ICharacter.RootObject,
+}
 
 
-const _CHARACTER_MODELS = {
-  paladin: {
+const CHARACTER_MODELS: ICharacterModels = {
+  [CLASS_TYPES_ENUM.PALADIN]: {
     base: 'paladin.glb',
     path: './resources/characters/',
     anchors: {
@@ -16,9 +68,9 @@ const _CHARACTER_MODELS = {
     },
     scale: 6.0,
     inventory: {
-      'inventory-1': 'weapon.axe1',
-      'inventory-2': 'weapon.hammer1',
-      'inventory-equip-1': 'weapon.sword1',
+      'inventory-1': WEAPON_TYPES_ENUM.AXE,
+      'inventory-2': WEAPON_TYPES_ENUM.HAMMER,
+      'inventory-equip-1': WEAPON_TYPES_ENUM.SWORD,
     },
     stats: {
       health: 200,
@@ -32,7 +84,7 @@ const _CHARACTER_MODELS = {
     },
     name: 'Paladin',
   },
-  sorceror: {
+  [CLASS_TYPES_ENUM.SORCEROR]: {
     base: 'sorceror.glb',
     path: './resources/characters/',
     anchors: {
@@ -59,7 +111,7 @@ const _CHARACTER_MODELS = {
     },
     name: 'Sorceror',
   },
-  warrok: {
+  [CLASS_TYPES_ENUM.WARROK]: {
     base: 'warrok.glb',
     path: './resources/characters/',
     anchors: {
@@ -86,7 +138,7 @@ const _CHARACTER_MODELS = {
     },
     name: 'Monster Guy',
   },
-  zombie: {
+  [CLASS_TYPES_ENUM.ZOMBIE]: {
     base: 'zombie-guy.glb',
     path: './resources/characters/',
     anchors: {
@@ -115,8 +167,26 @@ const _CHARACTER_MODELS = {
   },
 };
 
-const _WEAPONS_DATA = {
-  'weapon.axe1':
+interface IWeaponsData {
+  [WEAPON_TYPES_ENUM.AXE]: IWeaponaxe1;
+  [WEAPON_TYPES_ENUM.SWORD]: IWeaponaxe1;
+  [WEAPON_TYPES_ENUM.HAMMER]: IWeaponaxe1;
+}
+
+interface IWeaponaxe1 {
+  type: string;
+  damage: number;
+  renderParams: RenderParams;
+}
+
+interface RenderParams {
+  name: string;
+  scale: number;
+  icon: string;
+}
+
+const WEAPONS_DATA: IWeaponsData = {
+  [WEAPON_TYPES_ENUM.AXE]:
   {
     type: 'weapon',
     damage: 3,
@@ -126,7 +196,7 @@ const _WEAPONS_DATA = {
       icon: 'war-axe-64.png',
     },
   },
-  'weapon.sword1':
+  [WEAPON_TYPES_ENUM.SWORD]:
   {
     type: 'weapon',
     damage: 3,
@@ -136,7 +206,7 @@ const _WEAPONS_DATA = {
       icon: 'pointy-sword-64.png',
     },
   },
-  'weapon.hammer1':
+  [WEAPON_TYPES_ENUM.HAMMER]:
   {
     type: 'weapon',
     damage: 3,
@@ -148,7 +218,5 @@ const _WEAPONS_DATA = {
   },
 };
 
-
-const CHARACTER_MODELS = _CHARACTER_MODELS;
-const WEAPONS_DATA = _WEAPONS_DATA;
+export type { ICharacter };
 export { CHARACTER_MODELS, WEAPONS_DATA }

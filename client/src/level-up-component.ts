@@ -1,11 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {particle_system} from "./particle-system.js";
-import {entity} from "./entity.js";
+import { Component } from "./entity";
 
 export const level_up_component = (() => {
 
-  class LevelUpComponentSpawner extends entity.Component {
+  class LevelUpComponentSpawner extends Component {
     constructor(params) {
       super();
       this._params = params;
@@ -21,7 +21,7 @@ export const level_up_component = (() => {
     }
   };
 
-  class LevelUpComponent extends entity.Component {
+  class LevelUpComponent extends Component {
     constructor(params) {
       super();
       this._params = params;

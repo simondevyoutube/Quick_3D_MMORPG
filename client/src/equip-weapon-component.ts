@@ -1,15 +1,22 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
-import {entity} from './entity.js';
+import {Component} from './entity';
 
-import {defs} from '/shared/defs.mjs';
+import {CHARACTER_MODELS} from 'shared/src/defs';
 
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
+import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader';
+import { EVENT_TYPES, KNOWN_ENTITIES } from 'shared/src/constants';
 
 
 export const equip_weapon_component = (() => {
 
-  class EquipWeapon extends entity.Component {
+  class EquipWeapon extends Component {
+    params_: any;
+    target_: any;
+    name_: any;
+    anchor_: any;
+    _bones: any;
+
     constructor(params) {
       super();
       this.params_ = params;
@@ -17,13 +24,13 @@ export const equip_weapon_component = (() => {
       this.name_ = null;
 
       const classType = this.params_.desc.character.class;
-      const modelData = defs.CHARACTER_MODELS[classType];
+      const modelData = CHARACTER_MODELS[classType];
       this.anchor_ = modelData.anchors.rightHand;
     }
 
     InitComponent() {
-      this._RegisterHandler('load.character', (m) => this._OnCharacterLoaded(m));
-      this._RegisterHandler('inventory.equip', (m) => this._OnEquip(m));
+      this._RegisterHandler(EVENT_TYPES.LOAD_CHARACTER, (m) => this._OnCharacterLoaded(m));
+      this._RegisterHandler(EVENT_TYPES.INVENTORY_EQUIP, (m) => this._OnEquip(m));
     }
 
     _OnCharacterLoaded(msg) {
@@ -38,8 +45,8 @@ export const equip_weapon_component = (() => {
     }
 
     GetItemDefinition_(name) {
-      const database = this.FindEntity('database').GetComponent(
-          'InventoryDatabaseController');
+      const database = this.FindEntity(KNOWN_ENTITIES.DATABASE).GetComponent(
+          KNOWN_ENTITIES.INVENTORY_DATABASE_CONTROLLER);
       return database.Find(name);
     }
 
@@ -51,7 +58,7 @@ export const equip_weapon_component = (() => {
       if (this.target_) {
         this._UnloadModels();
       }
-      const inventory = this.GetComponent('InventoryController');
+      const inventory = this.GetComponent(KNOWN_ENTITIES.INVENTORY_CONTROLLER);
       const item = this.GetItemDefinition_(msg.value);
 
       this.name_ = msg.value;
@@ -115,7 +122,7 @@ export const equip_weapon_component = (() => {
         cb();
 
         this.Broadcast({
-            topic: 'load.weapon',
+            topic: EVENT_TYPES.LOAD_WEAPON,
             model: this.target_,
             bones: this._bones,
         });

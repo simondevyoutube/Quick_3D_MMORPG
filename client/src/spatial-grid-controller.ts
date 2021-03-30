@@ -3,7 +3,7 @@ import {entity} from './entity.js';
 
 export const spatial_grid_controller = (() => {
 
-  class SpatialGridController extends entity.Component {
+  class SpatialGridController extends Component {
     constructor(params) {
       super();
 

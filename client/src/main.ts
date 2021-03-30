@@ -1,6 +1,6 @@
 import {GUI} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
 
-import {entity_manager} from './entity-manager.js';
+import {entity_manager} from 'shared/src/entity-manager';
 import {entity} from './entity.js';
 import {ui_controller} from './ui-controller.js';
 import {level_up_component} from './level-up-component.js';
@@ -110,11 +110,11 @@ class CrappyMMOAttempt {
 
     const database = new entity.Entity();
     database.AddComponent(new inventory_controller.InventoryDatabaseController());
-    this.entityManager_.Add(database, 'database');
+    this.entityManager_.Add(database, KNOWN_ENTITIES.DATABASE);
 
     // HACK
     for (let k in defs.WEAPONS_DATA) {
-      database.GetComponent('InventoryDatabaseController').AddItem(
+      database.GetComponent(KNOWN_ENTITIES.INVENTORY_DATABASE_CONTROLLER).AddItem(
           k, defs.WEAPONS_DATA[k]);
     }
   }

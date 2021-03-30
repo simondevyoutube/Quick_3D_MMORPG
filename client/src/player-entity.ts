@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'three';
 
 import {entity} from './entity.js';
 import {finite_state_machine} from './finite-state-machine.js';
@@ -36,7 +36,7 @@ export const player_entity = (() => {
     }
   };
 
-  class BasicCharacterController extends entity.Component {
+  class BasicCharacterController extends Component {
     constructor(params) {
       super();
       this.params_ = params;
@@ -60,7 +60,7 @@ export const player_entity = (() => {
     }
 
     InitComponent() {
-      this._RegisterHandler('health.death', (m) => { this.OnDeath_(m); });
+      this._RegisterHandler(EVENT_TYPES.HEALTH_DEATH, (m) => { this.OnDeath_(m); });
       this._RegisterHandler(
           'update.position', (m) => { this.OnUpdatePosition_(m); });
       this._RegisterHandler(
@@ -140,7 +140,7 @@ export const player_entity = (() => {
         this.stateMachine_.SetState('idle');
 
         this.Broadcast({
-            topic: 'load.character',
+            topic: EVENT_TYPES.LOAD_CHARACTER,
             model: this.target_,
             bones: this.bones_,
         });
