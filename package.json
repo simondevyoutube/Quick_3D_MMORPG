@@ -1,9 +1,7 @@
 {
     "private": true,
     "workspaces": [
-        "client",
-        "server",
-        "shared"
+        "packages/*"
     ],
     "dependencies": {
         "typescript": "^4.2.3"

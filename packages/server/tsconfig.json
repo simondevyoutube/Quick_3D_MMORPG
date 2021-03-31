@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.packages.json",
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist",
+        "target": "ES6",
+        "moduleResolution": "Node"
+    },
+    "include": ["./src/*.ts"],
+    "exclude": ["./dist", "node_modules"],
+    "references": [{"path": "../shared"}]
+}
