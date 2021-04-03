@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "sourceMap": true,
+        "target": "ES6",
+        "moduleResolution": "Node"
+    },
+    "include": ["src"],
+    "exclude": ["dist/*","dat.gui.module.*"],
+    "references": [
+        {
+            "path": "../quick-3d-mmo-shared"
+        }
+    ]
+}

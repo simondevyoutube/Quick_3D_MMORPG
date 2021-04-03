@@ -1,0 +1,124 @@
+"use strict";
+exports.__esModule = true;
+exports.ANIM_TYPES = exports.WEAPON_TYPES_ENUM = exports.STATE_TYPES = exports.NAMED_COMPONENTS = exports.KNOWN_ENTITIES = exports.INVENTORY_TYPES = exports.EVENT_TYPES = exports.DOM_IDS = exports.CLASS_TYPES = exports.CLASS_TYPES_ENUM = exports.ATTACK_TYPES = exports._TIMEOUT = void 0;
+var STATE_TYPES;
+(function (STATE_TYPES) {
+    STATE_TYPES["ATTACK"] = "attack";
+    STATE_TYPES["DANCE"] = "dance";
+    STATE_TYPES["DEATH"] = "death";
+    STATE_TYPES["IDLE"] = "idle";
+    STATE_TYPES["RUN"] = "run";
+    STATE_TYPES["WALK"] = "walk";
+})(STATE_TYPES || (STATE_TYPES = {}));
+exports.STATE_TYPES = STATE_TYPES;
+var ANIM_TYPES;
+(function (ANIM_TYPES) {
+    ANIM_TYPES["ATTACK"] = "Attack";
+    ANIM_TYPES["DANCE"] = "Dance";
+    ANIM_TYPES["DEATH"] = "Death";
+    ANIM_TYPES["IDLE"] = "Idle";
+    ANIM_TYPES["RUN"] = "Run";
+    ANIM_TYPES["WALK"] = "Walk";
+})(ANIM_TYPES || (ANIM_TYPES = {}));
+exports.ANIM_TYPES = ANIM_TYPES;
+var EVENT_TYPES;
+(function (EVENT_TYPES) {
+    EVENT_TYPES["ACTION_ATTACK"] = "action.attack";
+    EVENT_TYPES["ATTACK"] = "attack";
+    EVENT_TYPES["ATTACK_DAMAGE"] = "attack.damage";
+    EVENT_TYPES["CHAT_MESSAGE"] = "chat.message";
+    EVENT_TYPES["CHAT_MSG"] = "chat.msg";
+    EVENT_TYPES["HEALTH_ADD_EXPERIENCE"] = "health.add-experience";
+    EVENT_TYPES["HEALTH_DAMAGE"] = "health.damage";
+    EVENT_TYPES["HEALTH_DEATH"] = "health.death";
+    EVENT_TYPES["HEALTH_LEVEL"] = "health.level";
+    EVENT_TYPES["HEALTH_UPDATE"] = "health.update";
+    EVENT_TYPES["INVENTORY_EQUIP"] = "inventory.equip";
+    EVENT_TYPES["INVENTORY_UPDATED"] = "inventory.updated";
+    EVENT_TYPES["LOAD_CHARACTER"] = "load.character";
+    EVENT_TYPES["LOAD_WEAPON"] = "load.weapon";
+    EVENT_TYPES["LOGIN_COMMIT"] = "login.commit";
+    EVENT_TYPES["NETWORK_INVENTORY"] = "network.inventory";
+    EVENT_TYPES["PLAYER_ACTION"] = "player.action";
+    EVENT_TYPES["STATS_NETWORK"] = "stats.network";
+    EVENT_TYPES["WORLD_INVENTORY"] = "world.inventory";
+    EVENT_TYPES["WORLD_PLAYER"] = "world.player";
+    EVENT_TYPES["WORLD_STATS"] = "world.stats";
+    EVENT_TYPES["WORLD_UPDATE"] = "world.update";
+    EVENT_TYPES["CONNECT"] = "connect";
+    EVENT_TYPES["NETWORK_UPDATE"] = "network.update";
+    EVENT_TYPES["EVENTS_NETWORK"] = "events.network";
+    EVENT_TYPES["INPUT_PICKED"] = "input.picked";
+})(EVENT_TYPES || (EVENT_TYPES = {}));
+exports.EVENT_TYPES = EVENT_TYPES;
+var KNOWN_ENTITIES;
+(function (KNOWN_ENTITIES) {
+    KNOWN_ENTITIES["DATABASE"] = "database";
+    KNOWN_ENTITIES["INVENTORY_CONTROLLER"] = "InventoryController";
+    KNOWN_ENTITIES["INVENTORY_DATABASE_CONTROLLER"] = "InventoryDatabaseController";
+    KNOWN_ENTITIES["LEVEL_UP_SPAWNER"] = "level-up-spawner";
+    KNOWN_ENTITIES["SPAWNERS"] = "spawners";
+    KNOWN_ENTITIES["LOADER"] = "loader";
+    KNOWN_ENTITIES["SCENERY"] = "scenery";
+    KNOWN_ENTITIES["TERRAIN"] = "terrain";
+    KNOWN_ENTITIES["UI"] = "ui";
+    KNOWN_ENTITIES["NETWORK"] = "network";
+    KNOWN_ENTITIES["PLAYER"] = "player";
+})(KNOWN_ENTITIES || (KNOWN_ENTITIES = {}));
+exports.KNOWN_ENTITIES = KNOWN_ENTITIES;
+var NAMED_COMPONENTS;
+(function (NAMED_COMPONENTS) {
+    NAMED_COMPONENTS["LEVEL_UP_SPAWNER"] = "LevelUpComponentSpawner";
+    NAMED_COMPONENTS["PLAYER_SPAWNER"] = "PlayerSpawner";
+    NAMED_COMPONENTS["NETWORK_ENTITY_SPAWNER"] = "NetworkEntitySpawner";
+    NAMED_COMPONENTS["UI_CONTROLLER"] = "UIController";
+    NAMED_COMPONENTS["THREEJS_CONTROLLER"] = "ThreeJSController";
+    NAMED_COMPONENTS["NETWORK_CONTROLLER"] = "NetworkController";
+})(NAMED_COMPONENTS || (NAMED_COMPONENTS = {}));
+exports.NAMED_COMPONENTS = NAMED_COMPONENTS;
+var INVENTORY_TYPES;
+(function (INVENTORY_TYPES) {
+    INVENTORY_TYPES["DEFAULT_PREFIX"] = "inventory-";
+    INVENTORY_TYPES["EQUIP_PREFIX"] = "inventory-equip-";
+})(INVENTORY_TYPES || (INVENTORY_TYPES = {}));
+exports.INVENTORY_TYPES = INVENTORY_TYPES;
+var CLASS_TYPES_ENUM;
+(function (CLASS_TYPES_ENUM) {
+    CLASS_TYPES_ENUM["PALADIN"] = "paladin";
+    CLASS_TYPES_ENUM["SORCEROR"] = "sorceror";
+    CLASS_TYPES_ENUM["WARROK"] = "warrok";
+    CLASS_TYPES_ENUM["ZOMBIE"] = "zombie";
+})(CLASS_TYPES_ENUM || (CLASS_TYPES_ENUM = {}));
+exports.CLASS_TYPES_ENUM = CLASS_TYPES_ENUM;
+var WEAPON_TYPES_ENUM;
+(function (WEAPON_TYPES_ENUM) {
+    WEAPON_TYPES_ENUM["AXE"] = "weapon.axe1";
+    WEAPON_TYPES_ENUM["HAMMER"] = "weapon.hammer1";
+    WEAPON_TYPES_ENUM["SWORD"] = "weapon.sword1";
+})(WEAPON_TYPES_ENUM || (WEAPON_TYPES_ENUM = {}));
+exports.WEAPON_TYPES_ENUM = WEAPON_TYPES_ENUM;
+var CLASS_TYPES = [CLASS_TYPES_ENUM.SORCEROR, CLASS_TYPES_ENUM.PALADIN];
+exports.CLASS_TYPES = CLASS_TYPES;
+var ATTACK_TYPES;
+(function (ATTACK_TYPES) {
+    ATTACK_TYPES["MELEE"] = "melee";
+})(ATTACK_TYPES || (ATTACK_TYPES = {}));
+exports.ATTACK_TYPES = ATTACK_TYPES;
+var _TIMEOUT = 600.0;
+exports._TIMEOUT = _TIMEOUT;
+var DOM_IDS;
+(function (DOM_IDS) {
+    DOM_IDS["HEALTH_BAR"] = "health-bar";
+    DOM_IDS["STATS_BENCHPRESS"] = "stats-benchpress";
+    DOM_IDS["STATS_CURL"] = "stats-curl";
+    DOM_IDS["STATS_EXPERIENCE"] = "stats-experience";
+    DOM_IDS["STATS_STRENGTH"] = "stats-strength";
+    DOM_IDS["STATS_WISDOMNESS"] = "stats-wisdomness";
+    DOM_IDS["LOGIN_INPUT"] = "login-input";
+    DOM_IDS["LOGIN_UI"] = "login-ui";
+    DOM_IDS["LOGIN_BUTTON"] = "login-button";
+    DOM_IDS["THREEJS"] = "threejs";
+    DOM_IDS["QUEST_UI"] = "quest-ui";
+})(DOM_IDS || (DOM_IDS = {}));
+exports.DOM_IDS = DOM_IDS;
+//# sourceMappingURL=constants.js.map

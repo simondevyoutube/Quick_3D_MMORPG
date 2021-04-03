@@ -1,17 +1,24 @@
 {
+    "name": "quick-3d-mmo",
     "private": true,
+    "version": "1.0.0",
+    "license": "MIT",
+    "main": "index.js",
     "workspaces": [
         "packages/*"
     ],
-    "dependencies": {
+    "scripts": {
+        "server": "yarn workspace quick-3d-mmo-server",
+        "client": "yarn workspace quick-3d-mmo-client",
+        "shared": "yarn workspace quick-3d-mmo-shared"
+    },
+    "devDependencies": {
         "typescript": "^4.2.3"
     },
-    "scripts": {
-        "server": "yarn workspace server",
-        "client": "yarn workspace client",
-        "shared": "yarn workspace shared",
-        "start:server:dev": "yarn server start:dev",
-        "start:client:dev": "yarn client start:dev",
-        "start:shared:dev": "yarn shared start:dev"
+    "dependencies": {
+        "@babel/core": "^7.13.14",
+        "gl-matrix": "^3.3.0",
+        "webpack": "^5.30.0",
+        "webpack-cli": "^4.6.0"
     }
 }
