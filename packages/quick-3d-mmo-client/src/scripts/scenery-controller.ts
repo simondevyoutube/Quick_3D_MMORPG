@@ -149,6 +149,7 @@ class SceneryController extends Component {
     }
   }
 
+  // @TODO this should be controlled manually. 
   FindBiome_(terrain, pos) {
     const biome = terrain.GetBiomeAt(pos);
 

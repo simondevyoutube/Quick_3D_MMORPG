@@ -138,7 +138,7 @@ class CrappyMMOAttempt {
     this.camera_.updateProjectionMatrix();
     this.threejs_.setSize(window.innerWidth, window.innerHeight);
   }
-
+  
   RAF_() {
     requestAnimationFrame((t) => {
       // console.log("RAF_()")
@@ -150,9 +150,7 @@ class CrappyMMOAttempt {
       this.Step_(t - this.previousRAF_);
       this.previousRAF_ = t;
 
-      setTimeout(() => {
-        this.RAF_();
-      }, 1);
+      this.RAF_();
     });
   }
 

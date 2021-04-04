@@ -110,12 +110,12 @@ class ThreeJSController extends Component {
     const fov = 60;
     const aspect = 1920 / 1080;
     const near = 1.0;
-    const far = 10000.0;
+    const far = 5000.0;
     this.camera_ = new THREE.PerspectiveCamera(fov, aspect, near, far);
     this.camera_.position.set(25, 10, 25);
 
     this.scene_ = new THREE.Scene();
-    this.scene_.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
+    this.scene_.fog = new THREE.FogExp2(0x89b2eb, 0.00005);
 
     let light = new THREE.DirectionalLight(0x8088b3, 0.7);
     light.position.set(-10, 500, 10);

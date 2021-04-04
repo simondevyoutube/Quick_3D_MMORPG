@@ -7,6 +7,8 @@ enum STATE_TYPES {
     WALK = 'walk',
 }
 
+const ENTITY_DRAW_DISTANCE = 200.0;
+
 enum ANIM_TYPES {
     ATTACK = 'Attack',
     DANCE = 'Dance',
@@ -43,6 +45,7 @@ enum EVENT_TYPES {
     NETWORK_UPDATE = 'network.update',
     EVENTS_NETWORK = 'events.network',
     INPUT_PICKED = 'input.picked',
+    UPDATE_POSITION = 'update.position',
 }
 
 type IEVENT_TYPES = Record<EVENT_TYPES, string>;
@@ -127,4 +130,5 @@ export {
     STATE_TYPES,
     WEAPON_TYPES_ENUM,
     ANIM_TYPES,
+    ENTITY_DRAW_DISTANCE,
 };

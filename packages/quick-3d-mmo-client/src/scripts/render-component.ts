@@ -4,6 +4,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import { Component } from './entity';
 import { Constants } from 'quick-3d-mmo-shared';
+import { EVENT_TYPES } from 'quick-3d-mmo-shared/src/constants';
 
 const { KNOWN_ENTITIES } = { ...Constants };
 
@@ -41,7 +42,7 @@ class RenderComponent extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler('update.position', (m) => { this._OnPosition(m); });
+    this._RegisterHandler(EVENT_TYPES.UPDATE_POSITION, (m) => { this._OnPosition(m); });
     this._RegisterHandler('update.rotation', (m) => { this._OnRotation(m); });
   }
 

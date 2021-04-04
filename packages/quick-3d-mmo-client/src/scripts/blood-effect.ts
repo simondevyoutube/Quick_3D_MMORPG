@@ -159,10 +159,10 @@ class BloodEffect extends Component {
 
       // Another hack
       const hc = e?.attacker?.GetComponent('HealthComponent');
-      if(!hc) {
+      if(!hc?.stats_?.desc) {
         return;
       }
-      if (hc.stats_.desc.character.class != CLASS_TYPES_ENUM.SORCEROR) {
+      if (hc?.stats_?.desc?.character?.class != CLASS_TYPES_ENUM.SORCEROR) {
         this.EmitBloodFX_();
       } else {
         this.EmitFireFX_();

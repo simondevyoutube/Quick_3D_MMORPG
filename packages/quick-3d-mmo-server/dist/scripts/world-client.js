@@ -15,7 +15,7 @@ var _timeout;
 import { quat, vec3 } from 'gl-matrix';
 import { SocketWrapper } from './world-server.js';
 import { Constants, EntityManager as aEntityManager } from 'quick-3d-mmo-shared';
-const { _TIMEOUT, EVENT_TYPES, EntityManager, STATE_TYPES } = Object.assign(Object.assign({}, Constants), aEntityManager);
+const { _TIMEOUT, EVENT_TYPES, EntityManager, STATE_TYPES, ENTITY_DRAW_DISTANCE } = Object.assign(Object.assign({}, Constants), aEntityManager);
 class WorldClient {
     constructor(client, entity) {
         _timeout.set(this, void 0);
@@ -34,9 +34,10 @@ class WorldClient {
         entity.parent_ = this;
     }
     Destroy() {
-        this.client.Disconnect();
+        var _a, _b, _c, _d;
+        (_b = (_a = this.client) === null || _a === void 0 ? void 0 : _a.Disconnect) === null || _b === void 0 ? void 0 : _b.call(_a);
         this.client = null;
-        this.entity.Destroy();
+        (_d = (_c = this.entity) === null || _c === void 0 ? void 0 : _c.Destroy) === null || _d === void 0 ? void 0 : _d.call(_c);
         this.entity = null;
     }
     OnDeath() { }
@@ -69,7 +70,7 @@ class WorldClient {
     OnInventoryChanged_(inventory) {
         this.entity.UpdateInventory(inventory);
         // Todo: Merge this into entityCache path.
-        const nearby = this.entity.FindNear(50, true);
+        const nearby = this.entity.FindNear(ENTITY_DRAW_DISTANCE, true);
         for (let n of nearby) {
             n.parent_.client.Send(EVENT_TYPES.WORLD_INVENTORY, [this.entity.ID, inventory]);
         }
@@ -82,7 +83,7 @@ class WorldClient {
         this.BroadcastChat(chatMessage);
     }
     BroadcastChat(chatMessage) {
-        const nearby = this.entity.FindNear(50, true);
+        const nearby = this.entity.FindNear(ENTITY_DRAW_DISTANCE, true);
         for (let i = 0; i < nearby.length; ++i) {
             const n = nearby[i];
             // This is different from chat.msg?
@@ -114,9 +115,10 @@ class WorldNetworkClient extends WorldClient {
     }
     OnUpdateClientState_() {
         const _Filter = (e) => {
+            console.log(e, this.entity);
             return e.ID != this.entity.ID;
         };
-        const nearby = this.entity.FindNear(500).filter(e => _Filter(e));
+        const nearby = this.entity.FindNear(50).filter(e => _Filter(e));
         const updates = [{
                 id: this.entity.ID,
                 stats: this.entity.CreateStatsPacket_(),
@@ -186,7 +188,7 @@ class AIState_JustSitThere extends AIState {
         const _IsPlayer = (e) => {
             return !e.isAI;
         };
-        const nearby = this.entity.FindNear(50.0).filter(e => e.Health > 0).filter(_IsPlayer);
+        const nearby = this.entity.FindNear(ENTITY_DRAW_DISTANCE).filter(e => e.Health > 0).filter(_IsPlayer);
         if (nearby.length > 0) {
             this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
         }
@@ -229,9 +231,14 @@ class AIState_FollowToAttack extends AIState {
         }
     }
     Update(timeElapsed) {
-        if (!this.target_.Valid || this.target_.Health == 0) {
+        var _a, _b;
+        if (!this.target_.Valid) {
             this.parent_.SetState(new AIState_JustSitThere(this.target_));
             return;
+        }
+        else if (this.target_.Health == 0) {
+            this.parent_.SetState(new AIState_JustSitThere(this.target_));
+            return (_b = (_a = this.parent_) === null || _a === void 0 ? void 0 : _a.SetDead) === null || _b === void 0 ? void 0 : _b.call(_a);
         }
         this.UpdateMovement_(timeElapsed);
     }

@@ -55,7 +55,7 @@ class NPCController extends Component {
 
   InitComponent() {
     this._RegisterHandler(EVENT_TYPES.HEALTH_DEATH, (m) => { this.OnDeath_(m); });
-    this._RegisterHandler('update.position', (m) => { this.OnPosition_(m); });
+    this._RegisterHandler(EVENT_TYPES.UPDATE_POSITION, (m) => { this.OnPosition_(m); });
     this._RegisterHandler('update.rotation', (m) => { this.OnRotation_(m); });
   }
 

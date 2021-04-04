@@ -6,6 +6,7 @@ declare enum STATE_TYPES {
     RUN = "run",
     WALK = "walk"
 }
+declare const ENTITY_DRAW_DISTANCE = 200;
 declare enum ANIM_TYPES {
     ATTACK = "Attack",
     DANCE = "Dance",
@@ -40,7 +41,8 @@ declare enum EVENT_TYPES {
     CONNECT = "connect",
     NETWORK_UPDATE = "network.update",
     EVENTS_NETWORK = "events.network",
-    INPUT_PICKED = "input.picked"
+    INPUT_PICKED = "input.picked",
+    UPDATE_POSITION = "update.position"
 }
 declare type IEVENT_TYPES = Record<EVENT_TYPES, string>;
 declare enum KNOWN_ENTITIES {
@@ -98,5 +100,5 @@ declare enum DOM_IDS {
     QUEST_UI = "quest-ui"
 }
 export type { IEVENT_TYPES };
-export { _TIMEOUT, ATTACK_TYPES, CLASS_TYPES_ENUM, CLASS_TYPES, DOM_IDS, EVENT_TYPES, INVENTORY_TYPES, KNOWN_ENTITIES, NAMED_COMPONENTS, STATE_TYPES, WEAPON_TYPES_ENUM, ANIM_TYPES, };
+export { _TIMEOUT, ATTACK_TYPES, CLASS_TYPES_ENUM, CLASS_TYPES, DOM_IDS, EVENT_TYPES, INVENTORY_TYPES, KNOWN_ENTITIES, NAMED_COMPONENTS, STATE_TYPES, WEAPON_TYPES_ENUM, ANIM_TYPES, ENTITY_DRAW_DISTANCE, };
 //# sourceMappingURL=constants.d.ts.map

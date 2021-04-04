@@ -23,7 +23,7 @@ class StaticModelComponent extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler('update.position', (m) => { this._OnPosition(m); });
+    this._RegisterHandler(EVENT_TYPES.UPDATE_POSITION, (m) => { this._OnPosition(m); });
   }
 
   _OnPosition(m) {
@@ -117,7 +117,7 @@ class AnimatedModelComponent extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler('update.position', (m) => { this._OnPosition(m); });
+    this._RegisterHandler(EVENT_TYPES.UPDATE_POSITION, (m) => { this._OnPosition(m); });
   }
 
   _OnPosition(m) {
@@ -149,7 +149,7 @@ class AnimatedModelComponent extends Component {
     this._target.position.copy(this._parent._position);
 
     this.Broadcast({
-      topic: 'update.position',
+      topic: EVENT_TYPES.UPDATE_POSITION,
       value: this._parent._position,
     });
 

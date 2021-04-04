@@ -49,6 +49,7 @@ class WorldManager {
         this.terrain_ = new HeightGenerator();
         this.spawners_ = [];
         this.tickTimer_ = 0.0;
+        console.log("new WorldManager(); Generating World");
         // Hack
         for (let x = -40; x <= 40; ++x) {
             for (let z = -40; z <= 40; ++z) {

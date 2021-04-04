@@ -48,6 +48,7 @@ var EntityManager = /** @class */ (function () {
         var alive = [];
         for (var i = 0; i < this._entities.length; ++i) {
             var e = this._entities[i];
+            debugger;
             e.Update(timeElapsed);
             if (e.dead_) {
                 dead.push(e);

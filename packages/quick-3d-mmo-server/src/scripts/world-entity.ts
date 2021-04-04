@@ -4,7 +4,7 @@ import { Constants, Defs } from 'quick-3d-mmo-shared';
 // import { IWorldEntity } from 'shared/src/globaltypes';
 import type { WorldClient } from "./world-client.js";
 
-const { STATE_TYPES, EVENT_TYPES, ATTACK_TYPES, WEAPONS_DATA } = { ...Constants, ...Defs };
+const { STATE_TYPES, EVENT_TYPES, ATTACK_TYPES, WEAPONS_DATA, ENTITY_DRAW_DISTANCE } = { ...Constants, ...Defs };
 
 class Action_Attack {
   #onAction: any;
@@ -177,8 +177,13 @@ class WorldEntity {
   }
 
   OnActionAttack_Fired() {
+    if((this?.characterDefinition_?.stats?.health ?? -1) <= 0) {
+      console.log("Deadman attacked, this")
+      debugger;
+      return;
+    }
     // wheee hardcoded :(
-    const nearby = this.FindNear(50.0);
+    const nearby = this.FindNear(ENTITY_DRAW_DISTANCE);
 
     const _Filter = (c: { Health: number, position_: vec3 }) => {
       if (c.Health == 0) {
@@ -209,7 +214,7 @@ class WorldEntity {
       // Calculate damage, use equipped weapon + whatever, this will be bad.
       let damage = 0;
 
-      console.log('attacking: ' + target.accountInfo_.name);
+      console.log(this?.characterDefinition_?.name,' attacking: ' + target.characterDefinition_.name);
 
       if (this.characterDefinition_.attack.type == ATTACK_TYPES.MELEE) {
         damage = (this.stats_.strength / 5.0);

@@ -84,7 +84,7 @@ class WorldManager {
 
     this.spawners_ = [];
     this.tickTimer_ = 0.0;
-
+      console.log("new WorldManager(); Generating World")
     // Hack
     for (let x = -40; x <= 40; ++x) {
       for (let z = -40; z <= 40; ++z) {
@@ -177,7 +177,7 @@ class WorldManager {
   UpdateEntities_(timeElapsed) {
     const dead = [];
     const alive = [];
-
+    
     for (let i = 0; i < this.entities_.length; ++i) {
       const e = this.entities_[i];
 

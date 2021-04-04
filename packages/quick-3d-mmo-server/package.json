@@ -7,8 +7,10 @@
     "scripts": {
         "build": "tsc --build",
         "build:watch": "tsc  --build --watch",
+        "start:watch": "concurrently 'yarn build:watch' 'nodemon dist/index.js'",
         "start": "yarn build && node dist/index.js",
-        "debug": "concurrently 'yarn build:watch' 'nodemon --inspect-brk dist/index.js'"
+        "debug-brk": "concurrently 'yarn build:watch' 'nodemon --inspect-brk dist/index.js'",
+        "debug": "concurrently 'yarn build:watch' 'nodemon --inspect dist/index.js'"
     },
     "dependencies": {
         "gl-matrix": "^3.3.0",

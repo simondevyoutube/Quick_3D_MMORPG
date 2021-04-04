@@ -30,6 +30,7 @@
         "@babel/core": "^7",
         "babel": "^6.23.0",
         "socket.io-client": "^4.0.0",
+        "stats.js": "^0.17.0",
         "three": "^0.127.0"
     },
     "scripts": {

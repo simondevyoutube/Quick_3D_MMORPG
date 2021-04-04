@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import {Constants} from 'quick-3d-mmo-shared';
+const {UPDATE_POSITION} = Constants.EVENT_TYPES;
 
 class Entity {
     _name: any;
@@ -84,9 +86,10 @@ class Entity {
 
     Broadcast(msg) {
       if (!(msg.topic in this._handlers)) {
+        
         return;
       }
-
+      console.warn("Entity.ts: able to find broadcast topic: ", msg?.topic, msg, this._name)
       for (let curHandler of this._handlers[msg.topic]) {
         curHandler(msg);
       }
@@ -95,7 +98,7 @@ class Entity {
     SetPosition(p) {
       this._position.copy(p);
       this.Broadcast({
-          topic: 'update.position',
+          topic: UPDATE_POSITION,
           value: this._position,
       });
     }

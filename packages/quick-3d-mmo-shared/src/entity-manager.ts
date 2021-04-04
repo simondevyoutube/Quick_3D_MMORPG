@@ -59,8 +59,9 @@ class EntityManager {
     const dead: any[] = [];
     const alive: any[] = [];
     for (let i = 0; i < this._entities.length; ++i) {
-      const e = this._entities[i];
 
+      const e = this._entities[i];
+      debugger;
       e.Update(timeElapsed);
 
       if (e.dead_) {

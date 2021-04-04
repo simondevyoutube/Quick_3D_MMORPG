@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.ANIM_TYPES = exports.WEAPON_TYPES_ENUM = exports.STATE_TYPES = exports.NAMED_COMPONENTS = exports.KNOWN_ENTITIES = exports.INVENTORY_TYPES = exports.EVENT_TYPES = exports.DOM_IDS = exports.CLASS_TYPES = exports.CLASS_TYPES_ENUM = exports.ATTACK_TYPES = exports._TIMEOUT = void 0;
+exports.ENTITY_DRAW_DISTANCE = exports.ANIM_TYPES = exports.WEAPON_TYPES_ENUM = exports.STATE_TYPES = exports.NAMED_COMPONENTS = exports.KNOWN_ENTITIES = exports.INVENTORY_TYPES = exports.EVENT_TYPES = exports.DOM_IDS = exports.CLASS_TYPES = exports.CLASS_TYPES_ENUM = exports.ATTACK_TYPES = exports._TIMEOUT = void 0;
 var STATE_TYPES;
 (function (STATE_TYPES) {
     STATE_TYPES["ATTACK"] = "attack";
@@ -11,6 +11,8 @@ var STATE_TYPES;
     STATE_TYPES["WALK"] = "walk";
 })(STATE_TYPES || (STATE_TYPES = {}));
 exports.STATE_TYPES = STATE_TYPES;
+var ENTITY_DRAW_DISTANCE = 200.0;
+exports.ENTITY_DRAW_DISTANCE = ENTITY_DRAW_DISTANCE;
 var ANIM_TYPES;
 (function (ANIM_TYPES) {
     ANIM_TYPES["ATTACK"] = "Attack";
@@ -49,6 +51,7 @@ var EVENT_TYPES;
     EVENT_TYPES["NETWORK_UPDATE"] = "network.update";
     EVENT_TYPES["EVENTS_NETWORK"] = "events.network";
     EVENT_TYPES["INPUT_PICKED"] = "input.picked";
+    EVENT_TYPES["UPDATE_POSITION"] = "update.position";
 })(EVENT_TYPES || (EVENT_TYPES = {}));
 exports.EVENT_TYPES = EVENT_TYPES;
 var KNOWN_ENTITIES;

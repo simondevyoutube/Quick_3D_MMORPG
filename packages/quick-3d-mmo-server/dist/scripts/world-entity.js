@@ -14,7 +14,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _onAction, _time, _cooldown, _timeElapsed;
 import { quat, vec3 } from 'gl-matrix';
 import { Constants, Defs } from 'quick-3d-mmo-shared';
-const { STATE_TYPES, EVENT_TYPES, ATTACK_TYPES, WEAPONS_DATA } = Object.assign(Object.assign({}, Constants), Defs);
+const { STATE_TYPES, EVENT_TYPES, ATTACK_TYPES, WEAPONS_DATA, ENTITY_DRAW_DISTANCE } = Object.assign(Object.assign({}, Constants), Defs);
 class Action_Attack {
     constructor(time, cooldown, onAction) {
         _onAction.set(this, void 0);
@@ -142,8 +142,14 @@ class WorldEntity {
         });
     }
     OnActionAttack_Fired() {
+        var _a, _b, _c, _d;
+        if (((_c = (_b = (_a = this === null || this === void 0 ? void 0 : this.characterDefinition_) === null || _a === void 0 ? void 0 : _a.stats) === null || _b === void 0 ? void 0 : _b.health) !== null && _c !== void 0 ? _c : -1) <= 0) {
+            console.log("Deadman attacked, this");
+            debugger;
+            return;
+        }
         // wheee hardcoded :(
-        const nearby = this.FindNear(50.0);
+        const nearby = this.FindNear(ENTITY_DRAW_DISTANCE);
         const _Filter = (c) => {
             if (c.Health == 0) {
                 return false;
@@ -152,8 +158,8 @@ class WorldEntity {
             return dist <= this.characterDefinition_.attack.range;
         };
         const attackable = nearby.filter(_Filter);
-        if(attackable?.[0]) {
-            const target = attackable[0];
+        for (let a of attackable) {
+            const target = a;
             const dirToTarget = vec3.create();
             vec3.sub(dirToTarget, target.position_, this.position_);
             vec3.normalize(dirToTarget, dirToTarget);
@@ -162,11 +168,11 @@ class WorldEntity {
             vec3.normalize(forward, forward);
             const dot = vec3.dot(forward, dirToTarget);
             if (dot < 0.9 || dot > 1.1) {
-                return;
+                continue;
             }
             // Calculate damage, use equipped weapon + whatever, this will be bad.
             let damage = 0;
-            console.log(this?.accountInfo_?.name, 'attacking: ' + target.accountInfo_.name);
+            console.log((_d = this === null || this === void 0 ? void 0 : this.characterDefinition_) === null || _d === void 0 ? void 0 : _d.name, ' attacking: ' + target.characterDefinition_.name);
             if (this.characterDefinition_.attack.type == ATTACK_TYPES.MELEE) {
                 damage = (this.stats_.strength / 5.0);
                 // TS hack. Should move this definition up. 
@@ -187,45 +193,6 @@ class WorldEntity {
             target.OnDamage(this, damage);
             this.onEvent_(EVENT_TYPES.ATTACK_DAMAGE, { target: target, damage: damage });
         }
-
-        /**
-         * This would attack multiple targets at once for every character. Replace this with a targeting system. 
-         */
-        // for (let a of attackable) {
-        //     const target = a;
-        //     const dirToTarget = vec3.create();
-        //     vec3.sub(dirToTarget, target.position_, this.position_);
-        //     vec3.normalize(dirToTarget, dirToTarget);
-        //     const forward = vec3.fromValues(0, 0, 1);
-        //     vec3.transformQuat(forward, forward, this.rotation_);
-        //     vec3.normalize(forward, forward);
-        //     const dot = vec3.dot(forward, dirToTarget);
-        //     if (dot < 0.9 || dot > 1.1) {
-        //         continue;
-        //     }
-        //     // Calculate damage, use equipped weapon + whatever, this will be bad.
-        //     let damage = 0;
-        //     console.log(this?.accountInfo_?.name, 'attacking: ' + target.accountInfo_.name);
-        //     if (this.characterDefinition_.attack.type == ATTACK_TYPES.MELEE) {
-        //         damage = (this.stats_.strength / 5.0);
-        //         // TS hack. Should move this definition up. 
-        //         const equipped = this.characterInfo_.inventory['inventory-equip-1'];
-        //         const weaponsData = WEAPONS_DATA;
-        //         if (equipped) {
-        //             console.log(' equipped: ' + equipped);
-        //             const weapon = weaponsData[equipped];
-        //             if (weapon) {
-        //                 damage *= weapon.damage * 10;
-        //             }
-        //         }
-        //     }
-        //     else {
-        //         damage = (this.stats_.wisdomness / 10.0);
-        //     }
-        //     console.log(' damage: ' + damage);
-        //     target.OnDamage(this, damage);
-        //     this.onEvent_(EVENT_TYPES.ATTACK_DAMAGE, { target: target, damage: damage });
-        // }
     }
     onEvent_(eventType, data) {
         console.error("This is the fake error Jeremy put in to see if this undefined onEvent_ function was ever called.");

@@ -1,3 +1,4 @@
+import { EVENT_TYPES } from 'quick-3d-mmo-shared/src/constants';
 import { Component } from './entity';
 
 class SpatialGridController extends Component {
@@ -23,7 +24,7 @@ class SpatialGridController extends Component {
 
     this.client_ = this.grid_.NewClient(pos, [1, 1]);
     this.client_.entity = this.parent_;
-    this._RegisterHandler('update.position', (m) => this._OnPosition(m));
+    this._RegisterHandler(EVENT_TYPES.UPDATE_POSITION, (m) => this._OnPosition(m));
   }
 
   _OnPosition(msg) {

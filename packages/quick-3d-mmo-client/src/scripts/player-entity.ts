@@ -5,7 +5,7 @@ import { FiniteStateMachine } from './finite-state-machine';
 import { IdleState, WalkState, RunState, AttackState, DanceState, DeathState } from './player-state';
 import { Constants, Defs } from 'quick-3d-mmo-shared';
 
-const { ANIM_TYPES, EVENT_TYPES, KNOWN_ENTITIES, NAMED_COMPONENTS, STATE_TYPES, CHARACTER_MODELS } = {...Constants, ...Defs};
+const { ANIM_TYPES, EVENT_TYPES, KNOWN_ENTITIES, NAMED_COMPONENTS, STATE_TYPES, CHARACTER_MODELS, ENTITY_DRAW_DISTANCE } = {...Constants, ...Defs};
 
 class CharacterFSM extends FiniteStateMachine {
   _proxy: any;
@@ -72,7 +72,7 @@ class BasicCharacterController extends Component {
   InitComponent() {
     this._RegisterHandler(EVENT_TYPES.HEALTH_DEATH, (m) => { this.OnDeath_(m); });
     this._RegisterHandler(
-      'update.position', (m) => { this.OnUpdatePosition_(m); });
+      EVENT_TYPES.UPDATE_POSITION, (m) => { this.OnUpdatePosition_(m); });
     this._RegisterHandler(
       'update.rotation', (m) => { this.OnUpdateRotation_(m); });
   }
@@ -167,13 +167,14 @@ class BasicCharacterController extends Component {
     const _IsAlive = (c) => {
       const h = c.entity.GetComponent('HealthComponent');
       if (!h) {
-        return true;
+        c.entity.SetDead()
+        return false;
       }
       return h.Health > 0;
     };
 
     const grid = this.GetComponent('SpatialGridController');
-    const nearby = grid.FindNearbyEntities(5).filter(e => _IsAlive(e));
+    const nearby = grid.FindNearbyEntities(ENTITY_DRAW_DISTANCE).filter(e => _IsAlive(e));
     const collisions = [];
 
     for (let i = 0; i < nearby.length; ++i) {

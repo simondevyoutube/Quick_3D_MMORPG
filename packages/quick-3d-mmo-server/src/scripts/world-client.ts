@@ -5,7 +5,7 @@ import { SocketWrapper } from './world-server.js';
 
 import { Constants, EntityManager as aEntityManager } from 'quick-3d-mmo-shared';
 
-const { _TIMEOUT, EVENT_TYPES, EntityManager, STATE_TYPES } = { ...Constants, ...aEntityManager };
+const { _TIMEOUT, EVENT_TYPES, EntityManager, STATE_TYPES, ENTITY_DRAW_DISTANCE } = { ...Constants, ...aEntityManager };
 
 class WorldClient {
   entity: WorldEntity;
@@ -38,10 +38,10 @@ class WorldClient {
   }
 
   Destroy() {
-    this.client.Disconnect();
+    this.client?.Disconnect?.();
     this.client = null;
 
-    this.entity.Destroy();
+    this.entity?.Destroy?.();
     this.entity = null;
   }
 
@@ -85,7 +85,7 @@ class WorldClient {
     this.entity.UpdateInventory(inventory);
 
     // Todo: Merge this into entityCache path.
-    const nearby = this.entity.FindNear(50, true);
+    const nearby = this.entity.FindNear(ENTITY_DRAW_DISTANCE, true);
 
     for (let n of nearby) {
       n.parent_.client.Send(EVENT_TYPES.WORLD_INVENTORY, [this.entity.ID, inventory]);
@@ -102,7 +102,7 @@ class WorldClient {
   }
 
   BroadcastChat(chatMessage) {
-    const nearby = this.entity.FindNear(50, true);
+    const nearby = this.entity.FindNear(ENTITY_DRAW_DISTANCE, true);
 
     for (let i = 0; i < nearby.length; ++i) {
       const n = nearby[i];
@@ -146,18 +146,18 @@ class WorldNetworkClient extends WorldClient {
 
   OnUpdateClientState_() {
     const _Filter = (e) => {
+      console.log(e, this.entity)
       return e.ID != this.entity.ID;
     };
 
-    const nearby = this.entity.FindNear(500).filter(e => _Filter(e));
-
+    const nearby = this.entity.FindNear(50).filter(e => _Filter(e));
+    
     const updates = [{
       id: this.entity.ID,
       stats: this.entity.CreateStatsPacket_(),
       events: this.entity.CreateEventsPacket_(),
     }];
     const newCache_ = {};
-
     for (let n of nearby) {
       // We could easily trim this down based on what we know
       // this client saw last. Maybe do it later.
@@ -241,7 +241,7 @@ class AIState_JustSitThere extends AIState {
     const _IsPlayer = (e) => {
       return !e.isAI;
     };
-    const nearby = this.entity.FindNear(50.0).filter(e => e.Health > 0).filter(_IsPlayer);
+    const nearby = this.entity.FindNear(ENTITY_DRAW_DISTANCE).filter(e => e.Health > 0).filter(_IsPlayer);
 
     if (nearby.length > 0) {
       this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
@@ -296,9 +296,12 @@ class AIState_FollowToAttack extends AIState {
   }
 
   Update(timeElapsed: number) {
-    if (!this.target_.Valid || this.target_.Health == 0) {
+    if (!this.target_.Valid) {
       this.parent_.SetState(new AIState_JustSitThere(this.target_));
       return;
+    } else if(this.target_.Health == 0) {
+      this.parent_.SetState(new AIState_JustSitThere(this.target_));
+      return this.parent_?.SetDead?.()
     }
 
     this.UpdateMovement_(timeElapsed);
