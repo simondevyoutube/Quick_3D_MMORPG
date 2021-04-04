@@ -6,10 +6,10 @@
 - Clone the repository
 - *From the root folder*
 - run `yarn`. The Yarn workspace settings will handle installing the packages for client and server.
+- run `yarn shared build`
 - run `yarn server start:dev` 
-- Ensure a browser is open to localhost:3000 _(Maybe. See below)_
-  -  If 3000 is taken unavailable, on most systems, you can run `PORT={NEW_PORT | 4444 | 1337} yarn client start{:dev}` 
-  -  Example `PORT=1337 yarn client start`
+- Ensure a browser is open to localhost:7700 _(Maybe. See below)_
+  -  Example `yarn client start:dev`
 - This should set the server to auto restart on changes. 
 - The client will need to be manually refreshed, if you want it to display any changes. That's by design. Noone wants to relog every time they make a change.
 
