@@ -1,0 +1,24 @@
+{
+    "name": "quick-3d-mmo-server",
+    "version": "0.0.1",
+    "main": "index.js",
+    "type": "module",
+    "license": "MIT",
+    "scripts": {
+        "build": "tsc --build",
+        "build:watch": "tsc  --build --watch",
+        "start:watch": "concurrently 'yarn build:watch' 'nodemon dist/index.js'",
+        "start": "yarn build && node dist/index.js",
+        "debug-brk": "concurrently 'yarn build:watch' 'nodemon --inspect-brk dist/index.js'",
+        "debug": "concurrently 'yarn build:watch' 'nodemon --inspect dist/index.js'"
+    },
+    "dependencies": {
+        "gl-matrix": "^3.3.0",
+        "http": "^0.0.1-security",
+        "perf_hooks": "^0.0.1",
+        "socket.io": "^4.0.1"
+    },
+    "devDependencies": {
+        "@types/three": "^0.126.2"
+    }
+}

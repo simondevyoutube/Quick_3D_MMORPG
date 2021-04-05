@@ -1,0 +1,33 @@
+{
+    "extends": "../../tsconfig.packages.json",
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "outDir": "dist",
+        "target": "ES5",
+        "lib": [
+            "ESNext",
+            "dom",
+            "webworker"
+        ],
+        "preserveConstEnums": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "baseUrl": "."
+    },
+    "references": [ 
+        {
+            "path": "../quick-3d-mmo-shared"
+        }
+    ],
+    "include": [
+        "./src/scripts/*.ts",
+        "src/scripts/attacker-controller.ts",
+        "src/index.ts"
+    ],
+    "exclude": [
+        "./dist",
+        "node_modules"
+    ]
+}
