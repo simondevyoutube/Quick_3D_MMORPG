@@ -1,8 +1,6 @@
-import {entity} from './entity.js';
-
+import { entity } from "./entity.js";
 
 export const inventory_controller = (() => {
-
   class InventoryDatabaseController extends entity.Component {
     constructor() {
       super();
@@ -17,7 +15,7 @@ export const inventory_controller = (() => {
     Find(name) {
       return this.items_[name];
     }
-  };
+  }
 
   class UIInventoryController extends entity.Component {
     constructor() {
@@ -25,26 +23,29 @@ export const inventory_controller = (() => {
     }
 
     InitEntity() {
-      this._RegisterHandler('inventory.updated', () => this.OnInventoryUpdated_());
+      this._RegisterHandler(
+        "inventory.updated",
+        () => this.OnInventoryUpdated_(),
+      );
 
-      this.inventory_ = this.GetComponent('InventoryController');
+      this.inventory_ = this.GetComponent("InventoryController");
 
       const _SetupElement = (n) => {
         const element = document.getElementById(n);
         element.ondragstart = (ev) => {
-          ev.dataTransfer.setData('text/plain', n);
+          ev.dataTransfer.setData("text/plain", n);
         };
         element.ondragover = (ev) => {
           ev.preventDefault();
         };
         element.ondrop = (ev) => {
           ev.preventDefault();
-          const data = ev.dataTransfer.getData('text/plain');
+          const data = ev.dataTransfer.getData("text/plain");
           const other = document.getElementById(data);
-    
+
           this.OnItemDropped_(other, element);
         };
-      }
+      };
 
       for (let k in this.inventory_.Inventory) {
         _SetupElement(k);
@@ -73,8 +74,9 @@ export const inventory_controller = (() => {
     }
 
     GetItemDefinition_(name) {
-      const database = this.FindEntity('database').GetComponent(
-          'InventoryDatabaseController');
+      const database = this.FindEntity("database").GetComponent(
+        "InventoryDatabaseController",
+      );
       return database.Find(name);
     }
 
@@ -82,14 +84,13 @@ export const inventory_controller = (() => {
       const div = document.getElementById(slot);
       const item = this.GetItemDefinition_(itemName);
       if (item) {
-        const path = './resources/icons/weapons/' + item.renderParams.icon;
+        const path = "./resources/icons/weapons/" + item.renderParams.icon;
         div.style.backgroundImage = "url('" + path + "')";
       } else {
-        div.style.backgroundImage = '';
+        div.style.backgroundImage = "";
       }
     }
-  };
-
+  }
 
   class InventoryController extends entity.Component {
     constructor() {
@@ -101,15 +102,15 @@ export const inventory_controller = (() => {
     CreateEmpty_() {
       const inventory = {};
       for (let i = 1; i <= 24; ++i) {
-        inventory['inventory-' + i] = {
-          type: 'inventory',
+        inventory["inventory-" + i] = {
+          type: "inventory",
           value: null,
         };
       }
 
       for (let i = 1; i <= 8; ++i) {
-        inventory['inventory-equip-' + i] = {
-          type: 'equip',
+        inventory["inventory-equip-" + i] = {
+          type: "equip",
           value: null,
         };
       }
@@ -122,7 +123,10 @@ export const inventory_controller = (() => {
 
     InitComponent() {
       // Hack
-      this._RegisterHandler('network.inventory', (m) => this.OnNetworkUpdate_(m));
+      this._RegisterHandler(
+        "network.inventory",
+        (m) => this.OnNetworkUpdate_(m),
+      );
     }
 
     OnNetworkUpdate_(msg) {
@@ -140,7 +144,7 @@ export const inventory_controller = (() => {
 
       if (inventory) {
         this.Broadcast({
-            topic: 'inventory.updated'
+          topic: "inventory.updated",
         });
       }
     }
@@ -157,8 +161,9 @@ export const inventory_controller = (() => {
     }
 
     GetItemDefinition_(name) {
-      const database = this.FindEntity('database').GetComponent(
-          'InventoryDatabaseController');
+      const database = this.FindEntity("database").GetComponent(
+        "InventoryDatabaseController",
+      );
       return database.Find(name);
     }
 
@@ -167,10 +172,10 @@ export const inventory_controller = (() => {
 
       this.inventory_[slot].value = itemName;
 
-      if (this.inventory_[slot].type == 'equip' && oldValue != itemName) {
+      if (this.inventory_[slot].type == "equip" && oldValue != itemName) {
         this.Broadcast({
-            topic: 'inventory.equip',
-            value: itemName,
+          topic: "inventory.equip",
+          value: itemName,
         });
       }
     }
@@ -183,8 +188,7 @@ export const inventory_controller = (() => {
       }
       return null;
     }
-  };
-
+  }
 
   class InventoryItem extends entity.Component {
     constructor(params) {
@@ -201,13 +205,12 @@ export const inventory_controller = (() => {
     get RenderParams() {
       return this._params.renderParams;
     }
-  };
+  }
 
-  
   return {
-      InventoryDatabaseController: InventoryDatabaseController,
-      UIInventoryController: UIInventoryController,
-      InventoryController: InventoryController,
-      InventoryItem: InventoryItem,
+    InventoryDatabaseController: InventoryDatabaseController,
+    UIInventoryController: UIInventoryController,
+    InventoryController: InventoryController,
+    InventoryItem: InventoryItem,
   };
 })();

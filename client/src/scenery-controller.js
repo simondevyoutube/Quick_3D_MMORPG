@@ -1,72 +1,70 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {entity} from './entity.js';
-import {render_component} from './render-component.js';
-import {spatial_grid_controller} from './spatial-grid-controller.js';
+import { entity } from "./entity.js";
+import { render_component } from "./render-component.js";
+import { spatial_grid_controller } from "./spatial-grid-controller.js";
 
-import {math} from '/shared/math.mjs';
-import {noise} from '/shared/noise.mjs';
-
+import { math } from "/shared/math.mjs";
+import { noise } from "/shared/noise.mjs";
 
 export const scenery_controller = (() => {
-
   const _SCENERY = {
     birch1: {
-      base: 'Birch_1.fbx',
-      resourcePath: './resources/trees/FBX/',
+      base: "Birch_1.fbx",
+      resourcePath: "./resources/trees/FBX/",
       names: {
-        Bark: 'Birch_Bark.png',
-        Leaves: 'Birch_Leaves_Yellow.png'
+        Bark: "Birch_Bark.png",
+        Leaves: "Birch_Leaves_Yellow.png",
       },
       scale: 0.075,
-      biomes: ['forest'],
+      biomes: ["forest"],
       collision: true,
     },
     tree1: {
-      base: 'Tree_1.fbx',
-      resourcePath: './resources/trees/FBX/',
+      base: "Tree_1.fbx",
+      resourcePath: "./resources/trees/FBX/",
       names: {
-        Bark: 'Tree_Bark.jpg',
-        Leaves: 'Leaves_Blue.png'
+        Bark: "Tree_Bark.jpg",
+        Leaves: "Leaves_Blue.png",
       },
       scale: 0.1,
-      biomes: ['forest'],
+      biomes: ["forest"],
       collision: true,
     },
     rock1: {
-      base: 'Rock_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      base: "Rock_1.fbx",
+      resourcePath: "./resources/nature/FBX/",
       names: {},
       scale: 0.025,
-      biomes: ['arid', 'desert'],
+      biomes: ["arid", "desert"],
     },
     rockMoss1: {
-      base: 'Rock_Moss_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      base: "Rock_Moss_1.fbx",
+      resourcePath: "./resources/nature/FBX/",
       names: {},
       scale: 0.025,
-      biomes: ['forest'],
+      biomes: ["forest"],
     },
     plant1: {
-      base: 'Plant_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      base: "Plant_1.fbx",
+      resourcePath: "./resources/nature/FBX/",
       names: {},
       scale: 0.05,
-      biomes: ['forest', 'arid'],
+      biomes: ["forest", "arid"],
     },
     grass1: {
-      base: 'Grass_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      base: "Grass_1.fbx",
+      resourcePath: "./resources/nature/FBX/",
       names: {},
       scale: 0.05,
-      biomes: ['forest', 'arid'],
+      biomes: ["forest", "arid"],
     },
     flowers1: {
-      base: 'Flowers.fbx',
-      resourcePath: './resources/nature/FBX/',
+      base: "Flowers.fbx",
+      resourcePath: "./resources/nature/FBX/",
       names: {},
       scale: 0.05,
-      biomes: ['forest'],
+      biomes: ["forest"],
     },
   };
 
@@ -77,18 +75,18 @@ export const scenery_controller = (() => {
   };
 
   const multiples = {
-    birch1: {name: 'Birch_', key: 'birch', num: 10},
-    tree1: {name: 'Tree_', key: 'tree', num: 10},
-    rock1: {name: 'Rock_', key: 'rock', num: 7},
-    rockMoss1: {name: 'Rock_Moss_', key: 'rockMoss', num: 7},
-    plant1: {name: 'Plant_', key: 'plant', num: 5},
-    grass1: {name: 'Grass_', key: 'grass',  num: 2},
+    birch1: { name: "Birch_", key: "birch", num: 10 },
+    tree1: { name: "Tree_", key: "tree", num: 10 },
+    rock1: { name: "Rock_", key: "rock", num: 7 },
+    rockMoss1: { name: "Rock_Moss_", key: "rockMoss", num: 7 },
+    plant1: { name: "Plant_", key: "plant", num: 5 },
+    grass1: { name: "Grass_", key: "grass", num: 2 },
   };
 
   for (let k in multiples) {
     for (let i = 2; i < multiples[k].num; ++i) {
-      _SCENERY[multiples[k].key + i] = {..._SCENERY[k]};
-      _SCENERY[multiples[k].key + i].base = multiples[k].name + i + '.fbx';
+      _SCENERY[multiples[k].key + i] = { ..._SCENERY[k] };
+      _SCENERY[multiples[k].key + i].base = multiples[k].name + i + ".fbx";
     }
   }
 
@@ -103,7 +101,7 @@ export const scenery_controller = (() => {
         lacunarity: 2.0,
         exponentiation: 1.0,
         scale: 1.0,
-        noiseType: 'simplex',
+        noiseType: "simplex",
         seed: 2,
         height: 1.0,
       };
@@ -121,23 +119,28 @@ export const scenery_controller = (() => {
       for (let i = 0; i < 20; ++i) {
         const index = math.rand_int(1, 3);
         const pos = new THREE.Vector3(
-            (Math.random() * 2.0 - 1.0) * 5000,
-            500,
-            (Math.random() * 2.0 - 1.0) * 5000);
-  
+          (Math.random() * 2.0 - 1.0) * 5000,
+          500,
+          (Math.random() * 2.0 - 1.0) * 5000,
+        );
+
         const e = new entity.Entity();
-        e.AddComponent(new render_component.RenderComponent({
-          scene: this.params_.scene,
-          resourcePath: './resources/nature2/GLTF/',
-          resourceName: 'Cloud' + index + '.glb',
-          scale: Math.random() * 20 + 40,
-          emissive: new THREE.Color(0x000000),
-          color: new THREE.Color(0x202020),
-        }));
+        e.AddComponent(
+          new render_component.RenderComponent({
+            scene: this.params_.scene,
+            resourcePath: "./resources/nature2/GLTF/",
+            resourceName: "Cloud" + index + ".glb",
+            scale: Math.random() * 20 + 40,
+            emissive: new THREE.Color(0x000000),
+            color: new THREE.Color(0x202020),
+          }),
+        );
         e.SetPosition(pos);
 
         const q = new THREE.Quaternion().setFromAxisAngle(
-            new THREE.Vector3(0, 1, 0), math.rand_range(0, 360));
+          new THREE.Vector3(0, 1, 0),
+          math.rand_range(0, 360),
+        );
         e.SetQuaternion(q);
 
         this.Manager.Add(e);
@@ -153,11 +156,11 @@ export const scenery_controller = (() => {
       const h = math.sat(pos.y / 100.0);
 
       if (h < 0.05) {
-        return 'desert';
+        return "desert";
       } else if (m > 0.5) {
-        return 'forest';
+        return "forest";
       } else {
-        return 'arid';
+        return "arid";
       }
     }
 
@@ -171,44 +174,52 @@ export const scenery_controller = (() => {
 
       const roll = this.noise_.Get(spawnPos.x, 3.0, spawnPos.z);
       const randomProp = _SCENERY[
-          matchingScenery[Math.round(roll * (matchingScenery.length - 1))]];
+        matchingScenery[Math.round(roll * (matchingScenery.length - 1))]
+      ];
 
       const e = new entity.Entity();
-      e.AddComponent(new render_component.RenderComponent({
-        scene: this.params_.scene,
-        resourcePath: randomProp.resourcePath,
-        resourceName: randomProp.base,
-        textures: {
-          resourcePath: './resources/trees/Textures/',
-          names: randomProp.names,
-          wrap: true,
-        },
-        emissive: new THREE.Color(0x000000),
-        specular: new THREE.Color(0x000000),
-        scale: randomProp.scale * (0.8 + this.noise_.Get(spawnPos.x, 4.0, spawnPos.z) * 0.4),
-        castShadow: true,
-        receiveShadow: true,
-        onMaterial: (m) => {
-          if (m.name.search('Leaves') >= 0) {
-            m.alphaTest = 0.5;
-          }
-        }
-      }));
+      e.AddComponent(
+        new render_component.RenderComponent({
+          scene: this.params_.scene,
+          resourcePath: randomProp.resourcePath,
+          resourceName: randomProp.base,
+          textures: {
+            resourcePath: "./resources/trees/Textures/",
+            names: randomProp.names,
+            wrap: true,
+          },
+          emissive: new THREE.Color(0x000000),
+          specular: new THREE.Color(0x000000),
+          scale: randomProp.scale *
+            (0.8 + this.noise_.Get(spawnPos.x, 4.0, spawnPos.z) * 0.4),
+          castShadow: true,
+          receiveShadow: true,
+          onMaterial: (m) => {
+            if (m.name.search("Leaves") >= 0) {
+              m.alphaTest = 0.5;
+            }
+          },
+        }),
+      );
       if (randomProp.collision) {
         e.AddComponent(
           new spatial_grid_controller.SpatialGridController(
-              {grid: this.params_.grid}));
+            { grid: this.params_.grid },
+          ),
+        );
       }
 
       const q = new THREE.Quaternion().setFromAxisAngle(
-          new THREE.Vector3(0, 1, 0), this.noise_.Get(spawnPos.x, 5.0, spawnPos.z) * 360);
+        new THREE.Vector3(0, 1, 0),
+        this.noise_.Get(spawnPos.x, 5.0, spawnPos.z) * 360,
+      );
       e.SetQuaternion(q);
 
       return e;
     }
 
     SpawnCrap_() {
-      const player = this.FindEntity('player');
+      const player = this.FindEntity("player");
       if (!player) {
         return;
       }
@@ -227,7 +238,9 @@ export const scenery_controller = (() => {
 
       const _P = new THREE.Vector3();
       const _V = new THREE.Vector3();
-      const terrain = this.FindEntity('terrain').GetComponent('TerrainChunkManager');
+      const terrain = this.FindEntity("terrain").GetComponent(
+        "TerrainChunkManager",
+      );
 
       for (let x = -10; x <= 10; ++x) {
         for (let y = -10; y <= 10; ++y) {
@@ -235,13 +248,13 @@ export const scenery_controller = (() => {
           _P.add(center);
           _P.multiplyScalar(50.0);
 
-          const key = '__scenery__[' + _P.x + '][' + _P.z + ']';
+          const key = "__scenery__[" + _P.x + "][" + _P.z + "]";
           if (this.FindEntity(key)) {
             continue;
           }
 
           _V.copy(_P);
-          
+
           _P.x += (this.noise_.Get(_P.x, 0.0, _P.z) * 2.0 - 1.0) * 25.0;
           _P.z += (this.noise_.Get(_P.x, 1.0, _P.z) * 2.0 - 1.0) * 25.0;
           _P.y = terrain.GetHeight(_P)[0];
@@ -268,9 +281,9 @@ export const scenery_controller = (() => {
     Update(_) {
       this.SpawnCrap_();
     }
-  };
+  }
 
   return {
-      SceneryController: SceneryController,
+    SceneryController: SceneryController,
   };
 })();

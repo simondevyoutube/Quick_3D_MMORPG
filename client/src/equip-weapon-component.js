@@ -1,14 +1,12 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {entity} from './entity.js';
+import { entity } from "./entity.js";
 
-import {defs} from '/shared/defs.mjs';
+import { defs } from "/shared/defs.mjs";
 
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
-
+import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js";
 
 export const equip_weapon_component = (() => {
-
   class EquipWeapon extends entity.Component {
     constructor(params) {
       super();
@@ -22,8 +20,11 @@ export const equip_weapon_component = (() => {
     }
 
     InitComponent() {
-      this._RegisterHandler('load.character', (m) => this._OnCharacterLoaded(m));
-      this._RegisterHandler('inventory.equip', (m) => this._OnEquip(m));
+      this._RegisterHandler(
+        "load.character",
+        (m) => this._OnCharacterLoaded(m),
+      );
+      this._RegisterHandler("inventory.equip", (m) => this._OnEquip(m));
     }
 
     _OnCharacterLoaded(msg) {
@@ -38,8 +39,9 @@ export const equip_weapon_component = (() => {
     }
 
     GetItemDefinition_(name) {
-      const database = this.FindEntity('database').GetComponent(
-          'InventoryDatabaseController');
+      const database = this.FindEntity("database").GetComponent(
+        "InventoryDatabaseController",
+      );
       return database.Find(name);
     }
 
@@ -51,7 +53,7 @@ export const equip_weapon_component = (() => {
       if (this.target_) {
         this._UnloadModels();
       }
-      const inventory = this.GetComponent('InventoryController');
+      const inventory = this.GetComponent("InventoryController");
       const item = this.GetItemDefinition_(msg.value);
 
       this.name_ = msg.value;
@@ -73,15 +75,15 @@ export const equip_weapon_component = (() => {
 
     _LoadModels(item, cb) {
       const loader = new FBXLoader();
-      loader.setPath('./resources/weapons/FBX/');
-      loader.load(item.renderParams.name + '.fbx', (fbx) => {
+      loader.setPath("./resources/weapons/FBX/");
+      loader.load(item.renderParams.name + ".fbx", (fbx) => {
         this.target_ = fbx;
         this.target_.scale.setScalar(item.renderParams.scale);
         // this.target_.rotateY(Math.PI);
         this.target_.rotateX(Math.PI / 2);
         // this.target_.rotateY(-1);
 
-        this.target_.traverse(c => {
+        this.target_.traverse((c) => {
           c.castShadow = true;
           c.receiveShadow = true;
 
@@ -96,11 +98,13 @@ export const equip_weapon_component = (() => {
             if (m) {
               const c = new THREE.Color().copy(m.color);
               c.multiplyScalar(0.75);
-              newMaterials.push(new THREE.MeshStandardMaterial({
+              newMaterials.push(
+                new THREE.MeshStandardMaterial({
                   color: c,
                   name: m.name,
                   metalness: 1.0,
-              }));
+                }),
+              );
             }
           }
 
@@ -109,21 +113,20 @@ export const equip_weapon_component = (() => {
           } else {
             c.material = newMaterials;
           }
-
         });
 
         cb();
 
         this.Broadcast({
-            topic: 'load.weapon',
-            model: this.target_,
-            bones: this._bones,
+          topic: "load.weapon",
+          model: this.target_,
+          bones: this._bones,
         });
       });
     }
-  };
+  }
 
   return {
-      EquipWeapon: EquipWeapon,
+    EquipWeapon: EquipWeapon,
   };
 })();

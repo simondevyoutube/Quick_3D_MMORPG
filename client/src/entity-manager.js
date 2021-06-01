@@ -1,7 +1,4 @@
-
-
 export const entity_manager = (() => {
-
   class EntityManager {
     constructor() {
       this._ids = 0;
@@ -12,7 +9,7 @@ export const entity_manager = (() => {
     _GenerateName() {
       this._ids += 1;
 
-      return '__name__' + this._ids;
+      return "__name__" + this._ids;
     }
 
     Get(n) {
@@ -43,7 +40,7 @@ export const entity_manager = (() => {
         if (i < 0) {
           return;
         }
-  
+
         this._entities.splice(i, 1);
       } else {
         if (i >= 0) {
@@ -73,7 +70,7 @@ export const entity_manager = (() => {
         const e = dead[i];
 
         delete this._entitiesMap[e.Name];
-  
+
         e.Destroy();
       }
 
@@ -82,7 +79,6 @@ export const entity_manager = (() => {
   }
 
   return {
-    EntityManager: EntityManager
+    EntityManager: EntityManager,
   };
-
 })();

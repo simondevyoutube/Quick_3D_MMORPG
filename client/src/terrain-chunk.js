@@ -1,14 +1,12 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-
-export const terrain_chunk = (function() {
-
+export const terrain_chunk = (function () {
   class TerrainChunk {
     constructor(params) {
       this._params = params;
       this._Init(params);
     }
-    
+
     Destroy() {
       this._params.group.remove(this._plane);
     }
@@ -43,22 +41,34 @@ export const terrain_chunk = (function() {
 
     RebuildMeshFromData(data) {
       this._geometry.setAttribute(
-          'position', new THREE.Float32BufferAttribute(data.positions, 3));
+        "position",
+        new THREE.Float32BufferAttribute(data.positions, 3),
+      );
       this._geometry.setAttribute(
-          'color', new THREE.Float32BufferAttribute(data.colours, 3));
+        "color",
+        new THREE.Float32BufferAttribute(data.colours, 3),
+      );
       this._geometry.setAttribute(
-          'normal', new THREE.Float32BufferAttribute(data.normals, 3));
+        "normal",
+        new THREE.Float32BufferAttribute(data.normals, 3),
+      );
       this._geometry.setAttribute(
-          'coords', new THREE.Float32BufferAttribute(data.coords, 3));
+        "coords",
+        new THREE.Float32BufferAttribute(data.coords, 3),
+      );
       this._geometry.setAttribute(
-          'weights1', new THREE.Float32BufferAttribute(data.weights1, 4));
+        "weights1",
+        new THREE.Float32BufferAttribute(data.weights1, 4),
+      );
       this._geometry.setAttribute(
-          'weights2', new THREE.Float32BufferAttribute(data.weights2, 4));
+        "weights2",
+        new THREE.Float32BufferAttribute(data.weights2, 4),
+      );
       this._geometry.computeBoundingBox();
     }
   }
 
   return {
-    TerrainChunk: TerrainChunk
-  }
+    TerrainChunk: TerrainChunk,
+  };
 })();

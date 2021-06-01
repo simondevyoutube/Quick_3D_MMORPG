@@ -1,10 +1,8 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {entity} from "./entity.js";
+import { entity } from "./entity.js";
 
 export const threejs_component = (() => {
-
-
   const _VS = `
   varying vec3 vWorldPosition;
   
@@ -14,8 +12,7 @@ export const threejs_component = (() => {
   
     gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
   }`;
-  
-  
+
   const _FS = `
   uniform vec3 topColor;
   uniform vec3 bottomColor;
@@ -59,7 +56,7 @@ export const threejs_component = (() => {
   
         gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
       #endif`;
-      
+
       THREE.ShaderChunk.fog_pars_fragment = `
       #ifdef USE_FOG
         uniform float fogTime;
@@ -72,17 +69,17 @@ export const threejs_component = (() => {
           uniform float fogFar;
         #endif
       #endif`;
-      
+
       THREE.ShaderChunk.fog_vertex = `
       #ifdef USE_FOG
         vWorldPosition = (modelMatrix * vec4(transformed, 1.0 )).xyz;
       #endif`;
-      
+
       THREE.ShaderChunk.fog_pars_vertex = `
       #ifdef USE_FOG
         varying vec3 vWorldPosition;
       #endif`;
-  
+
       this.threejs_ = new THREE.WebGLRenderer({
         antialias: false,
       });
@@ -92,24 +89,26 @@ export const threejs_component = (() => {
       this.threejs_.shadowMap.type = THREE.PCFSoftShadowMap;
       this.threejs_.setPixelRatio(window.devicePixelRatio);
       this.threejs_.setSize(window.innerWidth, window.innerHeight);
-      this.threejs_.domElement.id = 'threejs';
-  
-      document.getElementById('container').appendChild(this.threejs_.domElement);
-  
-      window.addEventListener('resize', () => {
+      this.threejs_.domElement.id = "threejs";
+
+      document.getElementById("container").appendChild(
+        this.threejs_.domElement,
+      );
+
+      window.addEventListener("resize", () => {
         this._OnWindowResize();
       }, false);
-  
+
       const fov = 60;
       const aspect = 1920 / 1080;
       const near = 1.0;
       const far = 10000.0;
       this.camera_ = new THREE.PerspectiveCamera(fov, aspect, near, far);
       this.camera_.position.set(25, 10, 25);
-  
+
       this.scene_ = new THREE.Scene();
       this.scene_.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
-  
+
       let light = new THREE.DirectionalLight(0x8088b3, 0.7);
       light.position.set(-10, 500, 10);
       light.target.position.set(0, 0, 0);
@@ -124,7 +123,7 @@ export const threejs_component = (() => {
       light.shadow.camera.top = 100;
       light.shadow.camera.bottom = -100;
       this.scene_.add(light);
-  
+
       this.sun_ = light;
 
       this.LoadSky_();
@@ -135,19 +134,18 @@ export const threejs_component = (() => {
       // hemiLight.color.setHSL(0.6, 1, 0.4);
       // hemiLight.groundColor.setHSL(0.095, 1, 0.5);
       this.scene_.add(hemiLight);
-  
-  
+
       const loader = new THREE.CubeTextureLoader();
       const texture = loader.load([
-          './resources/terrain/space-posx.jpg',
-          './resources/terrain/space-negx.jpg',
-          './resources/terrain/space-posy.jpg',
-          './resources/terrain/space-negy.jpg',
-          './resources/terrain/space-posz.jpg',
-          './resources/terrain/space-negz.jpg',
+        "./resources/terrain/space-posx.jpg",
+        "./resources/terrain/space-negx.jpg",
+        "./resources/terrain/space-posy.jpg",
+        "./resources/terrain/space-negy.jpg",
+        "./resources/terrain/space-posz.jpg",
+        "./resources/terrain/space-negz.jpg",
       ]);
       texture.encoding = THREE.sRGBEncoding;
-  
+
       const uniforms = {
         "topColor": { value: new THREE.Color(0x000000) },
         "bottomColor": { value: new THREE.Color(0x5d679e) },
@@ -156,29 +154,28 @@ export const threejs_component = (() => {
         "background": { value: texture },
       };
       // uniforms["topColor"].value.copy(hemiLight.color);
-  
+
       this.scene_.fog.color.copy(uniforms["bottomColor"].value);
-  
-  
+
       const skyGeo = new THREE.SphereBufferGeometry(5000, 32, 15);
       const skyMat = new THREE.ShaderMaterial({
-          uniforms: uniforms,
-          vertexShader: _VS,
-          fragmentShader: _FS,
-          side: THREE.BackSide
+        uniforms: uniforms,
+        vertexShader: _VS,
+        fragmentShader: _FS,
+        side: THREE.BackSide,
       });
-  
+
       const sky = new THREE.Mesh(skyGeo, skyMat);
       this.scene_.add(sky);
     }
 
     Update(_) {
-      const player = this.FindEntity('player');
+      const player = this.FindEntity("player");
       if (!player) {
         return;
       }
       const pos = player._position;
-  
+
       this.sun_.position.copy(pos);
       this.sun_.position.add(new THREE.Vector3(-50, 200, -10));
       this.sun_.target.position.copy(pos);
@@ -188,6 +185,6 @@ export const threejs_component = (() => {
   }
 
   return {
-      ThreeJSController: ThreeJSController,
+    ThreeJSController: ThreeJSController,
   };
 })();

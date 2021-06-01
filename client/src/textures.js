@@ -1,18 +1,16 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-
-export const textures = (function() {
-
+export const textures = (function () {
   // Taken from https://github.com/mrdoob/three.js/issues/758
-  function _GetImageData( image ) {
-    var canvas = document.createElement('canvas');
+  function _GetImageData(image) {
+    var canvas = document.createElement("canvas");
     canvas.width = image.width;
     canvas.height = image.height;
 
-    var context = canvas.getContext('2d');
-    context.drawImage( image, 0, 0 );
+    var context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
 
-    return context.getImageData( 0, 0, image.width, image.height );
+    return context.getImageData(0, 0, image.width, image.height);
   }
 
   return {
@@ -59,8 +57,13 @@ export const textures = (function() {
 
             data.set(curData.data, offset);
           }
-    
-          const diffuse = new THREE.DataTexture2DArray(data, 1024, 1024, atlas.textures.length);
+
+          const diffuse = new THREE.DataTexture2DArray(
+            data,
+            1024,
+            1024,
+            atlas.textures.length,
+          );
           diffuse.format = THREE.RGBAFormat;
           diffuse.type = THREE.UnsignedByteType;
           diffuse.minFilter = THREE.LinearMipMapLinearFilter;
@@ -82,10 +85,10 @@ export const textures = (function() {
 
       _LoadAtlas(atlas, names) {
         this._textures[atlas] = {
-          textures: names.map(n => this._LoadTexture(n) ),
+          textures: names.map((n) => this._LoadTexture(n)),
           atlas: null,
         };
       }
-    }
+    },
   };
 })();

@@ -1,9 +1,7 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-import {entity} from './entity.js';
-
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
+import { entity } from "./entity.js";
 
 export const third_person_camera = (() => {
-  
   class ThirdPersonCamera extends entity.Component {
     constructor(params) {
       super();
@@ -20,8 +18,13 @@ export const third_person_camera = (() => {
       idealOffset.applyQuaternion(this._params.target._rotation);
       idealOffset.add(this._params.target._position);
 
-      const terrain = this.FindEntity('terrain').GetComponent('TerrainChunkManager');
-      idealOffset.y = Math.max(idealOffset.y, terrain.GetHeight(idealOffset)[0] + 5.0);
+      const terrain = this.FindEntity("terrain").GetComponent(
+        "TerrainChunkManager",
+      );
+      idealOffset.y = Math.max(
+        idealOffset.y,
+        terrain.GetHeight(idealOffset)[0] + 5.0,
+      );
 
       return idealOffset;
     }
@@ -50,7 +53,6 @@ export const third_person_camera = (() => {
   }
 
   return {
-    ThirdPersonCamera: ThirdPersonCamera
+    ThirdPersonCamera: ThirdPersonCamera,
   };
-
 })();

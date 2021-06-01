@@ -1,27 +1,27 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js";
+import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js";
 
-import {entity} from './entity.js';
-
+import { entity } from "./entity.js";
 
 export const gltf_component = (() => {
-
   class StaticModelComponent extends entity.Component {
     constructor(params) {
       super();
       this._Init(params);
     }
-  
+
     _Init(params) {
       this._params = params;
-  
+
       this._LoadModels();
     }
-  
+
     InitComponent() {
-      this._RegisterHandler('update.position', (m) => { this._OnPosition(m); });
+      this._RegisterHandler("update.position", (m) => {
+        this._OnPosition(m);
+      });
     }
 
     _OnPosition(m) {
@@ -31,9 +31,12 @@ export const gltf_component = (() => {
     }
 
     _LoadModels() {
-      if (this._params.resourceName.endsWith('glb') || this._params.resourceName.endsWith('gltf')) {
+      if (
+        this._params.resourceName.endsWith("glb") ||
+        this._params.resourceName.endsWith("gltf")
+      ) {
         this._LoadGLB();
-      } else if (this._params.resourceName.endsWith('fbx')) {
+      } else if (this._params.resourceName.endsWith("fbx")) {
         this._LoadFBX();
       }
     }
@@ -52,7 +55,7 @@ export const gltf_component = (() => {
         texture.encoding = THREE.sRGBEncoding;
       }
 
-      this._target.traverse(c => {
+      this._target.traverse((c) => {
         let materials = c.material;
         if (!(c.material instanceof Array)) {
           materials = [c.material];
@@ -101,17 +104,18 @@ export const gltf_component = (() => {
 
     Update(timeInSeconds) {
     }
-  };
-
+  }
 
   class AnimatedModelComponent extends entity.Component {
     constructor(params) {
       super();
       this._Init(params);
     }
-  
+
     InitComponent() {
-      this._RegisterHandler('update.position', (m) => { this._OnPosition(m); });
+      this._RegisterHandler("update.position", (m) => {
+        this._OnPosition(m);
+      });
     }
 
     _OnPosition(m) {
@@ -123,14 +127,17 @@ export const gltf_component = (() => {
 
     _Init(params) {
       this._params = params;
-  
+
       this._LoadModels();
     }
-  
+
     _LoadModels() {
-      if (this._params.resourceName.endsWith('glb') || this._params.resourceName.endsWith('gltf')) {
+      if (
+        this._params.resourceName.endsWith("glb") ||
+        this._params.resourceName.endsWith("gltf")
+      ) {
         this._LoadGLB();
-      } else if (this._params.resourceName.endsWith('fbx')) {
+      } else if (this._params.resourceName.endsWith("fbx")) {
         this._LoadFBX();
       }
     }
@@ -143,7 +150,7 @@ export const gltf_component = (() => {
       this._target.position.copy(this._parent._position);
 
       this.Broadcast({
-        topic: 'update.position',
+        topic: "update.position",
         value: this._parent._position,
       });
 
@@ -154,7 +161,7 @@ export const gltf_component = (() => {
         texture.encoding = THREE.sRGBEncoding;
       }
 
-      this._target.traverse(c => {
+      this._target.traverse((c) => {
         let materials = c.material;
         if (!(c.material instanceof Array)) {
           materials = [c.material];
@@ -187,20 +194,22 @@ export const gltf_component = (() => {
       const _OnLoad = (anim) => {
         const clip = anim.animations[0];
         const action = this._mixer.clipAction(clip);
-  
+
         action.play();
       };
 
       const loader = new FBXLoader();
       loader.setPath(this._params.resourcePath);
-      loader.load(this._params.resourceAnimation, (a) => { _OnLoad(a); });
+      loader.load(this._params.resourceAnimation, (a) => {
+        _OnLoad(a);
+      });
 
       this._mixer = new THREE.AnimationMixer(this._target);
 
       this._parent._mesh = this._target;
       this.Broadcast({
-          topic: 'load.character',
-          model: this._target,
+        topic: "load.character",
+        model: this._target,
       });
     }
 
@@ -225,12 +234,10 @@ export const gltf_component = (() => {
         this._mixer.update(timeInSeconds);
       }
     }
-  };
-
+  }
 
   return {
-      StaticModelComponent: StaticModelComponent,
-      AnimatedModelComponent: AnimatedModelComponent,
+    StaticModelComponent: StaticModelComponent,
+    AnimatedModelComponent: AnimatedModelComponent,
   };
-
 })();

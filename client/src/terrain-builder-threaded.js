@@ -1,16 +1,13 @@
+import { terrain_chunk } from "./terrain-chunk.js";
 
-import {terrain_chunk} from './terrain-chunk.js';
-
-
-export const terrain_builder_threaded = (function() {
-
+export const terrain_builder_threaded = (function () {
   const _NUM_WORKERS = 4;
 
   let _IDs = 0;
 
   class WorkerThread {
     constructor(s) {
-      this._worker = new Worker(s, {type: 'module'});
+      this._worker = new Worker(s, { type: "module" });
       this._worker.onmessage = (e) => {
         this._OnMessage(e);
       };
@@ -36,7 +33,7 @@ export const terrain_builder_threaded = (function() {
 
   class WorkerThreadPool {
     constructor(sz, entry) {
-      this._workers = [...Array(sz)].map(_ => new WorkerThread(entry));
+      this._workers = [...Array(sz)].map((_) => new WorkerThread(entry));
       this._free = [...this._workers];
       this._busy = {};
       this._queue = [];
@@ -78,13 +75,15 @@ export const terrain_builder_threaded = (function() {
       this._old = [];
 
       this._workerPool = new WorkerThreadPool(
-          _NUM_WORKERS, 'src/terrain-builder-threaded-worker.js');
-  
+        _NUM_WORKERS,
+        "src/terrain-builder-threaded-worker.js",
+      );
+
       this._params = params;
     }
 
     _OnResult(chunk, msg) {
-      if (msg.subject == 'build_chunk_result') {
+      if (msg.subject == "build_chunk_result") {
         chunk.RebuildMeshFromData(msg.data);
         chunk.Show();
       }
@@ -122,7 +121,7 @@ export const terrain_builder_threaded = (function() {
       };
 
       const msg = {
-        subject: 'build_chunk',
+        subject: "build_chunk",
         params: threadedParams,
       };
 
@@ -130,7 +129,7 @@ export const terrain_builder_threaded = (function() {
         this._OnResult(c, m);
       });
 
-      return c;    
+      return c;
     }
 
     RetireChunks(chunks) {
@@ -166,6 +165,6 @@ export const terrain_builder_threaded = (function() {
   }
 
   return {
-    TerrainChunkRebuilder_Threaded: _TerrainChunkRebuilder_Threaded
-  }
+    TerrainChunkRebuilder_Threaded: _TerrainChunkRebuilder_Threaded,
+  };
 })();

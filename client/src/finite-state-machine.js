@@ -1,7 +1,4 @@
-
-
 export const finite_state_machine = (() => {
-
   class FiniteStateMachine {
     constructor() {
       this._states = {};
@@ -14,7 +11,7 @@ export const finite_state_machine = (() => {
 
     SetState(name) {
       const prevState = this._currentState;
-      
+
       if (prevState) {
         if (prevState.Name == name) {
           return;
@@ -33,10 +30,9 @@ export const finite_state_machine = (() => {
         this._currentState.Update(timeElapsed, input);
       }
     }
-  };
+  }
 
   return {
-    FiniteStateMachine: FiniteStateMachine
+    FiniteStateMachine: FiniteStateMachine,
   };
-
 })();

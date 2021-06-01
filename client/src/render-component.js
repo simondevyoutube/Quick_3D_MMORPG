@@ -1,13 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
-import {OBJLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/OBJLoader.js';
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js";
+import { OBJLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/OBJLoader.js";
 
-import {entity} from './entity.js';
-
+import { entity } from "./entity.js";
 
 export const render_component = (() => {
-
   class RenderComponent extends entity.Component {
     constructor(params) {
       super();
@@ -17,7 +15,7 @@ export const render_component = (() => {
     }
 
     Destroy() {
-      this.group_.traverse(c => {
+      this.group_.traverse((c) => {
         if (c.material) {
           c.material.dispose();
         }
@@ -31,16 +29,20 @@ export const render_component = (() => {
     InitEntity() {
       this._Init(this.params_);
     }
-  
+
     _Init(params) {
       this.params_ = params;
-  
+
       this._LoadModels();
     }
-  
+
     InitComponent() {
-      this._RegisterHandler('update.position', (m) => { this._OnPosition(m); });
-      this._RegisterHandler('update.rotation', (m) => { this._OnRotation(m); });
+      this._RegisterHandler("update.position", (m) => {
+        this._OnPosition(m);
+      });
+      this._RegisterHandler("update.rotation", (m) => {
+        this._OnRotation(m);
+      });
     }
 
     _OnPosition(m) {
@@ -52,11 +54,11 @@ export const render_component = (() => {
     }
 
     _LoadModels() {
-      if (this.params_.resourceName.endsWith('glb')) {
+      if (this.params_.resourceName.endsWith("glb")) {
         this._LoadGLB();
-      } else if (this.params_.resourceName.endsWith('fbx')) {
+      } else if (this.params_.resourceName.endsWith("fbx")) {
         this._LoadFBX();
-      } else if (this.params_.resourceName.endsWith('obj')) {
+      } else if (this.params_.resourceName.endsWith("obj")) {
         this._LoadOBJ();
       }
     }
@@ -69,11 +71,13 @@ export const render_component = (() => {
 
       const textures = {};
       if (this.params_.textures) {
-        const loader = this.FindEntity('loader').GetComponent('LoadController');
+        const loader = this.FindEntity("loader").GetComponent("LoadController");
 
         for (let k in this.params_.textures.names) {
           const t = loader.LoadTexture(
-              this.params_.textures.resourcePath, this.params_.textures.names[k]);
+            this.params_.textures.resourcePath,
+            this.params_.textures.names[k],
+          );
           t.encoding = THREE.sRGBEncoding;
 
           if (this.params_.textures.wrap) {
@@ -85,7 +89,7 @@ export const render_component = (() => {
         }
       }
 
-      this._target.traverse(c => {
+      this._target.traverse((c) => {
         let materials = c.material;
         if (!(c.material instanceof Array)) {
           materials = [c.material];
@@ -124,9 +128,9 @@ export const render_component = (() => {
         }
 
         this.Broadcast({
-            topic: 'render.loaded',
-            value: this._target,
-        })
+          topic: "render.loaded",
+          value: this._target,
+        });
       });
     }
 
@@ -139,11 +143,14 @@ export const render_component = (() => {
     }
 
     _LoadFBX() {
-      const loader = this.FindEntity('loader').GetComponent('LoadController');
+      const loader = this.FindEntity("loader").GetComponent("LoadController");
       loader.LoadFBX(
-          this.params_.resourcePath, this.params_.resourceName, (fbx) => {
-        this._OnLoaded(fbx);
-      });
+        this.params_.resourcePath,
+        this.params_.resourceName,
+        (fbx) => {
+          this._OnLoaded(fbx);
+        },
+      );
     }
 
     _LoadOBJ() {
@@ -156,11 +163,9 @@ export const render_component = (() => {
 
     Update(timeInSeconds) {
     }
-  };
-
+  }
 
   return {
-      RenderComponent: RenderComponent,
+    RenderComponent: RenderComponent,
   };
-
 })();

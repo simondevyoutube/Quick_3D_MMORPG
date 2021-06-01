@@ -1,14 +1,12 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
-import {SkeletonUtils} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/utils/SkeletonUtils.js';
+import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js";
+import { SkeletonUtils } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/utils/SkeletonUtils.js";
 
-import {entity} from "./entity.js";
-
+import { entity } from "./entity.js";
 
 export const load_controller = (() => {
-
   class LoadController extends entity.Component {
     constructor() {
       super();
@@ -22,7 +20,7 @@ export const load_controller = (() => {
         const loader = new THREE.TextureLoader();
         loader.setPath(path);
 
-        this.textures_[name] = {loader: loader, texture: loader.load(name)};
+        this.textures_[name] = { loader: loader, texture: loader.load(name) };
         this.textures_[name].encoding = THREE.sRGBEncoding;
       }
 
@@ -34,7 +32,7 @@ export const load_controller = (() => {
         const loader = new FBXLoader();
         loader.setPath(path);
 
-        this.models_[name] = {loader: loader, asset: null, queue: [onLoad]};
+        this.models_[name] = { loader: loader, asset: null, queue: [onLoad] };
         this.models_[name].loader.load(name, (fbx) => {
           this.models_[name].asset = fbx;
 
@@ -58,11 +56,11 @@ export const load_controller = (() => {
         const loader = new GLTFLoader();
         loader.setPath(path);
 
-        this.models_[name] = {loader: loader, asset: null, queue: [onLoad]};
+        this.models_[name] = { loader: loader, asset: null, queue: [onLoad] };
         this.models_[name].loader.load(name, (glb) => {
           this.models_[name].asset = glb;
 
-          glb.scene.traverse(c => {
+          glb.scene.traverse((c) => {
             // HAHAHAH
             c.frustumCulled = false;
             // Apparently this doesn't work, so just disable frustum culling.
@@ -81,7 +79,7 @@ export const load_controller = (() => {
           const queue = this.models_[name].queue;
           this.models_[name].queue = null;
           for (let q of queue) {
-            const clone = {...glb};
+            const clone = { ...glb };
             clone.scene = SkeletonUtils.clone(clone.scene);
 
             q(clone);
@@ -90,16 +88,15 @@ export const load_controller = (() => {
       } else if (this.models_[name].asset == null) {
         this.models_[name].queue.push(onLoad);
       } else {
-        const clone = {...this.models_[name].asset};
+        const clone = { ...this.models_[name].asset };
         clone.scene = SkeletonUtils.clone(clone.scene);
 
         onLoad(clone);
       }
-
     }
   }
 
   return {
-      LoadController: LoadController,
+    LoadController: LoadController,
   };
 })();

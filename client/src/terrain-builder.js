@@ -1,8 +1,6 @@
-import {terrain_chunk} from './terrain-chunk.js';
+import { terrain_chunk } from "./terrain-chunk.js";
 
-
-export const terrain_builder = (function() {
-
+export const terrain_builder = (function () {
   class _TerrainChunkRebuilder {
     constructor(params) {
       this._pool = {};
@@ -29,7 +27,7 @@ export const terrain_builder = (function() {
 
       this._queued.push(c);
 
-      return c;    
+      return c;
     }
 
     RetireChunks(chunks) {
@@ -95,6 +93,6 @@ export const terrain_builder = (function() {
   }
 
   return {
-    TerrainChunkRebuilder: _TerrainChunkRebuilder
-  }
+    TerrainChunkRebuilder: _TerrainChunkRebuilder,
+  };
 })();

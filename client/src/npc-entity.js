@@ -1,13 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {entity} from './entity.js';
-import {player_entity} from './player-entity.js'
+import { entity } from "./entity.js";
+import { player_entity } from "./player-entity.js";
 
-import {defs} from '/shared/defs.mjs';
-
+import { defs } from "/shared/defs.mjs";
 
 export const npc_entity = (() => {
-
   class NPCController extends entity.Component {
     constructor(params) {
       super();
@@ -15,7 +13,7 @@ export const npc_entity = (() => {
     }
 
     Destroy() {
-      this.group_.traverse(c => {
+      this.group_.traverse((c) => {
         if (c.material) {
           let materials = c.material;
           if (!(c.material instanceof Array)) {
@@ -48,9 +46,15 @@ export const npc_entity = (() => {
     }
 
     InitComponent() {
-      this._RegisterHandler('health.death', (m) => { this.OnDeath_(m); });
-      this._RegisterHandler('update.position', (m) => { this.OnPosition_(m); });
-      this._RegisterHandler('update.rotation', (m) => { this.OnRotation_(m); });
+      this._RegisterHandler("health.death", (m) => {
+        this.OnDeath_(m);
+      });
+      this._RegisterHandler("update.position", (m) => {
+        this.OnPosition_(m);
+      });
+      this._RegisterHandler("update.rotation", (m) => {
+        this.OnRotation_(m);
+      });
     }
 
     SetState(s) {
@@ -61,9 +65,9 @@ export const npc_entity = (() => {
 
       // hack: should propogate attacks through the events on server
       // Right now, they're inferred from whatever animation we're running, blech
-      if (s == 'attack' && this.stateMachine_._currentState.Name != 'attack') {
+      if (s == "attack" && this.stateMachine_._currentState.Name != "attack") {
         this.Broadcast({
-            topic: 'action.attack',
+          topic: "action.attack",
         });
       }
 
@@ -71,7 +75,7 @@ export const npc_entity = (() => {
     }
 
     OnDeath_(msg) {
-      this.SetState('death');
+      this.SetState("death");
     }
 
     OnPosition_(m) {
@@ -86,16 +90,16 @@ export const npc_entity = (() => {
       const classType = this.params_.desc.character.class;
       const modelData = defs.CHARACTER_MODELS[classType];
 
-      const loader = this.FindEntity('loader').GetComponent('LoadController');
+      const loader = this.FindEntity("loader").GetComponent("LoadController");
       loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
         this.target_ = glb.scene;
         this.target_.scale.setScalar(modelData.scale);
         this.target_.visible = false;
 
         this.group_.add(this.target_);
-  
+
         this.bones_ = {};
-        this.target_.traverse(c => {
+        this.target_.traverse((c) => {
           if (!c.skeleton) {
             return;
           }
@@ -104,7 +108,7 @@ export const npc_entity = (() => {
           }
         });
 
-        this.target_.traverse(c => {
+        this.target_.traverse((c) => {
           c.castShadow = true;
           c.receiveShadow = true;
           if (c.material && c.material.map) {
@@ -114,7 +118,6 @@ export const npc_entity = (() => {
 
         this.mixer_ = new THREE.AnimationMixer(this.target_);
 
-        
         const _FindAnim = (animName) => {
           for (let i = 0; i < glb.animations.length; i++) {
             if (glb.animations[i].name.includes(animName)) {
@@ -122,36 +125,37 @@ export const npc_entity = (() => {
               const action = this.mixer_.clipAction(clip);
               return {
                 clip: clip,
-                action: action
-              }
+                action: action,
+              };
             }
           }
           return null;
         };
 
-        this.animations_['idle'] = _FindAnim('Idle');
-        this.animations_['walk'] = _FindAnim('Walk');
-        this.animations_['run'] = _FindAnim('Run');
-        this.animations_['death'] = _FindAnim('Death');
-        this.animations_['attack'] = _FindAnim('Attack');
-        this.animations_['dance'] = _FindAnim('Dance');
+        this.animations_["idle"] = _FindAnim("Idle");
+        this.animations_["walk"] = _FindAnim("Walk");
+        this.animations_["run"] = _FindAnim("Run");
+        this.animations_["death"] = _FindAnim("Death");
+        this.animations_["attack"] = _FindAnim("Attack");
+        this.animations_["dance"] = _FindAnim("Dance");
 
         this.target_.visible = true;
 
         this.stateMachine_ = new player_entity.CharacterFSM(
-            new player_entity.BasicCharacterControllerProxy(this.animations_));
+          new player_entity.BasicCharacterControllerProxy(this.animations_),
+        );
 
         if (this.queuedState_) {
-          this.stateMachine_.SetState(this.queuedState_)
+          this.stateMachine_.SetState(this.queuedState_);
           this.queuedState_ = null;
         } else {
-          this.stateMachine_.SetState('idle');
+          this.stateMachine_.SetState("idle");
         }
 
         this.Broadcast({
-            topic: 'load.character',
-            model: this.group_,
-            bones: this.bones_,
+          topic: "load.character",
+          model: this.group_,
+          bones: this.bones_,
         });
       });
     }
@@ -161,15 +165,14 @@ export const npc_entity = (() => {
         return;
       }
       this.stateMachine_.Update(timeInSeconds, null);
-      
+
       if (this.mixer_) {
         this.mixer_.update(timeInSeconds);
       }
     }
-  };
+  }
 
   return {
     NPCController: NPCController,
   };
-
 })();

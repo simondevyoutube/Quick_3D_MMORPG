@@ -1,10 +1,8 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
 
-import {entity} from "./entity.js";
-
+import { entity } from "./entity.js";
 
 export const player_input = (() => {
-
   class PickableComponent extends entity.Component {
     constructor() {
       super();
@@ -12,7 +10,7 @@ export const player_input = (() => {
 
     InitComponent() {
     }
-  };
+  }
 
   class BasicCharacterControllerInput extends entity.Component {
     constructor(params) {
@@ -20,7 +18,7 @@ export const player_input = (() => {
       this._params = params;
       this._Init();
     }
-  
+
     _Init() {
       this._keys = {
         forward: false,
@@ -32,22 +30,22 @@ export const player_input = (() => {
         backspace: false,
       };
       this._raycaster = new THREE.Raycaster();
-      document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
-      document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
-      document.addEventListener('mouseup', (e) => this._onMouseUp(e), false);
+      document.addEventListener("keydown", (e) => this._onKeyDown(e), false);
+      document.addEventListener("keyup", (e) => this._onKeyUp(e), false);
+      document.addEventListener("mouseup", (e) => this._onMouseUp(e), false);
     }
-  
+
     _onMouseUp(event) {
-      const rect = document.getElementById('threejs').getBoundingClientRect();
+      const rect = document.getElementById("threejs").getBoundingClientRect();
       const pos = {
-        x: ((event.clientX - rect.left) / rect.width) * 2  - 1,
-        y: ((event.clientY - rect.top ) / rect.height) * -2 + 1,
+        x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        y: ((event.clientY - rect.top) / rect.height) * -2 + 1,
       };
 
       this._raycaster.setFromCamera(pos, this._params.camera);
 
       const pickables = this.Manager.Filter((e) => {
-        const p = e.GetComponent('PickableComponent');
+        const p = e.GetComponent("PickableComponent");
         if (!p) {
           return false;
         }
@@ -57,10 +55,11 @@ export const player_input = (() => {
       const ray = new THREE.Ray();
       ray.origin.setFromMatrixPosition(this._params.camera.matrixWorld);
       ray.direction.set(pos.x, pos.y, 0.5).unproject(
-          this._params.camera).sub(ray.origin).normalize();
+        this._params.camera,
+      ).sub(ray.origin).normalize();
 
       // hack
-      document.getElementById('quest-ui').style.visibility = 'hidden';
+      document.getElementById("quest-ui").style.visibility = "hidden";
 
       for (let p of pickables) {
         // GOOD ENOUGH
@@ -68,7 +67,7 @@ export const player_input = (() => {
 
         if (ray.intersectsBox(box)) {
           p.Broadcast({
-              topic: 'input.picked'
+            topic: "input.picked",
           });
           break;
         }
@@ -103,12 +102,12 @@ export const player_input = (() => {
           break;
       }
     }
-  
+
     _onKeyUp(event) {
       if (event.currentTarget.activeElement != document.body) {
         return;
       }
-      switch(event.keyCode) {
+      switch (event.keyCode) {
         case 87: // w
           this._keys.forward = false;
           break;
@@ -132,11 +131,10 @@ export const player_input = (() => {
           break;
       }
     }
-  };
+  }
 
   return {
     BasicCharacterControllerInput: BasicCharacterControllerInput,
     PickableComponent: PickableComponent,
   };
-
 })();
