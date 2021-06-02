@@ -1,7 +1,4 @@
-import { THREE } from "./deps.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
-import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js";
-
+import { FBXLoader, OrbitControls, THREE } from "./src/deps.js";
 import "https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js";
 
 const _CHARACTER_MODELS = {
