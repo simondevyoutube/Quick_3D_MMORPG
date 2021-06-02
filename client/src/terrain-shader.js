@@ -1,4 +1,4 @@
-export const VS_1 = `
+export const VS1 = `
 
 // Triplanar Attributes
 in vec4 weights1;
@@ -12,7 +12,7 @@ out vec4 vWeights2;
 
 `;
 
-export const VS_2 = `
+export const VS2 = `
 
 vCoords = transformed.xyz;
 vWeights1 = weights1;
@@ -255,7 +255,7 @@ void main() {
 
   `;
 
-export const PS_1 = `
+export const PS1 = `
 
 precision mediump sampler2DArray;
 
@@ -420,7 +420,7 @@ vec4 _TriplanarN(vec3 pos, vec3 normal, float texSlice, sampler2DArray tex) {
 
   `;
 
-export const PS_2 = `
+export const PS2 = `
 
 {
   vec3 worldPosition = vCoords;
