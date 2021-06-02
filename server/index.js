@@ -1,13 +1,13 @@
-import * as http from "http";
-import * as socket_io from "socket.io";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 import { WorldServer } from "./src/world-server.js";
 
 function Main() {
   const port = process.env.PORT || 3000;
 
-  const server = http.createServer();
-  const io = new socket_io.Server(server, {
+  const server = createServer();
+  const io = new Server(server, {
     cors: {
       origin: "*",
     },
