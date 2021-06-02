@@ -1,6 +1,5 @@
 import { createServer } from "http";
 import { Server } from "socket.io";
-
 import { WorldServer } from "./src/world-server.js";
 
 function Main() {

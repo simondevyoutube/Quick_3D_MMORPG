@@ -6,9 +6,9 @@ import { WorldEntity } from "./world-entity.js";
 import pkg1 from "../../client/shared/spatial-hash-grid.js";
 import pkg2 from "../../client/shared/terrain-height.js";
 import pkg3 from "../../client/shared/defs.js";
-const { SpatialHashGrid } = pkg1
-const { HeightGenerator } = pkg2
-const { _CHARACTER_MODELS } = pkg3
+const { SpatialHashGrid } = pkg1;
+const { HeightGenerator } = pkg2;
+const { _CHARACTER_MODELS } = pkg3;
 
 export class MonsterSpawner {
   constructor(params) {
