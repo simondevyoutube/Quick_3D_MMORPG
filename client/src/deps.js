@@ -6,3 +6,6 @@ export { SkeletonUtils } from "https://cdn.jsdelivr.net/npm/three@0.124/examples
 export { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
 
 export { GUI } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js";
+
+// TODO-DefinitelyMaybe: Networking
+// export { io } from "https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js";
