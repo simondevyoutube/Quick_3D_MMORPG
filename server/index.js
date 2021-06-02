@@ -1,5 +1,4 @@
-import { createServer } from "http";
-import { Server } from "socket.io";
+import { Server, createServer } from "./src/deps.js";
 import { WorldServer } from "./src/world-server.js";
 
 function Main() {

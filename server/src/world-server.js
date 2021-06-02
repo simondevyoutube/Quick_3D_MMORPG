@@ -1,5 +1,4 @@
-import { performance } from "perf_hooks";
-
+import { performance } from "./deps.js";
 import { WorldManager } from "./world-manager.js";
 import { LoginQueue } from "./login-queue.js";
 

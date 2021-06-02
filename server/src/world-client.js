@@ -1,4 +1,4 @@
-import { quat, vec3 } from "gl-matrix";
+import { quat, vec3 } from "./deps.js";
 
 export const _TIMEOUT = 600.0;
 
