@@ -1,7 +1,7 @@
 import * as http from "http";
 import * as socket_io from "socket.io";
 
-import { world_server } from "./src/world-server.js";
+import { WorldServer } from "./src/world-server.js";
 
 function Main() {
   const port = process.env.PORT || 3000;
@@ -17,7 +17,7 @@ function Main() {
     console.log("listening on: *", port);
   });
 
-  const _WORLD = new world_server.WorldServer(io);
+  const _WORLD = new WorldServer(io);
   _WORLD.Run();
 }
 
