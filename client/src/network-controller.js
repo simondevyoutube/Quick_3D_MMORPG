@@ -1,12 +1,9 @@
 // TODO-DefinitelyMaybe: networking
 import "https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js";
-
 import { Component } from "./entity.js";
 
 export class NetworkController extends Component {
-  constructor(params) {
-    console.log("return here if params below is not important");
-    console.table(params);
+  constructor() {
     super();
 
     this.playerID_ = null;
