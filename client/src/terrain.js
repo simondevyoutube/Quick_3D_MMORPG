@@ -147,7 +147,7 @@ export class TerrainChunkManager extends Component {
         onNoiseChanged,
       );
 
-    this._biomes = new noise.Noise(params.guiParams.biomes);
+    this._biomes = new NoiseGenerator(params.guiParams.biomes);
     this._biomesParams = params.guiParams.biomes;
 
     const colourParams = {
@@ -160,7 +160,7 @@ export class TerrainChunkManager extends Component {
       seed: 2,
       height: 1.0,
     };
-    this._colourNoise = new noise.Noise(colourParams);
+    this._colourNoise = new NoiseGenerator(colourParams);
     this._colourNoiseParams = colourParams;
   }
 

@@ -1,10 +1,10 @@
 import { THREE } from "./deps.js";
 import { Entity } from "./entity.js";
 import { RenderComponent } from "./render-component.js";
-import {} from "./spatial-grid-controller.js";
+import { SpatialGridController } from "./spatial-grid-controller.js";
 
 import { math } from "../shared/math.js";
-import { noise } from "../shared/noise.js";
+import { NoiseGenerator } from "../shared/noise.js";
 
 const _SCENERY = {
   birch1: {
@@ -103,7 +103,7 @@ export class SceneryController extends Component {
       seed: 2,
       height: 1.0,
     };
-    this.noise_ = new noise.Noise(noiseParams);
+    this.noise_ = new NoiseGenerator(noiseParams);
 
     this.center_ = null;
     this.crap_ = [];

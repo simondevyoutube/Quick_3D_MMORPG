@@ -1,13 +1,13 @@
-import { simplex } from "./simplex-noise.js";
+import { SimplexNoise } from "./simplex-noise.js";
 
-export class _NoiseGenerator {
+export class NoiseGenerator {
   constructor(params) {
     this._params = params;
     this._Init();
   }
 
   _Init() {
-    this._noise = new simplex.SimplexNoise(this._params.seed);
+    this._noise = new SimplexNoise(this._params.seed);
   }
 
   Get(x, y, z) {
