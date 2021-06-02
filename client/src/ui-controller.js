@@ -1,7 +1,7 @@
-import { entity } from "./entity.js";
+import { Entity } from "./entity.js";
 
 export const ui_controller = (() => {
-  class UIController extends entity.Component {
+  class UIController extends Component {
     constructor(params) {
       super();
       this._params = params;

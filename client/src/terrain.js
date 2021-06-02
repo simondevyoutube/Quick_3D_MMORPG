@@ -1,6 +1,5 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
-
-import { entity } from "./entity.js";
+import { THREE } from "./deps.js";
+import { Component } from "./entity.js";
 import { quadtree } from "./quadtree.js";
 import { terrain_shader } from "./terrain-shader.js";
 import { terrain_builder_threaded } from "./terrain-builder-threaded.js";
@@ -11,10 +10,10 @@ import { utils } from "./utils.js";
 import { terrain_constants } from "/shared/terrain-constants.mjs";
 import { terrain_height } from "/shared/terrain-height.mjs";
 
-import { noise } from "/shared/noise.mjs";
+import { noise } from "../shared/noise.js";
 
 export const terrain = (function () {
-  class TerrainChunkManager extends entity.Component {
+  class TerrainChunkManager extends Component {
     constructor(params) {
       super();
       this._Init(params);

@@ -1,5 +1,4 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
-
+import { THREE } from "./deps.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js";
 

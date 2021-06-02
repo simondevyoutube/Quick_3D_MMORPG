@@ -1,5 +1,4 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
-
+import { THREE } from "./deps.js";
 export const textures = (function () {
   // Taken from https://github.com/mrdoob/three.js/issues/758
   function _GetImageData(image) {

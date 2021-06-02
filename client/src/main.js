@@ -1,19 +1,17 @@
-import { GUI } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js";
+import { GUI } from "./deps.js";
+import { EntityManager } from "./entity-manager.js";
+import {} from "./ui-controller.js";
+import { LevelUpComponentSpawner } from "./level-up-component.js";
+import { NetworkController } from "./network-controller.js";
+import {} from "./scenery-controller.js";
+import { LoadController } from "./load-controller.js";
+import {} from "./spawners.js";
+import {} from "./terrain.js";
+import { InventoryDatabaseController } from "./inventory-controller.js";
 
-import { entity_manager } from "./entity-manager.js";
-import { entity } from "./entity.js";
-import { ui_controller } from "./ui-controller.js";
-import { level_up_component } from "./level-up-component.js";
-import { network_controller } from "./network-controller.js";
-import { scenery_controller } from "./scenery-controller.js";
-import { load_controller } from "./load-controller.js";
-import { spawners } from "./spawners.js";
-import { terrain } from "./terrain.js";
-import { inventory_controller } from "./inventory-controller.js";
-
-import { spatial_hash_grid } from "/shared/spatial-hash-grid.mjs";
-import { defs } from "/shared/defs.mjs";
-import { threejs_component } from "./threejs_component.js";
+import {} from "/shared/spatial-hash-grid.mjs";
+import { _CHARACTER_MODELS, _WEAPONS_DATA } from "../shared/defs.js";
+import {} from "./threejs_component.js";
 
 class CrappyMMOAttempt {
   constructor() {
@@ -21,7 +19,7 @@ class CrappyMMOAttempt {
   }
 
   _Initialize() {
-    this.entityManager_ = new entity_manager.EntityManager();
+    this.entityManager_ = new EntityManager();
 
     document.getElementById("login-ui").style.visibility = "visible";
     document.getElementById("login-button").onclick = () => {
@@ -32,7 +30,7 @@ class CrappyMMOAttempt {
   OnGameStarted_() {
     this.CreateGUI_();
 
-    this.grid_ = new spatial_hash_grid.SpatialHashGrid(
+    this.grid_ = new SpatialHashGrid(
       [[-1000, -1000], [1000, 1000]],
       [100, 100],
     );
@@ -55,8 +53,8 @@ class CrappyMMOAttempt {
   }
 
   LoadControllers_() {
-    const threejs = new entity.Entity();
-    threejs.AddComponent(new threejs_component.ThreeJSController());
+    const threejs = new Entity();
+    threejs.AddComponent(new ThreeJSController());
     this.entityManager_.Add(threejs);
 
     // Hack
@@ -64,17 +62,17 @@ class CrappyMMOAttempt {
     this.camera_ = threejs.GetComponent("ThreeJSController").camera_;
     this.threejs_ = threejs.GetComponent("ThreeJSController").threejs_;
 
-    const ui = new entity.Entity();
-    ui.AddComponent(new ui_controller.UIController());
+    const ui = new Entity();
+    ui.AddComponent(new UIController());
     this.entityManager_.Add(ui, "ui");
 
-    const network = new entity.Entity();
-    network.AddComponent(new network_controller.NetworkController());
+    const network = new Entity();
+    network.AddComponent(new NetworkController());
     this.entityManager_.Add(network, "network");
 
-    const t = new entity.Entity();
+    const t = new Entity();
     t.AddComponent(
-      new terrain.TerrainChunkManager({
+      new TerrainChunkManager({
         scene: this.scene_,
         target: "player",
         gui: this._gui,
@@ -84,29 +82,29 @@ class CrappyMMOAttempt {
     );
     this.entityManager_.Add(t, "terrain");
 
-    const l = new entity.Entity();
-    l.AddComponent(new load_controller.LoadController());
+    const l = new Entity();
+    l.AddComponent(new LoadController());
     this.entityManager_.Add(l, "loader");
 
-    const scenery = new entity.Entity();
+    const scenery = new Entity();
     scenery.AddComponent(
-      new scenery_controller.SceneryController({
+      new SceneryController({
         scene: this.scene_,
         grid: this.grid_,
       }),
     );
     this.entityManager_.Add(scenery, "scenery");
 
-    const spawner = new entity.Entity();
+    const spawner = new Entity();
     spawner.AddComponent(
-      new spawners.PlayerSpawner({
+      new PlayerSpawner({
         grid: this.grid_,
         scene: this.scene_,
         camera: this.camera_,
       }),
     );
     spawner.AddComponent(
-      new spawners.NetworkEntitySpawner({
+      new NetworkEntitySpawner({
         grid: this.grid_,
         scene: this.scene_,
         camera: this.camera_,
@@ -114,17 +112,17 @@ class CrappyMMOAttempt {
     );
     this.entityManager_.Add(spawner, "spawners");
 
-    const database = new entity.Entity();
+    const database = new Entity();
     database.AddComponent(
-      new inventory_controller.InventoryDatabaseController(),
+      new InventoryDatabaseController(),
     );
     this.entityManager_.Add(database, "database");
 
     // HACK
-    for (let k in defs.WEAPONS_DATA) {
+    for (let k in _WEAPONS_DATA) {
       database.GetComponent("InventoryDatabaseController").AddItem(
         k,
-        defs.WEAPONS_DATA[k],
+        _WEAPONS_DATA[k],
       );
     }
   }
@@ -135,9 +133,9 @@ class CrappyMMOAttempt {
       scene: this.scene_,
     };
 
-    const levelUpSpawner = new entity.Entity();
+    const levelUpSpawner = new Entity();
     levelUpSpawner.AddComponent(
-      new level_up_component.LevelUpComponentSpawner({
+      new LevelUpComponentSpawner({
         camera: this.camera_,
         scene: this.scene_,
       }),

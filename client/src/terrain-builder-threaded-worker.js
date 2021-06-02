@@ -1,12 +1,10 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
+import { THREE } from "./deps.js";
+import {} from "./texture-splatter.js";
+import { math } from "../shared/math.js";
+import { noise } from "../shared/noise.js";
+import { HeightGenerator } from "../shared/terrain-height.js";
 
-import { texture_splatter } from "./texture-splatter.js";
-
-import { math } from "/shared/math.mjs";
-import { noise } from "/shared/noise.mjs";
-import { terrain_height } from "/shared/terrain-height.mjs";
-
-class _TerrainBuilderThreadedWorker {
+export class _TerrainBuilderThreadedWorker {
   constructor() {
   }
 
@@ -18,11 +16,11 @@ class _TerrainBuilderThreadedWorker {
       params.offset[2],
     );
     this._params.noise = new noise.Noise(params.noiseParams);
-    this._params.heightGenerators = [new terrain_height.HeightGenerator()];
+    this._params.heightGenerators = [new HeightGenerator()];
 
     this._params.biomeGenerator = new noise.Noise(params.biomesParams);
     this._params.colourNoise = new noise.Noise(params.colourNoiseParams);
-    this._params.colourGenerator = new texture_splatter.TextureSplatter(
+    this._params.colourGenerator = new TextureSplatter(
       {
         biomeGenerator: this._params.biomeGenerator,
         colourNoise: this._params.colourNoise,
@@ -337,6 +335,7 @@ class _TerrainBuilderThreadedWorker {
   }
 }
 
+// TODO-DefinitelyMaybe: web workers... is the code below used?
 const _CHUNK = new _TerrainBuilderThreadedWorker();
 
 self.onmessage = (msg) => {
