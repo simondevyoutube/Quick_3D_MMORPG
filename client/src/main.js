@@ -1,4 +1,5 @@
 import { GUI } from "./deps.js";
+import { Entity } from "./entity.js";
 import { EntityManager } from "./entity-manager.js";
 import { UIController } from "./ui-controller.js";
 import { LevelUpComponentSpawner } from "./level-up-component.js";
