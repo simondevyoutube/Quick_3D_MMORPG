@@ -68,7 +68,7 @@ export class WorkerThreadPool {
   }
 }
 
-export class _TerrainChunkRebuilder_Threaded {
+export class TerrainChunkRebuilder_Threaded {
   constructor(params) {
     this._pool = {};
     this._old = [];

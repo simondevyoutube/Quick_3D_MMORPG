@@ -1,4 +1,4 @@
-export class _CubicHermiteSpline {
+export class CubicHermiteSpline {
   constructor(lerp) {
     this._points = [];
     this._lerp = lerp;
@@ -38,7 +38,7 @@ export class _CubicHermiteSpline {
   }
 }
 
-export class _LinearSpline {
+export class LinearSpline {
   constructor(lerp) {
     this._points = [];
     this._lerp = lerp;

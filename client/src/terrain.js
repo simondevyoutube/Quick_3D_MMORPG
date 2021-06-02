@@ -2,10 +2,10 @@ import { THREE } from "./deps.js";
 import { Component } from "./entity.js";
 import { CubeQuadTree } from "./quadtree.js";
 import { PS1, PS2, VS1, VS2 } from "./terrain-shader.js";
-import { _TerrainChunkRebuilder_Threaded } from "./terrain-builder-threaded.js";
+import { TerrainChunkRebuilder_Threaded } from "./terrain-builder-threaded.js";
 import { TextureSplatter } from "./texture-splatter.js";
-import { textures } from "./textures.js";
-import { utils } from "./utils.js";
+import { TextureAtlas } from "./textures.js";
+import { DictDifference, DictIntersection } from "./utils.js";
 
 import {
   NOISE_PARAMS,
@@ -15,7 +15,7 @@ import {
 } from "../shared/terrain-constants.js";
 import { HeightGenerator } from "../shared/terrain-height.js";
 
-import { noise } from "../shared/noise.js";
+import { NoiseGenerator } from "../shared/noise.js";
 
 export class TerrainChunkManager extends Component {
   constructor(params) {
@@ -32,7 +32,7 @@ export class TerrainChunkManager extends Component {
     noiseTexture.wrapS = THREE.RepeatWrapping;
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
-    const diffuse = new textures.TextureAtlas(params);
+    const diffuse = new TextureAtlas(params);
     diffuse.Load("diffuse", [
       "./resources/terrain/dirt_01_diffuse-1024.png",
       "./resources/terrain/grass1-albedo3-1024.png",
@@ -45,7 +45,7 @@ export class TerrainChunkManager extends Component {
       "./resources/terrain/bark1-albedo.jpg",
     ]);
 
-    const normal = new textures.TextureAtlas(params);
+    const normal = new TextureAtlas(params);
     normal.Load("normal", [
       "./resources/terrain/dirt_01_normal-1024.jpg",
       "./resources/terrain/grass1-normal-1024.jpg",
@@ -98,8 +98,7 @@ export class TerrainChunkManager extends Component {
       // s.fragmentShader += 'poop';
     };
 
-    this._builder = new terrain_builder_threaded
-      .TerrainChunkRebuilder_Threaded();
+    this._builder = new TerrainChunkRebuilder_Threaded();
     // this._builder = new terrain_builder.TerrainChunkRebuilder();
 
     this._InitNoise();
@@ -280,13 +279,13 @@ export class TerrainChunkManager extends Component {
       }
     }
 
-    const intersection = utils.DictIntersection(
+    const intersection = DictIntersection(
       this._chunks,
       newTerrainChunks,
     );
-    const difference = utils.DictDifference(newTerrainChunks, this._chunks);
+    const difference = DictDifference(newTerrainChunks, this._chunks);
     const recycle = Object.values(
-      utils.DictDifference(this._chunks, newTerrainChunks),
+      DictDifference(this._chunks, newTerrainChunks),
     );
 
     this._builder.RetireChunks(recycle);
