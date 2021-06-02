@@ -1,4 +1,4 @@
-import { Entity, Component } from "./entity.js";
+import { Component, Entity } from "./entity.js";
 
 import { ThirdPersonCamera } from "./third-person-camera.js";
 import { BasicCharacterController } from "./player-entity.js";

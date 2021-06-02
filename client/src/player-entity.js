@@ -1,7 +1,14 @@
 import { THREE } from "./deps.js";
 import { Component } from "./entity.js";
 import { FiniteStateMachine } from "./finite-state-machine.js";
-import { AttackState, DanceState, DeathState, IdleState, RunState, WalkState } from "./player-state.js";
+import {
+  AttackState,
+  DanceState,
+  DeathState,
+  IdleState,
+  RunState,
+  WalkState,
+} from "./player-state.js";
 
 import { _CHARACTER_MODELS, _WEAPONS_DATA } from "../shared/defs.js";
 

@@ -94,7 +94,8 @@ export class ThreeJSController extends Component {
     );
 
     window.addEventListener("resize", () => {
-      this._OnWindowResize();
+      // TODO-DefinitelyMaybe: Where was the window resize function at?
+      // this._OnWindowResize();
     }, false);
 
     const fov = 60;

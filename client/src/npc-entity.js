@@ -1,6 +1,9 @@
 import { THREE } from "./deps.js";
 import { Component } from "./entity.js";
-import { CharacterFSM, BasicCharacterControllerProxy } from "./player-entity.js";
+import {
+  BasicCharacterControllerProxy,
+  CharacterFSM,
+} from "./player-entity.js";
 import { _CHARACTER_MODELS } from "../shared/defs.js";
 
 export class NPCController extends Component {
