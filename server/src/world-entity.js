@@ -1,5 +1,6 @@
 import { quat, vec3 } from "gl-matrix";
-import { _WEAPONS_DATA } from "../../client/shared/defs.js";
+import pkg from "../../client/shared/defs.js";
+const { _WEAPONS_DATA } = pkg
 
 export class Action_Attack {
   constructor(time, cooldown, onAction) {
