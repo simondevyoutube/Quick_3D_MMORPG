@@ -1,7 +1,7 @@
 import { THREE } from "./deps.js";
 import { Component } from "./entity.js";
 import { FiniteStateMachine } from "./finite-state-machine.js";
-import { player_state } from "./player-state.js";
+import { AttackState, DanceState, DeathState, IdleState, RunState, WalkState } from "./player-state.js";
 
 import { _CHARACTER_MODELS, _WEAPONS_DATA } from "../shared/defs.js";
 
@@ -13,12 +13,12 @@ export class CharacterFSM extends FiniteStateMachine {
   }
 
   Init_() {
-    this._AddState("idle", player_state.IdleState);
-    this._AddState("walk", player_state.WalkState);
-    this._AddState("run", player_state.RunState);
-    this._AddState("attack", player_state.AttackState);
-    this._AddState("death", player_state.DeathState);
-    this._AddState("dance", player_state.DanceState);
+    this._AddState("idle", IdleState);
+    this._AddState("walk", WalkState);
+    this._AddState("run", RunState);
+    this._AddState("attack", AttackState);
+    this._AddState("death", DeathState);
+    this._AddState("dance", DanceState);
   }
 }
 

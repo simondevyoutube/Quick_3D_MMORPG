@@ -1,5 +1,5 @@
 import { THREE } from "./deps.js";
-import { Entity } from "./entity.js";
+import { Entity, Component } from "./entity.js";
 import { RenderComponent } from "./render-component.js";
 import { SpatialGridController } from "./spatial-grid-controller.js";
 

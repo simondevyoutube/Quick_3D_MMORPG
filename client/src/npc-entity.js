@@ -1,7 +1,6 @@
 import { THREE } from "./deps.js";
 import { Component } from "./entity.js";
-import { player_entity } from "./player-entity.js";
-
+import { CharacterFSM, BasicCharacterControllerProxy } from "./player-entity.js";
 import { _CHARACTER_MODELS } from "../shared/defs.js";
 
 export class NPCController extends Component {
@@ -139,8 +138,8 @@ export class NPCController extends Component {
 
       this.target_.visible = true;
 
-      this.stateMachine_ = new player_entity.CharacterFSM(
-        new player_entity.BasicCharacterControllerProxy(this.animations_),
+      this.stateMachine_ = new CharacterFSM(
+        new BasicCharacterControllerProxy(this.animations_),
       );
 
       if (this.queuedState_) {
