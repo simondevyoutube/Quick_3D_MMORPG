@@ -1,6 +1,6 @@
 import { Entity } from "./entity.js";
 
-import {} from "./third-person-camera.js";
+import { ThirdPersonCamera } from "./third-person-camera.js";
 import { BasicCharacterController } from "./player-entity.js";
 import { HealthComponent } from "./health-component.js";
 import { BasicCharacterControllerInput } from "./player-input.js";
@@ -13,9 +13,8 @@ import { EquipWeapon } from "./equip-weapon-component.js";
 import { AttackController } from "./attacker-controller.js";
 
 import { NPCController } from "./npc-entity.js";
-import {} from "./health-bar.js";
+// import { HealthBar } from "./health-bar.js";
 import { NetworkEntityController } from "./network-entity-controller.js";
-import { NetworkEntityController } from "./network-player-controller.js";
 import { FloatingName } from "./floating-name.js";
 import { SorcerorEffect } from "./sorceror-effect.js";
 import { BloodEffect } from "./blood-effect.js";
