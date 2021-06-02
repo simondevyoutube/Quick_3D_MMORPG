@@ -1,17 +1,17 @@
 import { GUI } from "./deps.js";
 import { EntityManager } from "./entity-manager.js";
-import {} from "./ui-controller.js";
+import { UIController } from "./ui-controller.js";
 import { LevelUpComponentSpawner } from "./level-up-component.js";
 import { NetworkController } from "./network-controller.js";
 import { SceneryController } from "./scenery-controller.js";
 import { LoadController } from "./load-controller.js";
 import { NetworkEntitySpawner, PlayerSpawner } from "./spawners.js";
-import {} from "./terrain.js";
+import { TerrainChunkManager } from "./terrain.js";
 import { InventoryDatabaseController } from "./inventory-controller.js";
 
-import {} from "/shared/spatial-hash-grid.js";
+import { SpatialHashGrid } from "../shared/spatial-hash-grid.js";
 import { _CHARACTER_MODELS, _WEAPONS_DATA } from "../shared/defs.js";
-import {} from "./threejs_component.js";
+import { ThreeJSController } from "./threejs_component.js";
 
 class CrappyMMOAttempt {
   constructor() {
