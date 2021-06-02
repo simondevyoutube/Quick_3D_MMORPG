@@ -1,21 +1,20 @@
-import * as http from 'http';
-import * as socket_io from 'socket.io';
+import * as http from "http";
+import * as socket_io from "socket.io";
 
-import {world_server} from './src/world-server.js';
-
+import { world_server } from "./src/world-server.js";
 
 function Main() {
   const port = process.env.PORT || 3000;
 
   const server = http.createServer();
   const io = new socket_io.Server(server, {
-      cors: {
-          origin: '*'
-      }
+    cors: {
+      origin: "*",
+    },
   });
 
   server.listen(port, () => {
-    console.log('listening on: *', port);
+    console.log("listening on: *", port);
   });
 
   const _WORLD = new world_server.WorldServer(io);
@@ -23,7 +22,6 @@ function Main() {
 }
 
 Main();
-
 
 // app.all("/socket.io/*", function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -52,7 +50,6 @@ Main();
 //   }
 // };
 
-
 // class WorldServer {
 //   constructor() {
 //     this.SetupIO_();
@@ -61,10 +58,9 @@ Main();
 //   SetupIO_() {
 //     io.on('connection', socket => {
 //       this.clients_[socket.id] = new Client(socket);
-//     });    
+//     });
 //   }
 // };
-
 
 // class World {
 //   constructor() {

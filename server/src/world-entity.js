@@ -1,6 +1,5 @@
 import { quat, vec3 } from "gl-matrix";
-
-import { defs } from "../../client/shared/defs.js";
+import { _WEAPONS_DATA } from "../../client/shared/defs.js";
 
 export class Action_Attack {
   constructor(time, cooldown, onAction) {
@@ -178,7 +177,7 @@ export class WorldEntity {
         const equipped = this.characterInfo_.inventory["inventory-equip-1"];
         if (equipped) {
           console.log(" equipped: " + equipped);
-          const weapon = defs.WEAPONS_DATA[equipped];
+          const weapon = _WEAPONS_DATA[equipped];
           if (weapon) {
             damage *= weapon.damage * 10;
           }

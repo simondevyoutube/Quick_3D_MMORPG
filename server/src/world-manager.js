@@ -1,11 +1,11 @@
 import { quat, vec3 } from "gl-matrix";
 
-import { world_client } from "./world-client.mjs";
-import { world_entity } from "./world-entity.mjs";
+import { WorldAIClient, WorldNetworkClient } from "./world-client.js";
+import { WorldEntity } from "./world-entity.js";
 
-import { spatial_hash_grid } from "../../client/shared/spatial-hash-grid.js";
-import { terrain_height } from "../../client/shared/terrain-height.mjs";
-import { defs } from "../../client/shared/defs.js";
+import { SpatialHashGrid } from "../../client/shared/spatial-hash-grid.js";
+import { HeightGenerator } from "../../client/shared/terrain-height.js";
+import { _CHARACTER_MODELS } from "../../client/shared/defs.js";
 
 export class MonsterSpawner {
   constructor(params) {
@@ -19,19 +19,19 @@ export class MonsterSpawner {
 
   Spawn_() {
     // Hack
-    const e = new world_entity.WorldEntity({
+    const e = new WorldEntity({
       id: this.parent_.ids_++,
       position: vec3.clone(this.pos_),
       rotation: quat.fromValues(0, 0, 0, 1),
       grid: this.grid_,
       character: {
-        definition: defs.CHARACTER_MODELS[this.params_.class],
+        definition: _CHARACTER_MODELS[this.params_.class],
         class: this.params_.class,
       },
-      account: { accountName: defs.CHARACTER_MODELS[this.params_.class].name },
+      account: { accountName: _CHARACTER_MODELS[this.params_.class].name },
     });
 
-    const wc = new world_client.WorldAIClient(e, this.terrain_, () => {
+    const wc = new WorldAIClient(e, this.terrain_, () => {
       this.entity_ = null;
       console.log("entity gone, spawner making now one soon");
     });
@@ -54,12 +54,12 @@ export class WorldManager {
   constructor() {
     this.ids_ = 0;
     this.entities_ = [];
-    this.grid_ = new spatial_hash_grid.SpatialHashGrid(
+    this.grid_ = new SpatialHashGrid(
       [[-4000, -4000], [4000, 4000]],
       [1000, 1000],
     );
 
-    this.terrain_ = new terrain_height.HeightGenerator();
+    this.terrain_ = new HeightGenerator();
 
     this.spawners_ = [];
     this.tickTimer_ = 0.0;
@@ -102,7 +102,7 @@ export class WorldManager {
     ];
 
     // Hack
-    const e = new world_entity.WorldEntity({
+    const e = new WorldEntity({
       id: this.ids_++,
       position: vec3.fromValues(
         -60 + (Math.random() * 2 - 1) * 20,
@@ -112,13 +112,13 @@ export class WorldManager {
       rotation: quat.fromValues(0, 0, 0, 1),
       grid: this.grid_,
       character: {
-        definition: defs.CHARACTER_MODELS[randomClass],
+        definition: _CHARACTER_MODELS[randomClass],
         class: randomClass,
       },
       account: params,
     });
 
-    const wc = new world_client.WorldNetworkClient(client, e);
+    const wc = new WorldNetworkClient(client, e);
 
     this.entities_.push(wc);
 
