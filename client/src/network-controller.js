@@ -1,5 +1,5 @@
 // TODO-DefinitelyMaybe: networking
-import "https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js";
+// import "https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js";
 import { Component } from "./entity.js";
 
 export class NetworkController extends Component {
@@ -46,45 +46,51 @@ export class NetworkController extends Component {
   }
 
   SetupSocket_() {
-    this.socket_ = io("ws://localhost:3000", {
-      reconnection: false,
-      transports: ["websocket"],
-      timeout: 10000,
-    });
+    console.log("initial request to make websocket");
+    this.ws = new WebSocket("ws://localhost:3000/ws");
 
-    this.socket_.on("connect", () => {
-      console.log(this.socket_.id);
-      const randomName = this.GenerateRandomName_();
-      // Input validation is for losers
-      this.socket_.emit(
-        "login.commit",
-        document.getElementById("login-input").value,
-      );
-    });
+    this.ws.onopen = async () => {
+      console.log("websocket connected")
+      console.log("attempting to login");
+      // Input validation should be done but currently isn't
+      this.ws.send(JSON.stringify({event:"login.commit",data:document.getElementById("login-input").value}));
+    }
 
-    this.socket_.on("disconnect", () => {
-      console.log("DISCONNECTED: " + this.socket_.id); // undefined
-    });
+    this.ws.onmessage = async (event) => {
+      const json = JSON.parse(event.data)
+      const { type, data } = json
+      console.log(`Recieved ${type} event`);
+      console.table(json);
+      this.OnMessage_(type, data);
+    }
 
-    this.socket_.onAny((e, d) => {
-      this.OnMessage_(e, d);
-    });
+    this.ws.onerror = async (event) => {
+      console.log(event);
+    }
+
+    this.ws.onclose = (event) => {
+      console.log("The WebSocket was closed");
+    }
+
+    // this.ws.onAny((e, d) => {
+    //   this.OnMessage_(e, d);
+    // });
   }
 
   SendChat(txt) {
-    this.socket_.emit("chat.msg", txt);
+    this.ws.emit("chat.msg", txt);
   }
 
   SendTransformUpdate(transform) {
-    this.socket_.emit("world.update", transform);
+    this.ws.emit("world.update", transform);
   }
 
   SendActionAttack_() {
-    this.socket_.emit("action.attack");
+    this.ws.emit("action.attack");
   }
 
   SendInventoryChange_(packet) {
-    this.socket_.emit("world.inventory", packet);
+    this.ws.emit("world.inventory", packet);
   }
 
   GetEntityID_(serverID) {
