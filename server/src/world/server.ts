@@ -1,6 +1,5 @@
-import { performance } from "./deps.js";
-import { WorldManager } from "./world-manager.js";
-import { LoginQueue } from "./login-queue.js";
+import { WorldManager } from "./manager.ts";
+import { LoginQueue } from "../login-queue.ts";
 
 export class SocketWrapper {
   constructor(params) {
@@ -58,6 +57,9 @@ export class WorldServer {
 
     this.worldMgr_ = new WorldManager({ parent: this });
     this.SetupIO_(io);
+
+    // from Deno runtime API
+    this.performance = new Performance()
   }
 
   SetupIO_(io) {
@@ -71,13 +73,13 @@ export class WorldServer {
   }
 
   Run() {
-    let t1 = performance.now();
+    let t1 = this.performance.now();
     this.Schedule_(t1);
   }
 
   Schedule_(t1) {
     setTimeout(() => {
-      let t2 = performance.now();
+      let t2 = this.performance.now();
       this.Update_((t2 - t1) * 0.001);
       this.Schedule_(t2);
     });

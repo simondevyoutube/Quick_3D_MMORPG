@@ -1,9 +1,9 @@
-import { quat, vec3 } from "./deps.js";
-import { WorldAIClient, WorldNetworkClient } from "./world-client.js";
-import { WorldEntity } from "./world-entity.js";
-import { SpatialHashGrid } from "../../client/shared/spatial-hash-grid.js";
-import { HeightGenerator } from "../../client/shared/terrain-height.js";
-import { _CHARACTER_MODELS } from "../../client/shared/defs.js";
+import { quat, vec3 } from "../deps.ts";
+import { WorldAIClient, WorldNetworkClient } from "./client.ts";
+import { WorldEntity } from "./entity.ts";
+import { SpatialHashGrid } from "../../../client/shared/spatial-hash-grid.js";
+import { HeightGenerator } from "../../../client/shared/terrain-height.js";
+import { _CHARACTER_MODELS } from "../../../client/shared/defs.js";
 
 
 export class MonsterSpawner {

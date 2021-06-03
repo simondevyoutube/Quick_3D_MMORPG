@@ -1,4 +1,4 @@
-import { quat, vec3 } from "./deps.js";
+import { quat, vec3 } from "./deps.ts";
 
 export const _TIMEOUT = 600.0;
 
