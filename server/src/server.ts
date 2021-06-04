@@ -7,7 +7,6 @@ import {
 import { World } from "./world.ts";
 
 const port = 3000;
-
 const server = serve({ port: port });
 console.log(`Deno server listening on: http://localhost:${port}`);
 
@@ -24,14 +23,18 @@ async function handleWs(sock: WebSocket) {
     for await (const ev of sock) {
       if (typeof ev === "string") {
         // text message.
-        console.log("ws:Text", ev);
+        // console.log("ws:Text", ev);
 
         // when we receive something from the websocket
         // we need to figure out what to do with it
         const json = JSON.parse(ev);
 
         if (json.event) {
-          // if (condition) { world.send("") }
+          console.log(json.event);
+          if (json.event == "login") {
+            client
+            world.login()
+          }
         }
       } else if (ev instanceof Uint8Array) {
         // binary message.
@@ -62,6 +65,7 @@ for await (const req of server) {
   if (method == "GET") {
     if (url == "/ws") {
       console.log("Trying to create a websocket connection");
+      // Please note that the websocket connection is not secure
       await acceptWebSocket({
         conn,
         bufReader,

@@ -53,7 +53,7 @@ export class NetworkController extends Component {
       console.log("websocket connected")
       console.log("attempting to login");
       // Input validation should be done but currently isn't
-      this.ws.send(JSON.stringify({event:"login.commit",data:document.getElementById("login-input").value}));
+      this.ws.send(JSON.stringify({event:"login",data:document.getElementById("login-input").value}));
     }
 
     this.ws.onmessage = async (event) => {

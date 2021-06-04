@@ -1,14 +1,15 @@
 import { quat, vec3 } from "./deps.ts";
-import { _WEAPONS_DATA } from "../../client/shared/defs.js";
+import { _WEAPONS_DATA, _CHARACTER_MODELS } from "../../client/shared/defs.js";
 import { SpatialHashGrid } from "../../client/shared/spatial-hash-grid.js";
 import { HeightGenerator } from "../../client/shared/terrain-height.js";
-import { _CHARACTER_MODELS } from "../../client/shared/defs.js";
 
 export const _TICK_RATE = 0.1;
 export const _TIMEOUT = 600.0;
 
 export class World {
-  performance: Performance;
+  // from Deno runtime API
+  performance: Performance = performance;
+
   // This is descrete maths. The world updates in a number of ticks per second.
   tick: number = 10; // possible values: 10, 16, 20, 30, 60 ...
   // try to go for numbers that divide into 1000 without any remainder
@@ -19,31 +20,7 @@ export class World {
   // have the clients interpolate between the values received
 
   running = false;
-  // manager = new Manager()
-
-  constructor() {
-    // from Deno runtime API
-    this.performance = performance;
-
-    // this.loginQueue_ = new LoginQueue(
-    //   (c, p) => {
-    //     this.OnLogin_(c, p);
-    //   },
-    // );
-
-    // this.;
-    // this.SetupIO_(io);
-  }
-
-  // SetupIO_(io) {
-  //   io.on("connection", (socket) => {
-  //     this.loginQueue_.Add(new SocketWrapper({ socket: socket }));
-  //   });
-  // }
-
-  // OnLogin_(client, params) {
-  //   this.manager.Add(client, params);
-  // }
+  manager = new Manager()
 
   start() {
     console.log("The world has started.");
@@ -55,28 +32,27 @@ export class World {
   schedule(t1: number) {
     let t2 = this.performance.now();
     // maximum because we'd like to be lazy if we can
-    const delta = Math.max((t2 - t1) * 0.001, this.minDelta);
-    this.update(delta);
+    const delta = (t2 - t1) * 0.001;
+    
+    this.manager.Update(delta);
 
     setTimeout(() => {
       this.schedule(t2);
     }, delta);
   }
 
-  update(timeElapsed: number) {
-    // this.manager.Update(timeElapsed);
-  }
-
-  on(event: Event) {
+  login(event: Event) {
+    console.log("login event");
+    this.manager.Add(client, params);
   }
 }
 
 export class Manager {
   ids_: number;
-  entities_: never[];
+  entities_: any[];
   grid_: SpatialHashGrid;
   terrain_: HeightGenerator;
-  spawners_: never[];
+  spawners_: MonsterSpawner[];
   tickTimer_: number;
   constructor() {
     this.ids_ = 0;
@@ -124,7 +100,7 @@ export class Manager {
 
   Add(client: any, params: { accountName: string }) {
     const models = ["sorceror", "paladin"];
-    const randomClass = models[
+    const randomClass:string = models[
       Math.floor(Math.random() * models.length)
     ];
 
@@ -139,6 +115,7 @@ export class Manager {
       rotation: quat.fromValues(0, 0, 0, 1),
       grid: this.grid_,
       character: {
+        // @ts-ignore
         definition: _CHARACTER_MODELS[randomClass],
         class: randomClass,
       },
@@ -185,8 +162,8 @@ export class Manager {
   }
 
   UpdateEntities_(timeElapsed: any) {
-    const dead: never[] = [];
-    const alive: never[] = [];
+    const dead: any[] = [];
+    const alive: any[] = [];
 
     for (let i = 0; i < this.entities_.length; ++i) {
       const e = this.entities_[i];
@@ -216,7 +193,7 @@ export class MonsterSpawner {
   terrain_: any;
   pos_: any;
   params_: any;
-  entity_: null;
+  entity_: any|null;
   constructor(params: { parent: any; pos: any; class?: string }) {
     this.parent_ = params.parent;
     this.grid_ = this.parent_.grid_;
@@ -242,7 +219,7 @@ export class MonsterSpawner {
 
     const wc = new WorldAIClient(e, this.terrain_, () => {
       this.entity_ = null;
-      console.log("entity gone, spawner making now one soon");
+      console.log("entity gone, spawner making one soon");
     });
 
     this.parent_.AddMonster(wc);
@@ -293,11 +270,11 @@ export class WorldEntity {
   accountInfo_: { name: any };
   characterDefinition_: any;
   characterInfo_: { class: any; inventory: any };
-  events_: never[];
+  events_: any[];
   grid_: any;
   gridClient_: any;
   updateTimer_: number;
-  action_: null;
+  action_: any|null;
   stats_: any;
   constructor(
     params: {
@@ -500,7 +477,7 @@ export class WorldEntity {
     }
   }
 
-  FindNear(radius: number, includeSelf: undefined) {
+  FindNear(radius: number, includeSelf = false) {
     let nearby = this.grid_.FindNear(
       [this.position_[0], this.position_[2]],
       [radius, radius],
@@ -537,11 +514,11 @@ export class WorldEntity {
 }
 
 export class WorldClient {
-  entity_: any;
+  entity_: any|null;
   client_: any;
   timeout_: number;
   entityCache_: {};
-  constructor(client: any, entity) {
+  constructor(client: any, entity:any) {
     this.entity_ = entity;
 
     // Hack
@@ -701,7 +678,7 @@ export class WorldNetworkClient extends WorldClient {
 }
 
 export class AIStateMachine {
-  currentState_: null;
+  currentState_: any|null;
   entity_: any;
   terrain_: any;
   constructor(entity: any, terrain: any) {
@@ -714,7 +691,7 @@ export class AIStateMachine {
     const prevState = this.currentState_;
 
     if (prevState) {
-      if (prevState.constructor.name == state.constructor.name) {
+      if (prevState.constructor.name == state!.constructor.name) {
         return;
       }
       prevState.Exit();
@@ -724,7 +701,7 @@ export class AIStateMachine {
     this.currentState_.parent_ = this;
     this.currentState_.entity_ = this.entity_;
     this.currentState_.terrain_ = this.terrain_;
-    state.Enter(prevState);
+    state!.Enter(prevState);
   }
 
   Update(timeElapsed: any) {
