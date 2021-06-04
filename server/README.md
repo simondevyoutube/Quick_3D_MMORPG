@@ -7,6 +7,10 @@ Start server with:
 The `--no-check` is simply for start-up time. Make sure to sort out type errors
 before running.
 
+notes:
+
+- Dropped websocket connections? i.e. how to reconnect?
+
 # Client-side
 
 Start up the client server with:
