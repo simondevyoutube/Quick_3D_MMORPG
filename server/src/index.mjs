@@ -11,7 +11,7 @@
 import * as http from "http";
 import * as socket_io from "socket.io";
 
-import { world_server } from "./src/world-server.mjs";
+import { world_server } from "./world-server.mjs";
 
 function Main() {
   const port = process.env.PORT || 3000;
