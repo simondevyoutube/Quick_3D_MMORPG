@@ -80,6 +80,12 @@ export const ui_controller = (() => {
 
     AddEventMessages(events) {
       for (let e of events) {
+        // TODO-DefinitelyMaybe: Some error came up where we couldn't find .Name on the attacker
+        if (!e.attacker) {
+          console.error("Some error came up where we couldn't find .Name on the attacker");
+          console.error(e);
+          debugger
+        }
         if (e.type != 'attack') {
           continue;
         }
