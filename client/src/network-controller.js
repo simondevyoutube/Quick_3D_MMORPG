@@ -102,8 +102,7 @@ export const network_controller = (() => {
       } else if (e == 'world.update') {
         const updates = d;
 
-        const spawner = this.FindEntity('spawners').GetComponent(
-            'NetworkEntitySpawner');
+        const spawner = this.FindEntity('spawners').GetComponent('NetworkEntitySpawner');
 
         const ui = this.FindEntity('ui').GetComponent('UIController');
 
@@ -119,7 +118,13 @@ export const network_controller = (() => {
                 inventory: u.desc.character.inventory,
             });
           } else {
+            // TODO-DefinitelyMaybe: This sometimes fails
+            // it asks the entity manager for an element thats not there
             npc = this.FindEntity(id);
+            if (!npc) {
+              // TODO-DefinitelyMaybe: We're early out of this and not worry about it for now
+              break
+            }
           }
 
           // Translate events, hardcoded, bad, sorry
@@ -138,10 +143,10 @@ export const network_controller = (() => {
           ui.AddEventMessages(events);
 
           npc.Broadcast({
-              topic: 'network.update',
-              transform: u.transform,
-              stats: u.stats,
-              events: events,
+            topic: 'network.update',
+            transform: u.transform,
+            stats: u.stats,
+            events: events,
           });
         }
       } else if (e == 'chat.message') {
