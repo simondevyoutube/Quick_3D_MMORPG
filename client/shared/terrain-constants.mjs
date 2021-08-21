@@ -1,6 +1,4 @@
-
-
-export const terrain_constants = (function() {
+export const terrain_constants = (function () {
   const QT_MIN_CELL_SIZE = 100;
   // const QT_MIN_CELL_RESOLUTION = 24;
   const QT_MIN_CELL_RESOLUTION = 16;
@@ -25,7 +23,7 @@ export const terrain_constants = (function() {
       exponentiation: 7.5,
       height: NOISE_HEIGHT,
       scale: NOISE_SCALE,
-      seed: 1
+      seed: 1,
     },
-  }
+  };
 })();

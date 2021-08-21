@@ -1,8 +1,6 @@
-import { THREE } from './deps.js';
-
+import { THREE } from "./deps.js";
 
 export const entity = (() => {
-
   class Entity {
     constructor() {
       this._name = null;
@@ -89,16 +87,16 @@ export const entity = (() => {
     SetPosition(p) {
       this._position.copy(p);
       this.Broadcast({
-          topic: 'update.position',
-          value: this._position,
+        topic: "update.position",
+        value: this._position,
       });
     }
 
     SetQuaternion(r) {
       this._rotation.copy(r);
       this.Broadcast({
-          topic: 'update.rotation',
-          value: this._rotation,
+        topic: "update.rotation",
+        value: this._rotation,
       });
     }
 
@@ -115,7 +113,7 @@ export const entity = (() => {
         this._components[k].Update(timeElapsed);
       }
     }
-  };
+  }
 
   class Component {
     constructor() {
@@ -130,7 +128,7 @@ export const entity = (() => {
     }
 
     InitComponent() {}
-    
+
     InitEntity() {}
 
     GetComponent(n) {
@@ -158,11 +156,10 @@ export const entity = (() => {
     _RegisterHandler(n, h) {
       this.parent_._RegisterHandler(n, h);
     }
-  };
+  }
 
   return {
     Entity: Entity,
     Component: Component,
   };
-
 })();

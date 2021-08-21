@@ -1,31 +1,29 @@
-import { THREE, OrbitControls, FBXLoader } from './deps.js';
-
+import { FBXLoader, OrbitControls, THREE } from "./deps.js";
 
 const _CHARACTER_MODELS = {
   zombie: {
-    base: 'mremireh_o_desbiens.fbx',
-    path: './resources/characters/zombie/',
+    base: "mremireh_o_desbiens.fbx",
+    path: "./resources/characters/zombie/",
     animations: {
-      idle: 'idle.fbx',
-      walk: 'walk.fbx',
-      run: 'run.fbx',
-      dance: 'dance.fbx',
+      idle: "idle.fbx",
+      walk: "walk.fbx",
+      run: "run.fbx",
+      dance: "dance.fbx",
     },
     nameOffset: 25,
   },
   guard: {
-    base: 'castle_guard_01.fbx',
-    path: './resources/characters/guard/',
+    base: "castle_guard_01.fbx",
+    path: "./resources/characters/guard/",
     animations: {
-      idle: 'Sword And Shield Idle.fbx',
-      walk: 'Sword And Shield Walk.fbx',
-      run: 'Sword And Shield Run.fbx',
-      dance: 'Macarena Dance.fbx',
+      idle: "Sword And Shield Idle.fbx",
+      walk: "Sword And Shield Walk.fbx",
+      run: "Sword And Shield Run.fbx",
+      dance: "Macarena Dance.fbx",
     },
     nameOffset: 20,
-  }
-}
-
+  },
+};
 
 class FloatingName {
   constructor(params) {
@@ -40,29 +38,29 @@ class FloatingName {
   Init_() {
     const modelData = _CHARACTER_MODELS[this.params_.desc.character.class];
 
-    this.element_ = document.createElement('canvas');
-    this.context2d_ = this.element_.getContext('2d');
+    this.element_ = document.createElement("canvas");
+    this.context2d_ = this.element_.getContext("2d");
     this.context2d_.canvas.width = 256;
     this.context2d_.canvas.height = 128;
-    this.context2d_.fillStyle = '#FFF';
+    this.context2d_.fillStyle = "#FFF";
     this.context2d_.font = "18pt Helvetica";
     this.context2d_.shadowOffsetX = 3;
     this.context2d_.shadowOffsetY = 3;
     this.context2d_.shadowColor = "rgba(0,0,0,0.3)";
     this.context2d_.shadowBlur = 4;
-    this.context2d_.textAlign = 'center';
+    this.context2d_.textAlign = "center";
     this.context2d_.fillText(this.params_.desc.account.name, 128, 64);
 
     const map = new THREE.CanvasTexture(this.context2d_.canvas);
 
     this.sprite_ = new THREE.Sprite(
-        new THREE.SpriteMaterial({map: map, color: 0xffffff}));
-    this.sprite_.scale.set(20, 10, 1)
+      new THREE.SpriteMaterial({ map: map, color: 0xffffff }),
+    );
+    this.sprite_.scale.set(20, 10, 1);
     this.sprite_.position.y += modelData.nameOffset;
     this.params_.parent.add(this.sprite_);
   }
-};
-
+}
 
 class OurLoadingManager {
   constructor(loader) {
@@ -83,8 +81,7 @@ class OurLoadingManager {
       }
     });
   }
-};
-
+}
 
 class BasicCharacterControllerProxy {
   constructor(animations) {
@@ -94,8 +91,7 @@ class BasicCharacterControllerProxy {
   get animations() {
     return this.animations_;
   }
-};
-
+}
 
 class AnimatedMesh {
   constructor(params) {
@@ -111,7 +107,7 @@ class AnimatedMesh {
 
   Destroy() {
     if (this.target_) {
-      this.target_.traverse(c => {
+      this.target_.traverse((c) => {
         if (c.material) {
           c.material.dispose();
         }
@@ -137,7 +133,7 @@ class AnimatedMesh {
     loader.setPath(modelData.path);
     loader.load(modelData.base, (fbx) => {
       fbx.scale.setScalar(0.1);
-      fbx.traverse(c => {
+      fbx.traverse((c) => {
         c.castShadow = true;
       });
 
@@ -149,7 +145,7 @@ class AnimatedMesh {
       const _OnLoad = (animName, anim) => {
         const clip = anim.animations[0];
         const action = this.mixer_.clipAction(clip);
-  
+
         this.animations_[animName] = {
           clip: clip,
           action: action,
@@ -164,17 +160,29 @@ class AnimatedMesh {
 
       this.manager_ = new OurLoadingManager(loader);
       this.manager_.load(
-          modelData.animations.idle,
-          (a) => { _OnLoad('idle', a); });
+        modelData.animations.idle,
+        (a) => {
+          _OnLoad("idle", a);
+        },
+      );
       this.manager_.load(
-          modelData.animations.walk,
-          (a) => { _OnLoad('walk', a); });
+        modelData.animations.walk,
+        (a) => {
+          _OnLoad("walk", a);
+        },
+      );
       this.manager_.load(
-          modelData.animations.run,
-          (a) => { _OnLoad('run', a); });
+        modelData.animations.run,
+        (a) => {
+          _OnLoad("run", a);
+        },
+      );
       this.manager_.load(
-          modelData.animations.dance,
-          (a) => { _OnLoad('dance', a); });
+        modelData.animations.dance,
+        (a) => {
+          _OnLoad("dance", a);
+        },
+      );
       this.manager_.onLoad = () => {
         this.onLoad();
       };
@@ -186,8 +194,7 @@ class AnimatedMesh {
       this.mixer_.update(timeElapsed);
     }
   }
-};
-
+}
 
 class BasicCharacterController {
   constructor(params) {
@@ -206,15 +213,16 @@ class BasicCharacterController {
     this._input = new BasicCharacterControllerInput();
 
     this.target_ = new AnimatedMesh({
-        scene: params.scene,
-        desc: params.desc,
+      scene: params.scene,
+      desc: params.desc,
     });
     this.target_.onLoad = () => {
       this.loaded_ = true;
-      this.stateMachine_.SetState('idle');
-    }
+      this.stateMachine_.SetState("idle");
+    };
     this.stateMachine_ = new CharacterFSM(
-        new BasicCharacterControllerProxy(this.target_.animations_));
+      new BasicCharacterControllerProxy(this.target_.animations_),
+    );
   }
 
   get IsLoaded() {
@@ -238,9 +246,9 @@ class BasicCharacterController {
 
   CreateTransformPacket() {
     return [
-        this.stateMachine_.currentState_.Name,
-        this.position_.toArray(),
-        this.quaternion_.toArray(),
+      this.stateMachine_.currentState_.Name,
+      this.position_.toArray(),
+      this.quaternion_.toArray(),
     ];
   }
 
@@ -253,13 +261,15 @@ class BasicCharacterController {
 
     const velocity = this.velocity_;
     const frameDecceleration = new THREE.Vector3(
-        velocity.x * this.decceleration_.x,
-        velocity.y * this.decceleration_.y,
-        velocity.z * this.decceleration_.z
+      velocity.x * this.decceleration_.x,
+      velocity.y * this.decceleration_.y,
+      velocity.z * this.decceleration_.z,
     );
     frameDecceleration.multiplyScalar(timeInSeconds);
     frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(
-        Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+      Math.abs(frameDecceleration.z),
+      Math.abs(velocity.z),
+    );
 
     velocity.add(frameDecceleration);
 
@@ -273,7 +283,7 @@ class BasicCharacterController {
       acc.multiplyScalar(2.0);
     }
 
-    if (this.stateMachine_.currentState_.Name == 'dance') {
+    if (this.stateMachine_.currentState_.Name == "dance") {
       acc.multiplyScalar(0.0);
     }
 
@@ -285,12 +295,18 @@ class BasicCharacterController {
     }
     if (this._input._keys.left) {
       _A.set(0, 1, 0);
-      _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * this.acceleration_.y);
+      _Q.setFromAxisAngle(
+        _A,
+        4.0 * Math.PI * timeInSeconds * this.acceleration_.y,
+      );
       _R.multiply(_Q);
     }
     if (this._input._keys.right) {
       _A.set(0, 1, 0);
-      _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * timeInSeconds * this.acceleration_.y);
+      _Q.setFromAxisAngle(
+        _A,
+        4.0 * -Math.PI * timeInSeconds * this.acceleration_.y,
+      );
       _R.multiply(_Q);
     }
 
@@ -318,11 +334,11 @@ class BasicCharacterController {
 
     this.target_.Update(timeInSeconds);
   }
-};
+}
 
 class BasicCharacterControllerInput {
   constructor() {
-    this._Init();    
+    this._Init();
   }
 
   _Init() {
@@ -334,8 +350,8 @@ class BasicCharacterControllerInput {
       space: false,
       shift: false,
     };
-    document.addEventListener('keydown', (e) => this.OnKeyDown_(e), false);
-    document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
+    document.addEventListener("keydown", (e) => this.OnKeyDown_(e), false);
+    document.addEventListener("keyup", (e) => this._onKeyUp(e), false);
   }
 
   OnKeyDown_(event) {
@@ -368,7 +384,7 @@ class BasicCharacterControllerInput {
     if (event.currentTarget.activeElement != document.body) {
       return;
     }
-    switch(event.keyCode) {
+    switch (event.keyCode) {
       case 87: // w
         this._keys.forward = false;
         break;
@@ -389,8 +405,7 @@ class BasicCharacterControllerInput {
         break;
     }
   }
-};
-
+}
 
 class FiniteStateMachine {
   constructor() {
@@ -404,7 +419,7 @@ class FiniteStateMachine {
 
   SetState(name) {
     const prevState = this.currentState_;
-    
+
     if (prevState) {
       if (prevState.Name == name) {
         return;
@@ -423,8 +438,7 @@ class FiniteStateMachine {
       this.currentState_.Update(timeElapsed, input);
     }
   }
-};
-
+}
 
 class CharacterFSM extends FiniteStateMachine {
   constructor(proxy) {
@@ -434,13 +448,12 @@ class CharacterFSM extends FiniteStateMachine {
   }
 
   _Init() {
-    this._AddState('idle', IdleState);
-    this._AddState('walk', WalkState);
-    this._AddState('run', RunState);
-    this._AddState('dance', DanceState);
+    this._AddState("idle", IdleState);
+    this._AddState("walk", WalkState);
+    this._AddState("run", RunState);
+    this._AddState("dance", DanceState);
   }
-};
-
+}
 
 class State {
   constructor(parent) {
@@ -450,8 +463,7 @@ class State {
   Enter() {}
   Exit() {}
   Update() {}
-};
-
+}
 
 class DanceState extends State {
   constructor(parent) {
@@ -459,22 +471,22 @@ class DanceState extends State {
 
     this._FinishedCallback = () => {
       this._Finished();
-    }
+    };
   }
 
   get Name() {
-    return 'dance';
+    return "dance";
   }
 
   Enter(prevState) {
-    const curAction = this._parent._proxy.animations_['dance'].action;
+    const curAction = this._parent._proxy.animations_["dance"].action;
     const mixer = curAction.getMixer();
-    mixer.addEventListener('finished', this._FinishedCallback);
+    mixer.addEventListener("finished", this._FinishedCallback);
 
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
 
-      curAction.reset();  
+      curAction.reset();
       curAction.setLoop(THREE.LoopOnce, 1);
       curAction.clampWhenFinished = true;
       curAction.crossFadeFrom(prevAction, 0.2, true);
@@ -486,13 +498,13 @@ class DanceState extends State {
 
   _Finished() {
     this._Cleanup();
-    this._parent.SetState('idle');
+    this._parent.SetState("idle");
   }
 
   _Cleanup() {
-    const action = this._parent._proxy.animations_['dance'].action;
-    
-    action.getMixer().removeEventListener('finished', this._CleanupCallback);
+    const action = this._parent._proxy.animations_["dance"].action;
+
+    action.getMixer().removeEventListener("finished", this._CleanupCallback);
   }
 
   Exit() {
@@ -501,8 +513,7 @@ class DanceState extends State {
 
   Update(_) {
   }
-};
-
+}
 
 class WalkState extends State {
   constructor(parent) {
@@ -510,18 +521,19 @@ class WalkState extends State {
   }
 
   get Name() {
-    return 'walk';
+    return "walk";
   }
 
   Enter(prevState) {
-    const curAction = this._parent._proxy.animations_['walk'].action;
+    const curAction = this._parent._proxy.animations_["walk"].action;
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
 
       curAction.enabled = true;
 
-      if (prevState.Name == 'run') {
-        const ratio = curAction.getClip().duration / prevAction.getClip().duration;
+      if (prevState.Name == "run") {
+        const ratio = curAction.getClip().duration /
+          prevAction.getClip().duration;
         curAction.time = prevAction.time * ratio;
       } else {
         curAction.time = 0.0;
@@ -546,15 +558,14 @@ class WalkState extends State {
 
     if (input._keys.forward || input._keys.backward) {
       if (input._keys.shift) {
-        this._parent.SetState('run');
+        this._parent.SetState("run");
       }
       return;
     }
 
-    this._parent.SetState('idle');
+    this._parent.SetState("idle");
   }
-};
-
+}
 
 class RunState extends State {
   constructor(parent) {
@@ -562,18 +573,19 @@ class RunState extends State {
   }
 
   get Name() {
-    return 'run';
+    return "run";
   }
 
   Enter(prevState) {
-    const curAction = this._parent._proxy.animations_['run'].action;
+    const curAction = this._parent._proxy.animations_["run"].action;
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
 
       curAction.enabled = true;
 
-      if (prevState.Name == 'walk') {
-        const ratio = curAction.getClip().duration / prevAction.getClip().duration;
+      if (prevState.Name == "walk") {
+        const ratio = curAction.getClip().duration /
+          prevAction.getClip().duration;
         curAction.time = prevAction.time * ratio;
       } else {
         curAction.time = 0.0;
@@ -598,15 +610,14 @@ class RunState extends State {
 
     if (input._keys.forward || input._keys.backward) {
       if (!input._keys.shift) {
-        this._parent.SetState('walk');
+        this._parent.SetState("walk");
       }
       return;
     }
 
-    this._parent.SetState('idle');
+    this._parent.SetState("idle");
   }
-};
-
+}
 
 class IdleState extends State {
   constructor(parent) {
@@ -614,11 +625,11 @@ class IdleState extends State {
   }
 
   get Name() {
-    return 'idle';
+    return "idle";
   }
 
   Enter(prevState) {
-    const idleAction = this._parent._proxy.animations_['idle'].action;
+    const idleAction = this._parent._proxy.animations_["idle"].action;
     if (prevState) {
       const prevAction = this._parent._proxy.animations_[prevState.Name].action;
       idleAction.time = 0.0;
@@ -640,13 +651,12 @@ class IdleState extends State {
       return;
     }
     if (input._keys.forward || input._keys.backward) {
-      this._parent.SetState('walk');
+      this._parent.SetState("walk");
     } else if (input._keys.space) {
-      this._parent.SetState('dance');
+      this._parent.SetState("dance");
     }
   }
-};
-
+}
 
 class ThirdPersonCamera {
   constructor(params) {
@@ -687,7 +697,6 @@ class ThirdPersonCamera {
   }
 }
 
-
 class PlayerEntity {
   constructor(params) {
     this.params_ = params;
@@ -718,8 +727,8 @@ class PlayerEntity {
     const p = data[1];
     const q = data[2];
     this.controls_.SetTransform(
-        new THREE.Vector3(...p),
-        new THREE.Quaternion(...q)
+      new THREE.Vector3(...p),
+      new THREE.Quaternion(...q),
     );
   }
 
@@ -734,13 +743,12 @@ class PlayerEntity {
     if (this.updateTimer_ <= 0.0 && this.controls_.IsLoaded) {
       this.updateTimer_ = 0.1;
       this.params_.socket.emit(
-        'world.update',
+        "world.update",
         this.controls_.CreateTransformPacket(),
       );
     }
   }
-};
-
+}
 
 class NetworkCharacterController {
   constructor(params) {
@@ -758,18 +766,19 @@ class NetworkCharacterController {
     this.params_ = params;
 
     this.target_ = new AnimatedMesh({
-        scene: params.scene,
-        desc: params.desc,
+      scene: params.scene,
+      desc: params.desc,
     });
     this.target_.onLoad = () => {
       this.stateMachine_ = new CharacterFSM(
-          new BasicCharacterControllerProxy(this.target_.animations_));
-      this.stateMachine_.SetState('idle');
-    }
+        new BasicCharacterControllerProxy(this.target_.animations_),
+      );
+      this.stateMachine_.SetState("idle");
+    };
 
     this.name_ = new FloatingName({
-        parent: this.target_.group_,
-        desc: params.desc,
+      parent: this.target_.group_,
+      desc: params.desc,
     });
   }
 
@@ -796,8 +805,7 @@ class NetworkCharacterController {
     this.stateMachine_.Update(timeInSeconds, null);
     this.target_.Update(timeInSeconds);
   }
-};
-
+}
 
 class NetworkEntity {
   constructor(params) {
@@ -817,16 +825,16 @@ class NetworkEntity {
 
   CreateFromDesc(desc, transform) {
     this.controller_ = new NetworkCharacterController({
-        scene: this.params_.scene,
-        desc: desc,
+      scene: this.params_.scene,
+      desc: desc,
     });
     this.controller_.position.set(...transform[1]);
     this.controller_.quaternion.set(...transform[2]);
-    this.targetFrame_ = {time: 0.1, transform: transform};
-}
+    this.targetFrame_ = { time: 0.1, transform: transform };
+  }
 
   UpdateTransform(data) {
-    this.transformUpdates_.push({time: 0.1, transform: data});
+    this.transformUpdates_.push({ time: 0.1, transform: data });
   }
 
   Update(timeElapsed) {
@@ -835,7 +843,7 @@ class NetworkEntity {
     this.ApplyLCT_(timeElapsed);
   }
 
-  ApplyLCT_(timeElapsed) {    
+  ApplyLCT_(timeElapsed) {
     if (this.transformUpdates_.length == 0) {
       return;
     }
@@ -844,14 +852,16 @@ class NetworkEntity {
       this.transformUpdates_[i].time -= timeElapsed;
     }
 
-    while (this.transformUpdates_.length > 0 &&
-        this.transformUpdates_[0].time <= 0.0) {
+    while (
+      this.transformUpdates_.length > 0 &&
+      this.transformUpdates_[0].time <= 0.0
+    ) {
       this.lastFrame_ = {
         transform: [
           this.targetFrame_.transform[0],
           this.controller_.position.toArray(),
-          this.controller_.quaternion.toArray()
-        ]
+          this.controller_.quaternion.toArray(),
+        ],
       };
       this.targetFrame_ = this.transformUpdates_.shift();
       this.targetFrame_.time = 0.0;
@@ -873,40 +883,41 @@ class NetworkEntity {
   }
 }
 
-
 class Chatbox {
   constructor(params) {
     this.params_ = params;
     this.OnChat = () => {};
-    this.Init_(); 
+    this.Init_();
   }
 
   Init_() {
-    this.element_ = document.getElementById('chat-input');
+    this.element_ = document.getElementById("chat-input");
     this.element_.addEventListener(
-        'keydown', (e) => this.OnKeyDown_(e), false);
+      "keydown",
+      (e) => this.OnKeyDown_(e),
+      false,
+    );
   }
 
   OnKeyDown_(evt) {
     if (evt.keyCode === 13) {
       evt.preventDefault();
       const msg = this.element_.value;
-      if (msg != '') {
+      if (msg != "") {
         this.OnChat(msg);
       }
-      this.element_.value = '';
+      this.element_.value = "";
     }
   }
 
   AddMessage(msg) {
-    const e = document.createElement('div');
-    e.className = 'chat-text';
-    e.innerText = '[' + msg.name + ']: ' + msg.text;
-    const chatElement = document.getElementById('chat-ui-text-area');
-    chatElement.insertBefore(e, document.getElementById('chat-input'));
+    const e = document.createElement("div");
+    e.className = "chat-text";
+    e.innerText = "[" + msg.name + "]: " + msg.text;
+    const chatElement = document.getElementById("chat-ui-text-area");
+    chatElement.insertBefore(e, document.getElementById("chat-input"));
   }
-};
-
+}
 
 class BasicMMODemo {
   constructor() {
@@ -924,10 +935,11 @@ class BasicMMODemo {
     this.threejs_.setPixelRatio(window.devicePixelRatio);
     this.threejs_.setSize(window.innerWidth, window.innerHeight);
 
-    document.getElementById('container').appendChild(
-        this.threejs_.domElement);
+    document.getElementById("container").appendChild(
+      this.threejs_.domElement,
+    );
 
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       this.OnWindowResize_();
     }, false);
 
@@ -961,27 +973,30 @@ class BasicMMODemo {
     this.scene_.add(light);
 
     const controls = new OrbitControls(
-      this.camera_, this.threejs_.domElement);
+      this.camera_,
+      this.threejs_.domElement,
+    );
     controls.target.set(0, 20, 0);
     controls.update();
 
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './resources/posx.jpg',
-        './resources/negx.jpg',
-        './resources/posy.jpg',
-        './resources/negy.jpg',
-        './resources/posz.jpg',
-        './resources/negz.jpg',
+      "./resources/posx.jpg",
+      "./resources/negx.jpg",
+      "./resources/posy.jpg",
+      "./resources/negy.jpg",
+      "./resources/posz.jpg",
+      "./resources/negz.jpg",
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene_.background = texture;
 
     const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 10, 10),
-        new THREE.MeshStandardMaterial({
-            color: 0x808080,
-          }));
+      new THREE.PlaneGeometry(100, 100, 10, 10),
+      new THREE.MeshStandardMaterial({
+        color: 0x808080,
+      }),
+    );
     plane.castShadow = false;
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
@@ -992,7 +1007,9 @@ class BasicMMODemo {
     this.entities_ = {};
 
     this.chatbox_ = new Chatbox();
-    this.chatbox_.OnChat = (txt) => { this.OnChat_(txt); };
+    this.chatbox_.OnChat = (txt) => {
+      this.OnChat_(txt);
+    };
 
     this.previousRAF_ = null;
     this.RAF_();
@@ -1000,37 +1017,56 @@ class BasicMMODemo {
 
   GenerateRandomName_() {
     const names1 = [
-        'Aspiring', 'Nameless', 'Cautionary', 'Excited',
-        'Modest', 'Maniacal', 'Caffeinated', 'Sleepy',
-        'Passionate', 'Masochistic', 'Aging', 'Pedantic',
-        'Talkative',
+      "Aspiring",
+      "Nameless",
+      "Cautionary",
+      "Excited",
+      "Modest",
+      "Maniacal",
+      "Caffeinated",
+      "Sleepy",
+      "Passionate",
+      "Masochistic",
+      "Aging",
+      "Pedantic",
+      "Talkative",
     ];
     const names2 = [
-        'Coder', 'Mute', 'Giraffe', 'Snowman',
-        'Machinist', 'Fondler', 'Typist',
-        'Noodler', 'Arborist', 'Peeper', 'Ghost',
+      "Coder",
+      "Mute",
+      "Giraffe",
+      "Snowman",
+      "Machinist",
+      "Fondler",
+      "Typist",
+      "Noodler",
+      "Arborist",
+      "Peeper",
+      "Ghost",
     ];
     const n1 = names1[
-        Math.floor(Math.random() * names1.length)];
+      Math.floor(Math.random() * names1.length)
+    ];
     const n2 = names2[
-        Math.floor(Math.random() * names2.length)];
-    return n1 + ' ' + n2;
+      Math.floor(Math.random() * names2.length)
+    ];
+    return n1 + " " + n2;
   }
 
   SetupSocket_() {
-    this.socket_ = io('ws://localhost:3000', {
-        reconnection: false,
-        transports: ['websocket'],
+    this.socket_ = io("ws://localhost:3000", {
+      reconnection: false,
+      transports: ["websocket"],
     });
 
     this.socket_.on("connect", () => {
       console.log(this.socket_.id);
       const randomName = this.GenerateRandomName_();
-      this.socket_.emit('login.commit', randomName);
+      this.socket_.emit("login.commit", randomName);
     });
 
     this.socket_.on("disconnect", () => {
-      console.log('DISCONNECTED: ' + this.socket_.id); // undefined
+      console.log("DISCONNECTED: " + this.socket_.id); // undefined
     });
 
     this.socket_.onAny((e, d) => {
@@ -1039,30 +1075,30 @@ class BasicMMODemo {
   }
 
   OnChat_(txt) {
-    this.socket_.emit('chat.msg', txt);
+    this.socket_.emit("chat.msg", txt);
   }
 
   OnMessage_(e, d) {
-    if (e == 'world.player') {
+    if (e == "world.player") {
       this.playerID_ = d.id;
       const e = new PlayerEntity({
-          scene: this.scene_,
-          camera: this.camera_,
-          socket: this.socket_
+        scene: this.scene_,
+        camera: this.camera_,
+        socket: this.socket_,
       });
       e.CreateFromDesc(d.desc);
       e.UpdateTransform(d.transform);
       this.entities_[d.id] = e;
-      console.log('entering world: ' + d.id);
-    } else if (e == 'world.update') {
+      console.log("entering world: " + d.id);
+    } else if (e == "world.update") {
       const updates = d;
       const alive = {};
 
       alive[this.playerID_] = this.entities_[this.playerID_];
 
       for (let u of updates) {
-        if ('desc' in u) {
-          const e = new NetworkEntity({scene: this.scene_});
+        if ("desc" in u) {
+          const e = new NetworkEntity({ scene: this.scene_ });
           e.CreateFromDesc(u.desc, u.transform);
           this.entities_[u.id] = e;
         } else {
@@ -1084,7 +1120,7 @@ class BasicMMODemo {
       for (let i = 0; i < dead.length; ++i) {
         dead[i].Destroy();
       }
-    } else if (e == 'chat.message') {
+    } else if (e == "chat.message") {
       this.chatbox_.AddMessage(d);
     }
   }
@@ -1115,9 +1151,8 @@ class BasicMMODemo {
   }
 }
 
-
 let _APP = null;
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
   _APP = new BasicMMODemo();
 });

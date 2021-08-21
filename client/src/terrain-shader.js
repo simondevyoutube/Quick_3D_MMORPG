@@ -1,5 +1,4 @@
-export const terrain_shader = (function() {
-
+export const terrain_shader = (function () {
   const _VS_1 = `
 
 // Triplanar Attributes
@@ -14,8 +13,7 @@ out vec4 vWeights2;
 
 `;
 
-
-    const _VS_2 = `
+  const _VS_2 = `
 
 vCoords = transformed.xyz;
 vWeights1 = weights1;
@@ -51,7 +49,6 @@ void main(){
   vWeights2 = weights2;
 }
   `;
-  
 
   const _PS = `
 
@@ -259,7 +256,6 @@ void main() {
 
   `;
 
-
   const _PS_1 = `
 
 precision mediump sampler2DArray;
@@ -424,8 +420,8 @@ vec4 _TriplanarN(vec3 pos, vec3 normal, float texSlice, sampler2DArray tex) {
 }
 
   `;
-  
-    const _PS_2 = `
+
+  const _PS_2 = `
 
 {
   vec3 worldPosition = vCoords;
@@ -463,13 +459,12 @@ vec4 _TriplanarN(vec3 pos, vec3 normal, float texSlice, sampler2DArray tex) {
 
     `;
 
-    return {
-      VS: _VS,
-      PS: _PS,
-      VS1: _VS_1,
-      VS2: _VS_2,
-      PS1: _PS_1,
-      PS2: _PS_2,
-    };
-  })();
-  
+  return {
+    VS: _VS,
+    PS: _PS,
+    VS1: _VS_1,
+    VS2: _VS_2,
+    PS1: _PS_1,
+    PS2: _PS_2,
+  };
+})();

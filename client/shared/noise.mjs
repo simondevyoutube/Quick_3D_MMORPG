@@ -1,8 +1,6 @@
-import {simplex} from './simplex-noise.mjs';
+import { simplex } from "./simplex-noise.mjs";
 
-
-export const noise = (function() {
-
+export const noise = (function () {
   class _NoiseGenerator {
     constructor(params) {
       this._params = params;
@@ -26,7 +24,10 @@ export const noise = (function() {
       let total = 0;
       for (let o = 0; o < this._params.octaves; o++) {
         const noiseValue = noiseFunc.noise3D(
-          xs * frequency, ys * frequency, zs * frequency) * 0.5 + 0.5;
+              xs * frequency,
+              ys * frequency,
+              zs * frequency,
+            ) * 0.5 + 0.5;
 
         total += noiseValue * amplitude;
         normalization += amplitude;
@@ -35,11 +36,13 @@ export const noise = (function() {
       }
       total /= normalization;
       return Math.pow(
-          total, this._params.exponentiation) * this._params.height;
+        total,
+        this._params.exponentiation,
+      ) * this._params.height;
     }
   }
 
   return {
-    Noise: _NoiseGenerator
-  }
+    Noise: _NoiseGenerator,
+  };
 })();

@@ -1,12 +1,10 @@
-import { THREE } from './deps.js';
+import { THREE } from "./deps.js";
 
-import {entity} from './entity.js';
+import { entity } from "./entity.js";
 
-import {defs} from '../shared/defs.mjs';
-
+import { defs } from "../shared/defs.mjs";
 
 export const floating_name = (() => {
-
   class FloatingName extends entity.Component {
     constructor(params) {
       super();
@@ -20,7 +18,7 @@ export const floating_name = (() => {
         return;
       }
 
-      this.sprite_.traverse(c => {
+      this.sprite_.traverse((c) => {
         if (c.material) {
           let materials = c.material;
           if (!(c.material instanceof Array)) {
@@ -42,9 +40,17 @@ export const floating_name = (() => {
 
     InitComponent() {
       this._RegisterHandler(
-          'load.character', (m) => { this.CreateSprite_(m); });
+        "load.character",
+        (m) => {
+          this.CreateSprite_(m);
+        },
+      );
       this._RegisterHandler(
-          'health.death', (m) => { this.OnDeath_(m); });
+        "health.death",
+        (m) => {
+          this.OnDeath_(m);
+        },
+      );
     }
 
     OnDeath_() {
@@ -56,32 +62,34 @@ export const floating_name = (() => {
         return;
       }
       const modelData = defs.CHARACTER_MODELS[
-          this.params_.desc.character.class];
+        this.params_.desc.character.class
+      ];
 
-      this.element_ = document.createElement('canvas');
-      this.context2d_ = this.element_.getContext('2d');
+      this.element_ = document.createElement("canvas");
+      this.context2d_ = this.element_.getContext("2d");
       this.context2d_.canvas.width = 256;
       this.context2d_.canvas.height = 128;
-      this.context2d_.fillStyle = '#FFF';
+      this.context2d_.fillStyle = "#FFF";
       this.context2d_.font = "18pt Helvetica";
       this.context2d_.shadowOffsetX = 3;
       this.context2d_.shadowOffsetY = 3;
       this.context2d_.shadowColor = "rgba(0,0,0,0.3)";
       this.context2d_.shadowBlur = 4;
-      this.context2d_.textAlign = 'center';
+      this.context2d_.textAlign = "center";
       this.context2d_.fillText(this.params_.desc.account.name, 128, 64);
 
       const map = new THREE.CanvasTexture(this.context2d_.canvas);
 
       this.sprite_ = new THREE.Sprite(
-          new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: false}));
-      this.sprite_.scale.set(10, 5, 1)
+        new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false }),
+      );
+      this.sprite_.scale.set(10, 5, 1);
       this.sprite_.position.y += modelData.nameOffset;
       msg.model.add(this.sprite_);
     }
-  };
+  }
 
   return {
-      FloatingName: FloatingName,
+    FloatingName: FloatingName,
   };
 })();

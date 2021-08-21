@@ -1,8 +1,6 @@
-import {entity} from "./entity.js";
-
+import { entity } from "./entity.js";
 
 export const health_component = (() => {
-
   class HealthComponent extends entity.Component {
     constructor(params) {
       super();
@@ -11,11 +9,17 @@ export const health_component = (() => {
 
     InitComponent() {
       this._RegisterHandler(
-          'health.damage', (m) => this.OnDamage_(m));
+        "health.damage",
+        (m) => this.OnDamage_(m),
+      );
       this._RegisterHandler(
-          'stats.network', (m) => this.OnNetworkUpdate_(m));
+        "stats.network",
+        (m) => this.OnNetworkUpdate_(m),
+      );
       this._RegisterHandler(
-          'health.add-experience', (m) => this.OnAddExperience_(m));
+        "health.add-experience",
+        (m) => this.OnAddExperience_(m),
+      );
 
       this.UpdateUI_();
     }
@@ -33,16 +37,20 @@ export const health_component = (() => {
         return;
       }
 
-      const bar = document.getElementById('health-bar');
+      const bar = document.getElementById("health-bar");
 
       const healthAsPercentage = this.stats_.health / this.stats_.maxHealth;
-      bar.style.width = Math.floor(200 * healthAsPercentage) + 'px';
+      bar.style.width = Math.floor(200 * healthAsPercentage) + "px";
 
-      document.getElementById('stats-strength').innerText = this.stats_.strength;
-      document.getElementById('stats-wisdomness').innerText = this.stats_.wisdomness;
-      document.getElementById('stats-benchpress').innerText = this.stats_.benchpress;
-      document.getElementById('stats-curl').innerText = this.stats_.curl;
-      document.getElementById('stats-experience').innerText = this.stats_.experience;
+      document.getElementById("stats-strength").innerText =
+        this.stats_.strength;
+      document.getElementById("stats-wisdomness").innerText =
+        this.stats_.wisdomness;
+      document.getElementById("stats-benchpress").innerText =
+        this.stats_.benchpress;
+      document.getElementById("stats-curl").innerText = this.stats_.curl;
+      document.getElementById("stats-experience").innerText =
+        this.stats_.experience;
     }
 
     _ComputeLevelXPRequirement() {
@@ -66,12 +74,13 @@ export const health_component = (() => {
       this.stats_.curl += 2;
 
       const spawner = this.FindEntity(
-          'level-up-spawner').GetComponent('LevelUpComponentSpawner');
+        "level-up-spawner",
+      ).GetComponent("LevelUpComponentSpawner");
       spawner.Spawn(this.Parent.Position);
 
       this.Broadcast({
-          topic: 'health.levelGained',
-          value: this.stats_.level,
+        topic: "health.levelGained",
+        value: this.stats_.level,
       });
 
       this.UpdateUI_();
@@ -79,7 +88,7 @@ export const health_component = (() => {
 
     _OnDeath() {
       this.Broadcast({
-          topic: 'health.death',
+        topic: "health.death",
       });
     }
 
@@ -89,14 +98,13 @@ export const health_component = (() => {
       }
 
       this.Broadcast({
-        topic: 'health.update',
+        topic: "health.update",
         health: this.stats_.health,
         maxHealth: this.stats_.maxHealth,
       });
 
       this.UpdateUI_();
     }
-
 
     OnNetworkUpdate_(msg) {
       const newStats = msg.value[1];
@@ -112,10 +120,9 @@ export const health_component = (() => {
 
       this.OnHealthChanged_();
     }
-  };
+  }
 
   return {
     HealthComponent: HealthComponent,
   };
-
 })();

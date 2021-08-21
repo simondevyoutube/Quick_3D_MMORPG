@@ -1,5 +1,4 @@
-export const spline = (function() {
-
+export const spline = (function () {
   class _CubicHermiteSpline {
     constructor(lerp) {
       this._points = [];
@@ -29,12 +28,16 @@ export const spline = (function() {
       }
 
       return this._lerp(
-          (t - this._points[p1][0]) / (
-              this._points[p2][0] - this._points[p1][0]),
-          this._points[p0][1], this._points[p1][1],
-          this._points[p2][1], this._points[p3][1]);
+        (t - this._points[p1][0]) / (
+          this._points[p2][0] - this._points[p1][0]
+        ),
+        this._points[p0][1],
+        this._points[p1][1],
+        this._points[p2][1],
+        this._points[p3][1],
+      );
     }
-  };
+  }
 
   class _LinearSpline {
     constructor(lerp) {
@@ -63,9 +66,12 @@ export const spline = (function() {
       }
 
       return this._lerp(
-          (t - this._points[p1][0]) / (
-              this._points[p2][0] - this._points[p1][0]),
-          this._points[p1][1], this._points[p2][1]);
+        (t - this._points[p1][0]) / (
+          this._points[p2][0] - this._points[p1][0]
+        ),
+        this._points[p1][1],
+        this._points[p2][1],
+      );
     }
   }
 

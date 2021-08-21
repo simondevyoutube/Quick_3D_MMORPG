@@ -1,11 +1,8 @@
-import { THREE } from './deps.js';
+import { THREE } from "./deps.js";
 
-import {entity} from './entity.js';
-
-
+import { entity } from "./entity.js";
 
 export const network_player_controller = (() => {
-
   class NetworkEntityController extends entity.Component {
     constructor() {
       super();
@@ -15,23 +12,40 @@ export const network_player_controller = (() => {
 
     InitComponent() {
       this._RegisterHandler(
-          'load.character', (m) => { this.OnLoaded_(m); });
+        "load.character",
+        (m) => {
+          this.OnLoaded_(m);
+        },
+      );
       this._RegisterHandler(
-          'inventory.equip', (m) => { this.OnEquipChanged_(m); });
+        "inventory.equip",
+        (m) => {
+          this.OnEquipChanged_(m);
+        },
+      );
       this._RegisterHandler(
-          'network.update', (m) => { this.OnUpdate_(m); });
+        "network.update",
+        (m) => {
+          this.OnUpdate_(m);
+        },
+      );
       this._RegisterHandler(
-          'action.attack', (m) => { this.OnActionAttack_(m); });
+        "action.attack",
+        (m) => {
+          this.OnActionAttack_(m);
+        },
+      );
     }
 
     InitEntity() {
-      this.net_ = this.FindEntity('network').GetComponent(
-          'NetworkController');
+      this.net_ = this.FindEntity("network").GetComponent(
+        "NetworkController",
+      );
     }
 
     OnEquipChanged_(msg) {
-      const inventory = this.GetComponent('InventoryController').CreatePacket();
-      
+      const inventory = this.GetComponent("InventoryController").CreatePacket();
+
       this.net_.SendInventoryChange_(inventory);
     }
 
@@ -47,16 +61,16 @@ export const network_player_controller = (() => {
 
       if (msg.stats) {
         this.Broadcast({
-            topic: 'stats.network',
-            value: msg.stats,
+          topic: "stats.network",
+          value: msg.stats,
         });
       }
 
       if (msg.events) {
         if (msg.events.length > 0) {
           this.Broadcast({
-              topic: 'events.network',
-              value: msg.events,
+            topic: "events.network",
+            value: msg.events,
           });
         }
       }
@@ -67,13 +81,13 @@ export const network_player_controller = (() => {
     }
 
     CreateTransformPacket() {
-      const controller = this.GetComponent('BasicCharacterController');
+      const controller = this.GetComponent("BasicCharacterController");
 
       // HACK
       return [
-          controller.stateMachine_._currentState.Name,
-          this.Parent.Position.toArray(),
-          this.Parent.Quaternion.toArray(),
+        controller.stateMachine_._currentState.Name,
+        this.Parent.Position.toArray(),
+        this.Parent.Quaternion.toArray(),
       ];
     }
 
@@ -85,7 +99,7 @@ export const network_player_controller = (() => {
         this.net_.SendTransformUpdate(this.CreateTransformPacket());
       }
     }
-  };
+  }
 
   return {
     NetworkEntityController: NetworkEntityController,

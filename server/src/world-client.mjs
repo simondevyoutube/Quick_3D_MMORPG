@@ -1,8 +1,6 @@
-import {quat, vec3} from 'gl-matrix';
-
+import { quat, vec3 } from "gl-matrix";
 
 export const world_client = (() => {
-
   const _TIMEOUT = 600.0;
 
   class WorldClient {
@@ -14,8 +12,8 @@ export const world_client = (() => {
 
       this.client_ = client;
       this.client_.onMessage = (e, d) => this.OnMessage_(e, d);
-      this.client_.Send('world.player', this.entity_ .CreatePlayerPacket_());
-      this.client_.Send('world.stats', this.entity_ .CreateStatsPacket_());
+      this.client_.Send("world.player", this.entity_.CreatePlayerPacket_());
+      this.client_.Send("world.stats", this.entity_.CreateStatsPacket_());
 
       this.timeout_ = _TIMEOUT;
 
@@ -36,7 +34,7 @@ export const world_client = (() => {
     OnDeath() {}
 
     OnEntityEvent_(t, d) {
-      if (t == 'attack.damage') {
+      if (t == "attack.damage") {
         this.OnDamageEvent_(d);
       }
     }
@@ -44,26 +42,26 @@ export const world_client = (() => {
     OnMessage_(evt, data) {
       this.timeout_ = _TIMEOUT;
 
-      if (evt == 'world.update') {
+      if (evt == "world.update") {
         this.entity_.UpdateTransform(data);
         return true;
       }
-  
-      if (evt == 'chat.msg') {
+
+      if (evt == "chat.msg") {
         this.OnChatMessage_(data);
         return true;
       }
-  
-      if (evt == 'action.attack') {
+
+      if (evt == "action.attack") {
         this.entity_.OnActionAttack();
         return true;
       }
-  
-      if (evt == 'world.inventory') {
+
+      if (evt == "world.inventory") {
         this.OnInventoryChanged_(data);
         return true;
       }
-  
+
       return false;
     }
 
@@ -71,12 +69,12 @@ export const world_client = (() => {
 
     OnInventoryChanged_(inventory) {
       this.entity_.UpdateInventory(inventory);
-  
+
       // Todo: Merge this into entityCache_ path.
       const nearby = this.entity_.FindNear(50, true);
 
       for (let n of nearby) {
-        n.parent_.client_.Send('world.inventory', [this.entity_.ID, inventory]);
+        n.parent_.client_.Send("world.inventory", [this.entity_.ID, inventory]);
       }
     }
 
@@ -89,12 +87,12 @@ export const world_client = (() => {
       this.BroadcastChat(chatMessage);
     }
 
-    BroadcastChat(chatMessage) {  
+    BroadcastChat(chatMessage) {
       const nearby = this.entity_.FindNear(50, true);
-  
+
       for (let i = 0; i < nearby.length; ++i) {
         const n = nearby[i];
-        n.parent_.client_.Send('chat.message', chatMessage);
+        n.parent_.client_.Send("chat.message", chatMessage);
       }
     }
 
@@ -117,8 +115,7 @@ export const world_client = (() => {
 
       this.OnUpdate_(timeElapsed);
     }
-  };
-
+  }
 
   class WorldNetworkClient extends WorldClient {
     constructor(client, entity) {
@@ -133,12 +130,12 @@ export const world_client = (() => {
         return e.ID != this.entity_.ID;
       };
 
-      const nearby = this.entity_.FindNear(500).filter(e => _Filter(e));
+      const nearby = this.entity_.FindNear(500).filter((e) => _Filter(e));
 
       const updates = [{
-          id: this.entity_.ID,
-          stats: this.entity_.CreateStatsPacket_(),
-          events: this.entity_.CreateEventsPacket_(),
+        id: this.entity_.ID,
+        stats: this.entity_.CreateStatsPacket_(),
+        events: this.entity_.CreateEventsPacket_(),
       }];
       const newCache_ = {};
 
@@ -146,10 +143,10 @@ export const world_client = (() => {
         // We could easily trim this down based on what we know
         // this client saw last. Maybe do it later.
         const cur = {
-            id: n.ID,
-            transform: n.CreateTransformPacket_(),
-            stats: n.CreateStatsPacket_(),
-            events: n.CreateEventsPacket_(),
+          id: n.ID,
+          transform: n.CreateTransformPacket_(),
+          stats: n.CreateStatsPacket_(),
+          events: n.CreateEventsPacket_(),
         };
 
         if (!(n.ID in this.entityCache_)) {
@@ -162,10 +159,9 @@ export const world_client = (() => {
 
       this.entityCache_ = newCache_;
 
-      this.client_.Send('world.update', updates);
+      this.client_.Send("world.update", updates);
     }
-  };
-
+  }
 
   class AIStateMachine {
     constructor(entity, terrain) {
@@ -176,7 +172,7 @@ export const world_client = (() => {
 
     SetState(state) {
       const prevState = this.currentState_;
-      
+
       if (prevState) {
         if (prevState.constructor.name == state.constructor.name) {
           return;
@@ -196,7 +192,7 @@ export const world_client = (() => {
         this.currentState_.Update(timeElapsed);
       }
     }
-  };
+  }
 
   class AIState {
     constructor() {}
@@ -216,7 +212,8 @@ export const world_client = (() => {
       const _IsPlayer = (e) => {
         return !e.isAI;
       };
-      const nearby = this.entity_.FindNear(50.0).filter(e => e.Health > 0).filter(_IsPlayer);
+      const nearby = this.entity_.FindNear(50.0).filter((e) => e.Health > 0)
+        .filter(_IsPlayer);
 
       if (nearby.length > 0) {
         this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
@@ -225,14 +222,14 @@ export const world_client = (() => {
 
     Update(timeElapsed) {
       this.timer_ += timeElapsed;
-      this.entity_.SetState('idle');
+      this.entity_.SetState("idle");
 
       if (this.timer_ > 5.0) {
         this.UpdateLogic_();
         this.timer_ = 0.0;
       }
     }
-  };
+  }
 
   class AIState_FollowToAttack extends AIState {
     constructor(target) {
@@ -241,7 +238,7 @@ export const world_client = (() => {
     }
 
     UpdateMovement_(timeElapsed) {
-      this.entity_.state_ = 'walk';
+      this.entity_.state_ = "walk";
 
       const direction = vec3.create();
       const forward = vec3.fromValues(0, 0, 1);
@@ -257,10 +254,14 @@ export const world_client = (() => {
 
       vec3.add(this.entity_.position_, this.entity_.position_, movement);
 
-      this.entity_.position_[1] = this.terrain_.Get(...this.entity_.position_)[0];
+      this.entity_.position_[1] =
+        this.terrain_.Get(...this.entity_.position_)[0];
       this.entity_.UpdateGridClient_();
 
-      const distance = vec3.distance(this.entity_.position_, this.target_.position_);
+      const distance = vec3.distance(
+        this.entity_.position_,
+        this.target_.position_,
+      );
 
       if (distance < 10.0) {
         this.entity_.OnActionAttack();
@@ -278,8 +279,7 @@ export const world_client = (() => {
 
       this.UpdateMovement_(timeElapsed);
     }
-  };
-
+  }
 
   class AIState_WaitAttackDone extends AIState {
     constructor(target) {
@@ -288,23 +288,22 @@ export const world_client = (() => {
     }
 
     Update(_) {
-      this.entity_.state_ = 'attack';
+      this.entity_.state_ = "attack";
       if (this.entity_.action_) {
         return;
       }
 
       this.parent_.SetState(new AIState_FollowToAttack(this.target_));
     }
-  };
+  }
 
-  
   class FakeClient {
     constructor() {}
-  
+
     Send(msg, data) {}
 
     Disconnect() {}
-  };
+  }
 
   class WorldAIClient extends WorldClient {
     constructor(entity, terrain, onDeath) {
@@ -340,11 +339,10 @@ export const world_client = (() => {
         this.deathTimer_ += timeElapsed;
       }
     }
-  };
-
+  }
 
   return {
-      WorldNetworkClient: WorldNetworkClient,
-      WorldAIClient: WorldAIClient,
+    WorldNetworkClient: WorldNetworkClient,
+    WorldAIClient: WorldAIClient,
   };
 })();

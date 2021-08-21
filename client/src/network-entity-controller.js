@@ -1,10 +1,8 @@
-import { THREE } from './deps.js';
+import { THREE } from "./deps.js";
 
-import {entity} from './entity.js';
-
+import { entity } from "./entity.js";
 
 export const network_entity_controller = (() => {
-
   class NetworkEntityController extends entity.Component {
     constructor() {
       super();
@@ -16,20 +14,24 @@ export const network_entity_controller = (() => {
 
     InitComponent() {
       this._RegisterHandler(
-          'network.update', (m) => { this.OnNetworkUpdate_(m); });
+        "network.update",
+        (m) => {
+          this.OnNetworkUpdate_(m);
+        },
+      );
     }
 
     SetTransform_(transform) {
       this.parent_.SetPosition(new THREE.Vector3(...transform[1]));
       this.parent_.SetQuaternion(new THREE.Quaternion(...transform[2]));
-      this.targetFrame_ = {time: 0.1, transform: transform};
+      this.targetFrame_ = { time: 0.1, transform: transform };
     }
 
     OnNetworkUpdate_(msg) {
-      if ('transform' in msg) {
+      if ("transform" in msg) {
         this.lastUpdate_ = 0.0;
-        this.transformUpdates_.push({time: 0.1, transform: msg.transform});
-       
+        this.transformUpdates_.push({ time: 0.1, transform: msg.transform });
+
         // First update
         if (this.targetFrame_ == null) {
           this.SetTransform_(msg.transform);
@@ -37,24 +39,24 @@ export const network_entity_controller = (() => {
       }
 
       // All of this should be LCT'd, but whatever
-      if ('stats' in msg) {
+      if ("stats" in msg) {
         this.Broadcast({
-            topic: 'stats.network',
-            value: msg.stats,
+          topic: "stats.network",
+          value: msg.stats,
         });
       }
 
-      if ('events' in msg) {
+      if ("events" in msg) {
         if (msg.events.length > 0) {
           this.Broadcast({
-              topic: 'events.network',
-              value: msg.events,
+            topic: "events.network",
+            value: msg.events,
           });
         }
       }
     }
 
-    Update(timeElapsed) {    
+    Update(timeElapsed) {
       this.lastUpdate_ += timeElapsed;
       if (this.lastUpdate_ >= 10.0) {
         this.Parent.SetDead();
@@ -63,24 +65,26 @@ export const network_entity_controller = (() => {
       if (this.transformUpdates_.length == 0) {
         return;
       }
-  
+
       for (let i = 0; i < this.transformUpdates_.length; ++i) {
         this.transformUpdates_[i].time -= timeElapsed;
       }
-  
-      while (this.transformUpdates_.length > 0 &&
-          this.transformUpdates_[0].time <= 0.0) {
+
+      while (
+        this.transformUpdates_.length > 0 &&
+        this.transformUpdates_[0].time <= 0.0
+      ) {
         this.lastFrame_ = {
           transform: [
             this.targetFrame_.transform[0],
             this.Parent.Position.toArray(),
-            this.Parent.Quaternion.toArray()
-          ]
+            this.Parent.Quaternion.toArray(),
+          ],
         };
         this.targetFrame_ = this.transformUpdates_.shift();
         this.targetFrame_.time = 0.0;
       }
-  
+
       if (this.targetFrame_ && this.lastFrame_) {
         this.targetFrame_.time += timeElapsed;
         const p1 = new THREE.Vector3(...this.lastFrame_.transform[1]);
@@ -99,13 +103,13 @@ export const network_entity_controller = (() => {
 
         this.Parent.SetPosition(pf);
         this.Parent.SetQuaternion(qf);
-        const controller = this.GetComponent('NPCController');
+        const controller = this.GetComponent("NPCController");
         controller.SetState(this.lastFrame_.transform[0]);
       }
     }
-  };
+  }
 
   return {
-      NetworkEntityController: NetworkEntityController,
+    NetworkEntityController: NetworkEntityController,
   };
 })();
