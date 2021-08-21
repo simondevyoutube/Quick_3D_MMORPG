@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.112.1/build/three.module.js';
+import { THREE } from './deps.js';
 
 
 export const quadtree = (function() {

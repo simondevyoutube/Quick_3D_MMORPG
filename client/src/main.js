@@ -1,4 +1,4 @@
-import {GUI} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
+import {GUI} from './deps.js';
 
 import {entity_manager} from './entity-manager.js';
 import {entity} from './entity.js';

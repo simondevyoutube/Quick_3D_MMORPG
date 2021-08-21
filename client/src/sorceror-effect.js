@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import { THREE } from './deps.js';
 
 import {particle_system} from "./particle-system.js";
 import {entity} from "./entity.js";
