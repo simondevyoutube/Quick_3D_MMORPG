@@ -16,42 +16,29 @@ import { defs } from "../shared/defs.mjs";
 import { threejs_component } from "./threejs_component.js";
 
 class CrappyMMOAttempt {
-  constructor() {
-    this._Initialize();
-  }
+  entityManager_ = new entity_manager.EntityManager();
+  grid_ = new spatial_hash_grid.SpatialHashGrid(
+    [[-1000, -1000], [1000, 1000]],
+    [100, 100],
+  );
 
-  _Initialize() {
-    this.entityManager_ = new entity_manager.EntityManager();
+  previousRAF_ = null;
 
-    document.getElementById("login-ui").style.visibility = "visible";
-    document.getElementById("login-button").onclick = () => {
-      this.OnGameStarted_();
-    };
+  _gui = new GUI();
+  _guiParams = {
+    general: {},
+  };
+
+  constructor () {
+    this._gui.addFolder("General");
+    this._gui.close();
   }
 
   OnGameStarted_() {
-    this.CreateGUI_();
-
-    this.grid_ = new spatial_hash_grid.SpatialHashGrid(
-      [[-1000, -1000], [1000, 1000]],
-      [100, 100],
-    );
-
     this.LoadControllers_();
     this.LoadPlayer_();
 
-    this.previousRAF_ = null;
     this.RAF_();
-  }
-
-  CreateGUI_() {
-    this._guiParams = {
-      general: {},
-    };
-    this._gui = new GUI();
-
-    const generalRollup = this._gui.addFolder("General");
-    this._gui.close();
   }
 
   LoadControllers_() {
@@ -174,8 +161,19 @@ class CrappyMMOAttempt {
   }
 }
 
-let _APP = null;
+const mmo = new CrappyMMOAttempt()
 
-window.addEventListener("DOMContentLoaded", () => {
-  _APP = new CrappyMMOAttempt();
+document.getElementById("login-button").onclick = () => {
+  mmo.OnGameStarted_();
+};
+
+window.addEventListener("resize", () => {
+  mmo._OnWindowResize();
 });
+
+// let _APP = null;
+
+// window.addEventListener("DOMContentLoaded", () => {
+//   console.log("hello world");
+//   _APP = new CrappyMMOAttempt();
+// });

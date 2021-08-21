@@ -1,5 +1,4 @@
 import { THREE } from "./deps.js";
-
 import { entity } from "./entity.js";
 
 export const threejs_component = (() => {
@@ -94,10 +93,6 @@ export const threejs_component = (() => {
       document.getElementById("container").appendChild(
         this.threejs_.domElement,
       );
-
-      window.addEventListener("resize", () => {
-        this._OnWindowResize();
-      }, false);
 
       const fov = 60;
       const aspect = 1920 / 1080;
