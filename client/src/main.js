@@ -11,8 +11,8 @@ import {spawners} from './spawners.js';
 import {terrain} from './terrain.js';
 import {inventory_controller} from './inventory-controller.js';
 
-import {spatial_hash_grid} from '/shared/spatial-hash-grid.mjs';
-import {defs} from '/shared/defs.mjs';
+import {spatial_hash_grid} from '../shared/spatial-hash-grid.mjs';
+import {defs} from '../shared/defs.mjs';
 import {threejs_component} from './threejs_component.js';
 
 

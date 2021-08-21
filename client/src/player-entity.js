@@ -4,7 +4,7 @@ import {entity} from './entity.js';
 import {finite_state_machine} from './finite-state-machine.js';
 import {player_state} from './player-state.js';
 
-import {defs} from '/shared/defs.mjs';
+import {defs} from '../shared/defs.mjs';
 
 
 export const player_entity = (() => {
