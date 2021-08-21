@@ -28,6 +28,7 @@ class CrappyMMOAttempt {
   _guiParams = {
     general: {},
   };
+  gameInitialized = false
 
   constructor () {
     this._gui.addFolder("General");
@@ -37,11 +38,13 @@ class CrappyMMOAttempt {
   OnGameStarted_() {
     this.LoadControllers_();
     this.LoadPlayer_();
+    this.gameInitialized = true
 
     this.RAF_();
   }
 
   LoadControllers_() {
+
     const threejs = new entity.Entity();
     threejs.AddComponent(new threejs_component.ThreeJSController());
     this.entityManager_.Add(threejs);
@@ -133,9 +136,12 @@ class CrappyMMOAttempt {
   }
 
   _OnWindowResize() {
-    this.camera_.aspect = window.innerWidth / window.innerHeight;
-    this.camera_.updateProjectionMatrix();
-    this.threejs_.setSize(window.innerWidth, window.innerHeight);
+    if (this.gameInitialized) {
+      // TODO-DefinitelyMaybe: Adjusts game aspect ratio not layout.
+      this.camera_.aspect = window.innerWidth / window.innerHeight;
+      this.camera_.updateProjectionMatrix();
+      this.threejs_.setSize(window.innerWidth, window.innerHeight); 
+    }
   }
 
   RAF_() {
