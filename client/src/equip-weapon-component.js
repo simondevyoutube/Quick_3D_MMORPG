@@ -1,10 +1,6 @@
-import { THREE } from './deps.js';
-
+import { THREE, FBXLoader } from './deps.js';
 import {entity} from './entity.js';
-
 import {defs} from '../shared/defs.mjs';
-
-import {FBXLoader} from './deps.js';
 
 
 export const equip_weapon_component = (() => {

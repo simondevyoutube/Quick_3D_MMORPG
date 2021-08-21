@@ -1,7 +1,5 @@
-import { THREE } from './deps.js';
+import { THREE, GLTFLoader, FBXLoader } from './deps.js';
 
-import {GLTFLoader} from './deps.js';
-import {FBXLoader} from './deps.js';
 
 import {entity} from './entity.js';
 
