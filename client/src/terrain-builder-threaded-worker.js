@@ -289,13 +289,14 @@ class _TerrainBuilderThreadedWorker {
     const uiWeights2 = weights2;
 
     const bytesInFloat32 = 4;
-    const positionsArray = new Float32Array(new SharedArrayBuffer(bytesInFloat32 * uiPositions.length));
-    const coloursArray = new Float32Array(new SharedArrayBuffer(bytesInFloat32 * uiColours.length));
-    const normalsArray = new Float32Array(new SharedArrayBuffer(bytesInFloat32 * uiNormals.length));
-    const coordsArray = new Float32Array(new SharedArrayBuffer(bytesInFloat32 * uiCoords.length));
-    const uvsArray = new Float32Array(new SharedArrayBuffer(bytesInFloat32 * uiUVs.length));
-    const weights1Array = new Float32Array(new SharedArrayBuffer(bytesInFloat32 * uiWeights2.length));
-    const weights2Array = new Float32Array(new SharedArrayBuffer(bytesInFloat32 * uiWeights2.length));
+    // TODO-DefinitelyMaybe: new ArrayBuffer(); use to be -> new SharedArrayBuffer();
+    const positionsArray = new Float32Array(new ArrayBuffer(bytesInFloat32 * uiPositions.length));
+    const coloursArray = new Float32Array(new ArrayBuffer(bytesInFloat32 * uiColours.length));
+    const normalsArray = new Float32Array(new ArrayBuffer(bytesInFloat32 * uiNormals.length));
+    const coordsArray = new Float32Array(new ArrayBuffer(bytesInFloat32 * uiCoords.length));
+    const uvsArray = new Float32Array(new ArrayBuffer(bytesInFloat32 * uiUVs.length));
+    const weights1Array = new Float32Array(new ArrayBuffer(bytesInFloat32 * uiWeights2.length));
+    const weights2Array = new Float32Array(new ArrayBuffer(bytesInFloat32 * uiWeights2.length));
 
     positionsArray.set(uiPositions, 0);
     coloursArray.set(uiColours, 0);
