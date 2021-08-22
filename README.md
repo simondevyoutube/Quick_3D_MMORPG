@@ -4,6 +4,7 @@ A recreation of simon's project with the following aims:
 
 - Code refactoring (make it approach-able/use-able)
   - ESmodules
+  - Webstream websockets
 - Development setup
   - typescript
   - web ui framework (maybe sveltekit?)
