@@ -11,8 +11,8 @@ import { NetworkEntitySpawner, PlayerSpawner } from "./spawners.js";
 import { TerrainChunkManager } from "./terrain.js";
 import { InventoryDatabaseController } from "./inventory-controller.js";
 
-import { SpatialHashGrid } from "../shared/spatial-hash-grid.mjs";
-import { WEAPONS_DATA } from "../shared/defs.mjs";
+import { SpatialHashGrid } from "../shared/spatial-hash-grid.js";
+import { WEAPONS_DATA } from "../shared/defs.js";
 import { ThreeJSController } from "./threejs_component.js";
 
 class CrappyMMOAttempt {

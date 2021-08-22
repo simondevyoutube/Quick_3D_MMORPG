@@ -1,10 +1,8 @@
-import { performance } from "perf_hooks";
+import { performance } from "./deps.js";
+import { WorldManager } from "./world-manager.js";
+import { LoginQueue } from "./login-queue.js";
 
-import { world_manager } from "./world-manager.mjs";
-import { login_queue } from "./login-queue.mjs";
-
-export const world_server = (() => {
-  class SocketWrapper {
+export class SocketWrapper {
     constructor(params) {
       this.socket_ = params.socket;
       this.onMessage = null;
@@ -50,15 +48,15 @@ export const world_server = (() => {
     }
   }
 
-  class WorldServer {
+export  class WorldServer {
     constructor(io) {
-      this.loginQueue_ = new login_queue.LoginQueue(
+      this.loginQueue_ = new LoginQueue(
         (c, p) => {
           this.OnLogin_(c, p);
         },
       );
 
-      this.worldMgr_ = new world_manager.WorldManager({ parent: this });
+      this.worldMgr_ = new WorldManager({ parent: this });
       this.SetupIO_(io);
     }
 
@@ -89,8 +87,3 @@ export const world_server = (() => {
       this.worldMgr_.Update(timeElapsed);
     }
   }
-
-  return {
-    WorldServer: WorldServer,
-  };
-})();

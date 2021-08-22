@@ -1,9 +1,8 @@
-import { quat, vec3 } from "gl-matrix";
+import { quat, vec3 } from "./deps.js";
 
-export const world_client = (() => {
   const _TIMEOUT = 600.0;
 
-  class WorldClient {
+export  class WorldClient {
     constructor(client, entity) {
       this.entity_ = entity;
 
@@ -117,7 +116,7 @@ export const world_client = (() => {
     }
   }
 
-  class WorldNetworkClient extends WorldClient {
+export  class WorldNetworkClient extends WorldClient {
     constructor(client, entity) {
       super(client, entity);
     }
@@ -163,7 +162,7 @@ export const world_client = (() => {
     }
   }
 
-  class AIStateMachine {
+export  class AIStateMachine {
     constructor(entity, terrain) {
       this.currentState_ = null;
       this.entity_ = entity;
@@ -194,14 +193,14 @@ export const world_client = (() => {
     }
   }
 
-  class AIState {
+export  class AIState {
     constructor() {}
     Exit() {}
     Enter() {}
     Update(timeElapsed) {}
   }
 
-  class AIState_JustSitThere extends AIState {
+export  class AIState_JustSitThere extends AIState {
     constructor() {
       super();
 
@@ -231,7 +230,7 @@ export const world_client = (() => {
     }
   }
 
-  class AIState_FollowToAttack extends AIState {
+ export class AIState_FollowToAttack extends AIState {
     constructor(target) {
       super();
       this.target_ = target;
@@ -281,7 +280,7 @@ export const world_client = (() => {
     }
   }
 
-  class AIState_WaitAttackDone extends AIState {
+export  class AIState_WaitAttackDone extends AIState {
     constructor(target) {
       super();
       this.target_ = target;
@@ -297,7 +296,7 @@ export const world_client = (() => {
     }
   }
 
-  class FakeClient {
+export  class FakeClient {
     constructor() {}
 
     Send(msg, data) {}
@@ -305,7 +304,7 @@ export const world_client = (() => {
     Disconnect() {}
   }
 
-  class WorldAIClient extends WorldClient {
+ export class WorldAIClient extends WorldClient {
     constructor(entity, terrain, onDeath) {
       super(new FakeClient(), entity);
       this.terrain_ = terrain;
@@ -340,9 +339,3 @@ export const world_client = (() => {
       }
     }
   }
-
-  return {
-    WorldNetworkClient: WorldNetworkClient,
-    WorldAIClient: WorldAIClient,
-  };
-})();

@@ -1,9 +1,8 @@
-import { quat, vec3 } from "gl-matrix";
+import { quat, vec3 } from "./deps.js";
 
-import { defs } from "../../client/shared/defs.mjs";
+import { WEAPONS_DATA } from "../../client/shared/defs.js";
 
-export const world_entity = (() => {
-  class Action_Attack {
+export class Action_Attack {
     constructor(time, cooldown, onAction) {
       this.onAction_ = onAction;
       this.time_ = time;
@@ -27,7 +26,7 @@ export const world_entity = (() => {
     }
   }
 
-  class WorldEntity {
+  export class WorldEntity {
     constructor(params) {
       this.id_ = params.id;
       this.state_ = "idle";
@@ -179,7 +178,7 @@ export const world_entity = (() => {
           const equipped = this.characterInfo_.inventory["inventory-equip-1"];
           if (equipped) {
             console.log(" equipped: " + equipped);
-            const weapon = defs.WEAPONS_DATA[equipped];
+            const weapon = WEAPONS_DATA[equipped];
             if (weapon) {
               damage *= weapon.damage * 10;
             }
@@ -252,8 +251,3 @@ export const world_entity = (() => {
       }
     }
   }
-
-  return {
-    WorldEntity: WorldEntity,
-  };
-})();

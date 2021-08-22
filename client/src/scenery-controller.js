@@ -4,8 +4,8 @@ import { Component, Entity } from "./entity.js";
 import { RenderComponent } from "./render-component.js";
 import { SpatialGridController } from "./spatial-grid-controller.js";
 
-import { rand_int, rand_range, sat } from "../shared/math.mjs";
-import { Noise } from "../shared/noise.mjs";
+import { rand_int, rand_range, sat } from "../shared/math.js";
+import { Noise } from "../shared/noise.js";
 
 const _SCENERY = {
   birch1: {

@@ -1,0 +1,14 @@
+{
+  "name": "client",
+  "version": "0.0.1",
+  "description": "",
+  "main": " ",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

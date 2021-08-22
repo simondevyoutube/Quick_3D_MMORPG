@@ -11,7 +11,7 @@ import {
   WalkState,
 } from "./player-state.js";
 
-import { CHARACTER_MODELS } from "../shared/defs.mjs";
+import { CHARACTER_MODELS } from "../shared/defs.js";
 
 export class CharacterFSM extends FiniteStateMachine {
   constructor(proxy) {

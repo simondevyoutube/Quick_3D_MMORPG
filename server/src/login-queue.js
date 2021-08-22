@@ -1,5 +1,4 @@
-export const login_queue = (() => {
-  class FiniteStateMachine {
+export class FiniteStateMachine {
     constructor(onEvent) {
       this.currentState_ = null;
       this.onEvent_ = onEvent;
@@ -30,7 +29,7 @@ export const login_queue = (() => {
     }
   }
 
-  class State {
+export class State {
     constructor() {}
 
     Broadcast(evt) {
@@ -47,7 +46,7 @@ export const login_queue = (() => {
     }
   }
 
-  class Login_Await extends State {
+export  class Login_Await extends State {
     constructor() {
       super();
       this.params_ = {};
@@ -65,7 +64,7 @@ export const login_queue = (() => {
     }
   }
 
-  class Login_Confirm extends State {
+export  class Login_Confirm extends State {
     constructor(params) {
       super();
       this.params_ = { ...params };
@@ -81,7 +80,7 @@ export const login_queue = (() => {
     }
   }
 
-  class LoginClient {
+export  class LoginClient {
     constructor(client, onLogin) {
       this.onLogin_ = onLogin;
 
@@ -102,7 +101,7 @@ export const login_queue = (() => {
     }
   }
 
-  class LoginQueue {
+export  class LoginQueue {
     constructor(onLogin) {
       this.clients_ = {};
       this.onLogin_ = onLogin;
@@ -123,8 +122,3 @@ export const login_queue = (() => {
       this.onLogin_(client, params);
     }
   }
-
-  return {
-    LoginQueue: LoginQueue,
-  };
-})();

@@ -2,7 +2,7 @@ import { THREE } from "./deps.js";
 
 import { Component } from "./entity.js";
 
-import { lerp } from "../shared/math.mjs";
+import { lerp } from "../shared/math.js";
 
 const _VS = `
 varying vec2 vUV;

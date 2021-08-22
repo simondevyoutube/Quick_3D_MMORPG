@@ -8,10 +8,10 @@ import { TextureSplatter } from "./texture-splatter.js";
 import { TextureAtlas } from "./textures.js";
 import { DictDifference, DictIntersection } from "./utils.js";
 
-import { terrain_constants } from "../shared/terrain-constants.mjs";
-import { HeightGenerator } from "../shared/terrain-height.mjs";
+import { terrain_constants } from "../shared/terrain-constants.js";
+import { HeightGenerator } from "../shared/terrain-height.js";
 
-import { Noise } from "../shared/noise.mjs";
+import { Noise } from "../shared/noise.js";
 
 export class TerrainChunkManager extends Component {
   loader = new THREE.TextureLoader();

@@ -6,7 +6,7 @@ import {
   CharacterFSM,
 } from "./player-entity.js";
 
-import { CHARACTER_MODELS } from "../shared/defs.mjs";
+import { CHARACTER_MODELS } from "../shared/defs.js";
 
 export class NPCController extends Component {
   constructor(params) {

@@ -1,5 +1,5 @@
-import { terrain_constants } from "./terrain-constants.mjs";
-import { Noise } from "./noise.mjs";
+import { terrain_constants } from "./terrain-constants.js";
+import { Noise } from "./noise.js";
 
 export class HeightGenerator {
   constructor() {
