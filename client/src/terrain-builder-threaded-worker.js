@@ -1,10 +1,10 @@
 import { THREE } from "./deps.js";
 
-import { texture_splatter } from "./texture-splatter.js";
+import { TextureSplatter } from "./texture-splatter.js";
 
-import { math } from "../shared/math.mjs";
-import { noise } from "../shared/noise.mjs";
-import { terrain_height } from "../shared/terrain-height.mjs";
+import { sat } from "../shared/math.mjs";
+import { Noise } from "../shared/noise.mjs";
+import { HeightGenerator } from "../shared/terrain-height.mjs";
 
 class _TerrainBuilderThreadedWorker {
   constructor() {
@@ -17,12 +17,12 @@ class _TerrainBuilderThreadedWorker {
       params.offset[1],
       params.offset[2],
     );
-    this._params.noise = new noise.Noise(params.noiseParams);
-    this._params.heightGenerators = [new terrain_height.HeightGenerator()];
+    this._params.noise = new Noise(params.noiseParams);
+    this._params.heightGenerators = [new HeightGenerator()];
 
-    this._params.biomeGenerator = new noise.Noise(params.biomesParams);
-    this._params.colourNoise = new noise.Noise(params.colourNoiseParams);
-    this._params.colourGenerator = new texture_splatter.TextureSplatter(
+    this._params.biomeGenerator = new Noise(params.biomesParams);
+    this._params.colourNoise = new Noise(params.colourNoiseParams);
+    this._params.colourGenerator = new TextureSplatter(
       {
         biomeGenerator: this._params.biomeGenerator,
         colourNoise: this._params.colourNoise,
@@ -67,10 +67,10 @@ class _TerrainBuilderThreadedWorker {
 
     const effectiveResolution = resolution - 2;
     for (let x = -1; x <= effectiveResolution + 1; x++) {
-      let xp = width * math.sat(x / effectiveResolution);
+      let xp = width * sat(x / effectiveResolution);
 
       for (let y = -1; y <= effectiveResolution + 1; y++) {
-        let yp = width * math.sat(y / effectiveResolution);
+        let yp = width * sat(y / effectiveResolution);
 
         // Compute position
         _P.set(xp - half, 0.0, yp - half);
@@ -99,7 +99,6 @@ class _TerrainBuilderThreadedWorker {
         colors.push(color.r, color.g, color.b);
         up.push(_D.x, _D.y, _D.z);
         wsPositions.push(_W.x, _W.z, height);
-        // TODO GUI
         uvs.push(_P.x / 200.0, _P.y / 200.0);
       }
     }

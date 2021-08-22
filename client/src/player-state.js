@@ -1,321 +1,303 @@
 import { THREE } from "./deps.js";
 
-export const player_state = (() => {
-  class State {
-    constructor(parent) {
-      this._parent = parent;
-    }
-
-    Enter() {}
-    Exit() {}
-    Update() {}
+export class State {
+  constructor(parent) {
+    this._parent = parent;
   }
 
-  class DeathState extends State {
-    constructor(parent) {
-      super(parent);
+  Enter() {}
+  Exit() {}
+  Update() {}
+}
 
-      this._action = null;
+export class DeathState extends State {
+  constructor(parent) {
+    super(parent);
+
+    this._action = null;
+  }
+
+  get Name() {
+    return "death";
+  }
+
+  Enter(prevState) {
+    this._action = this._parent._proxy.animations["death"].action;
+
+    this._action.reset();
+    this._action.setLoop(THREE.LoopOnce, 1);
+    this._action.clampWhenFinished = true;
+
+    if (prevState) {
+      const prevAction = this._parent._proxy.animations[prevState.Name].action;
+
+      this._action.crossFadeFrom(prevAction, 0.2, true);
+      this._action.play();
+    } else {
+      this._action.play();
     }
+  }
 
-    get Name() {
-      return "death";
+  Exit() {
+  }
+
+  Update(_) {
+  }
+}
+
+export class DanceState extends State {
+  constructor(parent) {
+    super(parent);
+
+    this._action = null;
+
+    this._FinishedCallback = () => {
+      this._Finished();
+    };
+  }
+
+  get Name() {
+    return "dance";
+  }
+
+  Enter(prevState) {
+    this._action = this._parent._proxy.animations["dance"].action;
+    const mixer = this._action.getMixer();
+    mixer.addEventListener("finished", this._FinishedCallback);
+
+    this._action.reset();
+    this._action.setLoop(THREE.LoopOnce, 1);
+    this._action.clampWhenFinished = true;
+
+    if (prevState) {
+      const prevAction = this._parent._proxy.animations[prevState.Name].action;
+
+      this._action.crossFadeFrom(prevAction, 0.2, true);
+      this._action.play();
+    } else {
+      this._action.play();
     }
+  }
 
-    Enter(prevState) {
-      this._action = this._parent._proxy.animations["death"].action;
+  _Finished() {
+    this._Cleanup();
+    this._parent.SetState("idle");
+  }
+
+  _Cleanup() {
+    if (this._action) {
+      this._action.getMixer().removeEventListener(
+        "finished",
+        this._FinishedCallback,
+      );
+    }
+  }
+
+  Exit() {
+    this._Cleanup();
+  }
+
+  Update(_) {
+  }
+}
+
+export class AttackState extends State {
+  constructor(parent) {
+    super(parent);
+
+    this._action = null;
+
+    this._FinishedCallback = () => {
+      this._Finished();
+    };
+  }
+
+  get Name() {
+    return "attack";
+  }
+
+  Enter(prevState) {
+    this._action = this._parent._proxy.animations["attack"].action;
+    const mixer = this._action.getMixer();
+    mixer.addEventListener("finished", this._FinishedCallback);
+
+    if (prevState) {
+      const prevAction = this._parent._proxy.animations[prevState.Name].action;
 
       this._action.reset();
       this._action.setLoop(THREE.LoopOnce, 1);
       this._action.clampWhenFinished = true;
-
-      if (prevState) {
-        const prevAction =
-          this._parent._proxy.animations[prevState.Name].action;
-
-        this._action.crossFadeFrom(prevAction, 0.2, true);
-        this._action.play();
-      } else {
-        this._action.play();
-      }
-    }
-
-    Exit() {
-    }
-
-    Update(_) {
+      this._action.crossFadeFrom(prevAction, 0.4, true);
+      this._action.play();
+    } else {
+      this._action.play();
     }
   }
 
-  class DanceState extends State {
-    constructor(parent) {
-      super(parent);
+  _Finished() {
+    this._Cleanup();
+    this._parent.SetState("idle");
+  }
 
-      this._action = null;
-
-      this._FinishedCallback = () => {
-        this._Finished();
-      };
-    }
-
-    get Name() {
-      return "dance";
-    }
-
-    Enter(prevState) {
-      this._action = this._parent._proxy.animations["dance"].action;
-      const mixer = this._action.getMixer();
-      mixer.addEventListener("finished", this._FinishedCallback);
-
-      this._action.reset();
-      this._action.setLoop(THREE.LoopOnce, 1);
-      this._action.clampWhenFinished = true;
-
-      if (prevState) {
-        const prevAction =
-          this._parent._proxy.animations[prevState.Name].action;
-
-        this._action.crossFadeFrom(prevAction, 0.2, true);
-        this._action.play();
-      } else {
-        this._action.play();
-      }
-    }
-
-    _Finished() {
-      this._Cleanup();
-      this._parent.SetState("idle");
-    }
-
-    _Cleanup() {
-      if (this._action) {
-        this._action.getMixer().removeEventListener(
-          "finished",
-          this._FinishedCallback,
-        );
-      }
-    }
-
-    Exit() {
-      this._Cleanup();
-    }
-
-    Update(_) {
+  _Cleanup() {
+    if (this._action) {
+      this._action.getMixer().removeEventListener(
+        "finished",
+        this._FinishedCallback,
+      );
     }
   }
 
-  class AttackState extends State {
-    constructor(parent) {
-      super(parent);
+  Exit() {
+    this._Cleanup();
+  }
 
-      this._action = null;
+  Update(_) {
+  }
+}
 
-      this._FinishedCallback = () => {
-        this._Finished();
-      };
-    }
+export class WalkState extends State {
+  constructor(parent) {
+    super(parent);
+  }
 
-    get Name() {
-      return "attack";
-    }
+  get Name() {
+    return "walk";
+  }
 
-    Enter(prevState) {
-      this._action = this._parent._proxy.animations["attack"].action;
-      const mixer = this._action.getMixer();
-      mixer.addEventListener("finished", this._FinishedCallback);
+  Enter(prevState) {
+    const curAction = this._parent._proxy.animations["walk"].action;
+    if (prevState) {
+      const prevAction = this._parent._proxy.animations[prevState.Name].action;
 
-      if (prevState) {
-        const prevAction =
-          this._parent._proxy.animations[prevState.Name].action;
+      curAction.enabled = true;
 
-        this._action.reset();
-        this._action.setLoop(THREE.LoopOnce, 1);
-        this._action.clampWhenFinished = true;
-        this._action.crossFadeFrom(prevAction, 0.4, true);
-        this._action.play();
+      if (prevState.Name == "run") {
+        const ratio = curAction.getClip().duration /
+          prevAction.getClip().duration;
+        curAction.time = prevAction.time * ratio;
       } else {
-        this._action.play();
+        curAction.time = 0.0;
+        curAction.setEffectiveTimeScale(1.0);
+        curAction.setEffectiveWeight(1.0);
       }
-    }
 
-    _Finished() {
-      this._Cleanup();
-      this._parent.SetState("idle");
-    }
-
-    _Cleanup() {
-      if (this._action) {
-        this._action.getMixer().removeEventListener(
-          "finished",
-          this._FinishedCallback,
-        );
-      }
-    }
-
-    Exit() {
-      this._Cleanup();
-    }
-
-    Update(_) {
+      curAction.crossFadeFrom(prevAction, 0.1, true);
+      curAction.play();
+    } else {
+      curAction.play();
     }
   }
 
-  class WalkState extends State {
-    constructor(parent) {
-      super(parent);
+  Exit() {
+  }
+
+  Update(timeElapsed, input) {
+    if (!input) {
+      return;
     }
 
-    get Name() {
-      return "walk";
+    if (input._keys.forward || input._keys.backward) {
+      if (input._keys.shift) {
+        this._parent.SetState("run");
+      }
+      return;
     }
 
-    Enter(prevState) {
-      const curAction = this._parent._proxy.animations["walk"].action;
-      if (prevState) {
-        const prevAction =
-          this._parent._proxy.animations[prevState.Name].action;
+    this._parent.SetState("idle");
+  }
+}
 
-        curAction.enabled = true;
+export class RunState extends State {
+  constructor(parent) {
+    super(parent);
+  }
 
-        if (prevState.Name == "run") {
-          const ratio = curAction.getClip().duration /
-            prevAction.getClip().duration;
-          curAction.time = prevAction.time * ratio;
-        } else {
-          curAction.time = 0.0;
-          curAction.setEffectiveTimeScale(1.0);
-          curAction.setEffectiveWeight(1.0);
-        }
+  get Name() {
+    return "run";
+  }
 
-        curAction.crossFadeFrom(prevAction, 0.1, true);
-        curAction.play();
+  Enter(prevState) {
+    const curAction = this._parent._proxy.animations["run"].action;
+    if (prevState) {
+      const prevAction = this._parent._proxy.animations[prevState.Name].action;
+
+      curAction.enabled = true;
+
+      if (prevState.Name == "walk") {
+        const ratio = curAction.getClip().duration /
+          prevAction.getClip().duration;
+        curAction.time = prevAction.time * ratio;
       } else {
-        curAction.play();
-      }
-    }
-
-    Exit() {
-    }
-
-    Update(timeElapsed, input) {
-      if (!input) {
-        return;
+        curAction.time = 0.0;
+        curAction.setEffectiveTimeScale(1.0);
+        curAction.setEffectiveWeight(1.0);
       }
 
-      if (input._keys.forward || input._keys.backward) {
-        if (input._keys.shift) {
-          this._parent.SetState("run");
-        }
-        return;
-      }
-
-      this._parent.SetState("idle");
+      curAction.crossFadeFrom(prevAction, 0.1, true);
+      curAction.play();
+    } else {
+      curAction.play();
     }
   }
 
-  class RunState extends State {
-    constructor(parent) {
-      super(parent);
-    }
-
-    get Name() {
-      return "run";
-    }
-
-    Enter(prevState) {
-      const curAction = this._parent._proxy.animations["run"].action;
-      if (prevState) {
-        const prevAction =
-          this._parent._proxy.animations[prevState.Name].action;
-
-        curAction.enabled = true;
-
-        if (prevState.Name == "walk") {
-          const ratio = curAction.getClip().duration /
-            prevAction.getClip().duration;
-          curAction.time = prevAction.time * ratio;
-        } else {
-          curAction.time = 0.0;
-          curAction.setEffectiveTimeScale(1.0);
-          curAction.setEffectiveWeight(1.0);
-        }
-
-        curAction.crossFadeFrom(prevAction, 0.1, true);
-        curAction.play();
-      } else {
-        curAction.play();
-      }
-    }
-
-    Exit() {
-    }
-
-    Update(timeElapsed, input) {
-      if (!input) {
-        return;
-      }
-
-      if (input._keys.forward || input._keys.backward) {
-        if (!input._keys.shift) {
-          this._parent.SetState("walk");
-        }
-        return;
-      }
-
-      this._parent.SetState("idle");
-    }
+  Exit() {
   }
 
-  class IdleState extends State {
-    constructor(parent) {
-      super(parent);
+  Update(timeElapsed, input) {
+    if (!input) {
+      return;
     }
 
-    get Name() {
-      return "idle";
-    }
-
-    Enter(prevState) {
-      const idleAction = this._parent._proxy.animations["idle"].action;
-      if (prevState) {
-        const prevAction =
-          this._parent._proxy.animations[prevState.Name].action;
-        idleAction.time = 0.0;
-        idleAction.enabled = true;
-        idleAction.setEffectiveTimeScale(1.0);
-        idleAction.setEffectiveWeight(1.0);
-        idleAction.crossFadeFrom(prevAction, 0.25, true);
-        idleAction.play();
-      } else {
-        idleAction.play();
-      }
-    }
-
-    Exit() {
-    }
-
-    Update(_, input) {
-      if (!input) {
-        return;
-      }
-
-      if (input._keys.forward || input._keys.backward) {
+    if (input._keys.forward || input._keys.backward) {
+      if (!input._keys.shift) {
         this._parent.SetState("walk");
-      } else if (input._keys.space) {
-        this._parent.SetState("attack");
-      } else if (input._keys.backspace) {
-        this._parent.SetState("dance");
       }
+      return;
+    }
+
+    this._parent.SetState("idle");
+  }
+}
+
+export class IdleState extends State {
+  constructor(parent) {
+    super(parent);
+  }
+
+  get Name() {
+    return "idle";
+  }
+
+  Enter(prevState) {
+    const idleAction = this._parent._proxy.animations["idle"].action;
+    if (prevState) {
+      const prevAction = this._parent._proxy.animations[prevState.Name].action;
+      idleAction.time = 0.0;
+      idleAction.enabled = true;
+      idleAction.setEffectiveTimeScale(1.0);
+      idleAction.setEffectiveWeight(1.0);
+      idleAction.crossFadeFrom(prevAction, 0.25, true);
+      idleAction.play();
+    } else {
+      idleAction.play();
     }
   }
 
-  return {
-    State: State,
-    DanceState: DanceState,
-    AttackState: AttackState,
-    IdleState: IdleState,
-    WalkState: WalkState,
-    RunState: RunState,
-    DeathState: DeathState,
-  };
-})();
+  Exit() {
+  }
+
+  Update(_, input) {
+    if (!input) {
+      return;
+    }
+
+    if (input._keys.forward || input._keys.backward) {
+      this._parent.SetState("walk");
+    } else if (input._keys.space) {
+      this._parent.SetState("attack");
+    } else if (input._keys.backspace) {
+      this._parent.SetState("dance");
+    }
+  }
+}

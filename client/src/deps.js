@@ -1,4 +1,4 @@
-export { GUI } from "https://cdn.skypack.dev/three/examples/jsm/libs/dat.gui.module.js";
+export * as tweakpane from "https://cdn.skypack.dev/tweakpane";
 // TODO-DefinitelyMaybe: import only the required things from three
 export * as THREE from "https://cdn.skypack.dev/three";
 export { io } from "https://cdn.skypack.dev/socket.io-client";
