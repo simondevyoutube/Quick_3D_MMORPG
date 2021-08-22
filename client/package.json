@@ -1,14 +1,16 @@
 {
   "name": "client",
   "version": "0.0.1",
-  "description": "",
-  "main": " ",
-  "dependencies": {},
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "author": "DefinitelyMaybe",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "dev": "svelte-kit dev --port=8080",
+    "build": "svelte-kit build",
+    "preview": "svelte-kit preview"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "next",
+    "svelte": "^3.34.0"
+  }
 }
