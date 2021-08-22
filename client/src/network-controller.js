@@ -1,3 +1,4 @@
+import { io } from "./deps.js";
 import { entity } from "./entity.js";
 
 export const network_controller = (() => {
