@@ -27,7 +27,12 @@ export const terrain_builder_threaded = (function () {
 
     postMessage(s, resolve) {
       this._resolve = resolve;
+      // console.log("pre-posting the message");
       this._worker.postMessage(s);
+      console.log("posted a message");
+      // console.log(s);
+      // console.log(resolve);
+      // debugger
     }
   }
 
