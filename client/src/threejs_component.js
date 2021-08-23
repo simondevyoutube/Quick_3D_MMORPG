@@ -80,6 +80,7 @@ export class ThreeJSController extends Component {
 
     this.threejs_ = new THREE.WebGLRenderer({
       antialias: false,
+      canvas: document.querySelector("canvas#game")
     });
     this.threejs_.outputEncoding = THREE.sRGBEncoding;
     this.threejs_.gammaFactor = 2.2;
@@ -88,10 +89,6 @@ export class ThreeJSController extends Component {
     this.threejs_.setPixelRatio(window.devicePixelRatio);
     this.threejs_.setSize(window.innerWidth, window.innerHeight);
     this.threejs_.domElement.id = "threejs";
-
-    document.getElementById("container").appendChild(
-      this.threejs_.domElement,
-    );
 
     const fov = 60;
     const aspect = 1920 / 1080;

@@ -2,20 +2,18 @@ import { tweakpane } from "./deps.js";
 
 import { EntityManager } from "./entity-manager.js";
 import { Entity } from "./entity.js";
-import { UIController } from "./ui-controller.js";
 import { LevelUpComponentSpawner } from "./level-up-component.js";
 import { NetworkController } from "./network-controller.js";
 import { SceneryController } from "./scenery-controller.js";
 import { LoadController } from "./load-controller.js";
 import { NetworkEntitySpawner, PlayerSpawner } from "./spawners.js";
 import { TerrainChunkManager } from "./terrain.js";
-import { InventoryDatabaseController } from "./inventory-controller.js";
 
 import { SpatialHashGrid } from "../shared/spatial-hash-grid.js";
 import { WEAPONS_DATA } from "../shared/defs.js";
 import { ThreeJSController } from "./threejs_component.js";
 
-class CrappyMMOAttempt {
+export class CrappyMMOAttempt {
   entityManager_ = new EntityManager();
   grid_ = new SpatialHashGrid(
     [[-1000, -1000], [1000, 1000]],
@@ -53,7 +51,7 @@ class CrappyMMOAttempt {
     this.threejs_ = threejs.GetComponent("ThreeJSController").threejs_;
 
     const ui = new Entity();
-    ui.AddComponent(new UIController());
+    // ui.AddComponent(new UIController());
     this.entityManager_.Add(ui, "ui");
 
     const network = new Entity();
@@ -103,18 +101,18 @@ class CrappyMMOAttempt {
     this.entityManager_.Add(spawner, "spawners");
 
     const database = new Entity();
-    database.AddComponent(
-      new InventoryDatabaseController(),
-    );
+    // database.AddComponent(
+    //   new InventoryDatabaseController(),
+    // );
     this.entityManager_.Add(database, "database");
 
     // HACK
-    for (let k in WEAPONS_DATA) {
-      database.GetComponent("InventoryDatabaseController").AddItem(
-        k,
-        WEAPONS_DATA[k],
-      );
-    }
+    // for (let k in WEAPONS_DATA) {
+    //   database.GetComponent("InventoryDatabaseController").AddItem(
+    //     k,
+    //     WEAPONS_DATA[k],
+    //   );
+    // }
   }
 
   LoadPlayer_() {
@@ -165,23 +163,5 @@ class CrappyMMOAttempt {
   }
 }
 
-// export const pane = new tweakpane.Pane()
-// const PARAMS = {
-//   num: 123,
-//   string: 'hello',
-//   color: '#0f0',
-// };
-// pane.addInput(PARAMS, 'num');
-// pane.addInput(PARAMS, 'string');
-// pane.addInput(PARAMS, 'color');
-// pane.expanded = false
+// const mmo = new CrappyMMOAttempt();
 
-const mmo = new CrappyMMOAttempt();
-
-document.getElementById("login-button").onclick = () => {
-  mmo.OnGameStarted_();
-};
-
-window.addEventListener("resize", () => {
-  mmo._OnWindowResize();
-});

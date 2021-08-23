@@ -160,7 +160,7 @@ export class BasicCharacterController extends Component {
         bones: this.bones_,
       });
 
-      this.FindEntity("ui").GetComponent("UIController").FadeoutLogin();
+      // this.FindEntity("ui").GetComponent("UIController").FadeoutLogin();
     });
   }
 

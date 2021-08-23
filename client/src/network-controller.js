@@ -57,7 +57,7 @@ export class NetworkController extends Component {
       // Input validation is for losers
       this.socket_.emit(
         "login.commit",
-        document.getElementById("login-input").value,
+        "Test Value", //document.getElementById("login-input").value,
       );
     });
 
@@ -156,7 +156,7 @@ export class NetworkController extends Component {
           }
         }
 
-        ui.AddEventMessages(events);
+        // ui.AddEventMessages(events);
 
         npc.Broadcast({
           topic: "network.update",
@@ -166,7 +166,7 @@ export class NetworkController extends Component {
         });
       }
     } else if (e == "chat.message") {
-      this.FindEntity("ui").GetComponent("UIController").AddChatMessage(d);
+      // this.FindEntity("ui").GetComponent("UIController").AddChatMessage(d);
     } else if (e == "world.inventory") {
       const id = this.GetEntityID_(d[0]);
 
