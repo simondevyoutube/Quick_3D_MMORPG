@@ -1,5 +1,3 @@
-import { tweakpane } from "./deps.js";
-
 import { EntityManager } from "./entity-manager.js";
 import { Entity } from "./entity.js";
 import { LevelUpComponentSpawner } from "./level-up-component.js";
@@ -10,12 +8,12 @@ import { NetworkEntitySpawner, PlayerSpawner } from "./spawners.js";
 import { TerrainChunkManager } from "./terrain.js";
 
 import { SpatialHashGrid } from "../shared/spatial-hash-grid.js";
-import { WEAPONS_DATA } from "../shared/defs.js";
+// import { WEAPONS_DATA } from "../shared/defs.js";
 import { ThreeJSController } from "./threejs_component.js";
 
 export class CrappyMMOAttempt {
-  entityManager_ = new EntityManager();
-  grid_ = new SpatialHashGrid(
+  entities = new EntityManager();
+  grid = new SpatialHashGrid(
     [[-1000, -1000], [1000, 1000]],
     [100, 100],
   );
@@ -25,25 +23,27 @@ export class CrappyMMOAttempt {
   // _guiParams = {
   //   general: {},
   // };
-  gameInitialized = false;
+  initialized = false;
 
-  constructor() {
-    // this._gui.addFolder("General");
-    // this._gui.close();
-  }
+  // constructor() {
+  //   // this._gui.addFolder("General");
+  //   // this._gui.close();
+  // }
 
   OnGameStarted_() {
     this.LoadControllers_();
     this.LoadPlayer_();
-    this.gameInitialized = true;
 
     this.RAF_();
+    
+    this.initialized = true;
+    console.log(this);
   }
 
   LoadControllers_() {
     const threejs = new Entity();
     threejs.AddComponent(new ThreeJSController());
-    this.entityManager_.Add(threejs);
+    this.entities.Add(threejs);
 
     // Hack
     this.scene_ = threejs.GetComponent("ThreeJSController").scene_;
@@ -52,11 +52,11 @@ export class CrappyMMOAttempt {
 
     const ui = new Entity();
     // ui.AddComponent(new UIController());
-    this.entityManager_.Add(ui, "ui");
+    this.entities.Add(ui, "ui");
 
     const network = new Entity();
     network.AddComponent(new NetworkController());
-    this.entityManager_.Add(network, "network");
+    this.entities.Add(network, "network");
 
     const t = new Entity();
     t.AddComponent(
@@ -68,43 +68,43 @@ export class CrappyMMOAttempt {
         threejs: this.threejs_,
       }),
     );
-    this.entityManager_.Add(t, "terrain");
+    this.entities.Add(t, "terrain");
 
     const l = new Entity();
     l.AddComponent(new LoadController());
-    this.entityManager_.Add(l, "loader");
+    this.entities.Add(l, "loader");
 
     const scenery = new Entity();
     scenery.AddComponent(
       new SceneryController({
         scene: this.scene_,
-        grid: this.grid_,
+        grid: this.grid,
       }),
     );
-    this.entityManager_.Add(scenery, "scenery");
+    this.entities.Add(scenery, "scenery");
 
     const spawner = new Entity();
     spawner.AddComponent(
       new PlayerSpawner({
-        grid: this.grid_,
+        grid: this.grid,
         scene: this.scene_,
         camera: this.camera_,
       }),
     );
     spawner.AddComponent(
       new NetworkEntitySpawner({
-        grid: this.grid_,
+        grid: this.grid,
         scene: this.scene_,
         camera: this.camera_,
       }),
     );
-    this.entityManager_.Add(spawner, "spawners");
+    this.entities.Add(spawner, "spawners");
 
     const database = new Entity();
     // database.AddComponent(
     //   new InventoryDatabaseController(),
     // );
-    this.entityManager_.Add(database, "database");
+    this.entities.Add(database, "database");
 
     // HACK
     // for (let k in WEAPONS_DATA) {
@@ -128,11 +128,11 @@ export class CrappyMMOAttempt {
         scene: this.scene_,
       }),
     );
-    this.entityManager_.Add(levelUpSpawner, "level-up-spawner");
+    this.entities.Add(levelUpSpawner, "level-up-spawner");
   }
 
   _OnWindowResize() {
-    if (this.gameInitialized) {
+    if (this.initialized) {
       // TODO-DefinitelyMaybe: Adjusts game aspect ratio not layout.
       this.camera_.aspect = window.innerWidth / window.innerHeight;
       this.camera_.updateProjectionMatrix();
@@ -159,7 +159,7 @@ export class CrappyMMOAttempt {
   Step_(timeElapsed) {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
 
-    this.entityManager_.Update(timeElapsedS);
+    this.entities.Update(timeElapsedS);
   }
 }
 

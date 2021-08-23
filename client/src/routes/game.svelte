@@ -3,18 +3,32 @@
   import HUD from "../components/game/hub.svelte";
   import Menu from "../components/game/menu.svelte";
 
-  const mmo = new CrappyMMOAttempt()
+  const game = new CrappyMMOAttempt()
   
   let menu;
   let hud;
 
+  let focused = false
+
   let showHUD = false
   let showMenu = true;
+  
+  function handleKeydown(event) {
+		// console.log(event.key);
+    // console.log(event.keyCode);
+	}
 
+  function handleKeyup(event) {
+		// console.log(event.key);
+    // console.log(event.keyCode);
+	}
 </script>
 
-<svelte:window on:resize="{() => {mmo._OnWindowResize();}}"></svelte:window>
-<svelte:body on:keyup on:keydown></svelte:body>
+<svelte:window on:blur="{() => {focused = false}}"
+  on:focus="{() => {focused = true}}"
+  on:resize="{() => {game._OnWindowResize();}}"></svelte:window>
+<svelte:body on:keyup={handleKeyup}
+  on:keydown={handleKeydown}></svelte:body>
 
 <canvas id="game"></canvas>
 {#if showHUD}
@@ -24,7 +38,7 @@
 {#if showMenu}
   <Menu bind:this={menu}
     on:click="{() => {
-      mmo.OnGameStarted_();
+      game.OnGameStarted_();
       showHUD = true}}"></Menu>
 {/if}
 

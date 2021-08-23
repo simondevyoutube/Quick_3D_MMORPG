@@ -173,7 +173,9 @@ export class MonsterSpawner {
             console.log(`killed ${e.accountInfo_.name}`);  
           } else {
             console.log("No account info on this event");
-            console.log(e);
+            try {
+              console.log(e.entity_.accountInfo_.name); 
+            } catch (error) {}
           }
           dead.push(e);
         } else {
