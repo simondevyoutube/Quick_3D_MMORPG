@@ -28,10 +28,11 @@ export class WorkerThread {
     this._resolve = resolve;
     // console.log("pre-posting the message");
     this._worker.postMessage(s);
-    console.log("posted a message");
-    // console.log(s);
-    // console.log(resolve);
-    // debugger
+    if (s.subject != "build_chunk") {
+      console.log("here");
+      console.log(s);
+      debugger
+    }
   }
 }
 
