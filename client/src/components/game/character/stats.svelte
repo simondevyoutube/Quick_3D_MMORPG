@@ -1,4 +1,5 @@
 <script>
+  let show = false;
   function OnStatsClicked_(msg) {
     const visibility = this._ui.stats.style.visibility;
     this.HideUI_();
@@ -14,6 +15,7 @@
   //   this.stats_.experience;
 </script>
 
+{#if show}
 <div class="stats" id="stats">
   <div class="stats-inner">
     <div class="stats-title">Statistics</div>
@@ -69,6 +71,7 @@
     </div>
   </div>
 </div>
+{/if}
 
 <style>
   .stats-tooltip {

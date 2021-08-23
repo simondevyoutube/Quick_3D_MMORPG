@@ -1,10 +1,13 @@
 <script>
+  import { Component } from "../../../entity.js";
+
+  let show = false;
+
   function OnInventoryClicked_(msg) {
     const visibility = this._ui.inventory.style.visibility;
     this.HideUI_();
     this._ui.inventory.style.visibility = visibility ? "" : "hidden";
   }
-  import { Component } from "./entity.js";
 
   export class InventoryDatabaseController extends Component {
     constructor() {
@@ -211,6 +214,7 @@
   }
 </script>
 
+{#if show}
 <div class="inventory" id="inventory">
   <div class="inventory-inner">
     <div class="inventory-title">Inventory</div>
@@ -261,6 +265,7 @@
     </div>
   </div>
 </div>
+{/if}
 
 <style>
   .inventory-title {

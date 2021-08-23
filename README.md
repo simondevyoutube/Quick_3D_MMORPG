@@ -4,8 +4,8 @@ A recreation of simon's project with the following aims:
 
 - Code refactoring (make it approach-able/use-able)
   - [x] ESmodules
+  - [x] svelte-kit web ui framework
+  - promises
   - Webstream websockets
-- Development setup
-  - typescript?
-  - web ui framework (maybe sveltekit?)
-- Electron app (maybe sometime in the future)
+- typescript (maybe)
+- Electron app (maybe)

@@ -1,28 +1,32 @@
 <script>
   import { CrappyMMOAttempt } from "../main.js";
+  import HUD from "../components/game/hub.svelte";
+  import Menu from "../components/game/menu.svelte";
 
   const mmo = new CrappyMMOAttempt()
+  
+  let menu;
+  let hud;
 
-  let inventory   //: document.getElementById("inventory"),
-  let stats       //: document.getElementById("stats"),
-  let quests      //: document.getElementById("quest-journal"),
-
-  function HideUI_() {
-    inventory.style.visibility = "hidden";
-    stats.style.visibility = "hidden";
-    quests.style.visibility = "hidden";
-  }
-  // HideUI_();
+  let showHUD = false
+  let showMenu = true;
 
 </script>
 
 <svelte:window on:resize="{() => {mmo._OnWindowResize();}}"></svelte:window>
+<svelte:body on:keyup on:keydown></svelte:body>
 
-<button on:click="{() => {
-  console.log("Starting Game");
-  mmo.OnGameStarted_();}}">Start</button>
-<a href="/">Return</a>
 <canvas id="game"></canvas>
+{#if showHUD}
+  <HUD bind:this={hud}
+    bind:show={showHUD}></HUD>
+{/if}
+{#if showMenu}
+  <Menu bind:this={menu}
+    on:click="{() => {
+      mmo.OnGameStarted_();
+      showHUD = true}}"></Menu>
+{/if}
 
 <style>
   :global(body) {
@@ -32,5 +36,11 @@
     color: white;
     margin: 0;
     overflow: hidden;
+  }
+  canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: -1;
   }
 </style>
