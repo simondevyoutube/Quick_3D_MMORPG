@@ -169,7 +169,12 @@ export class MonsterSpawner {
         e.Update(timeElapsed);
 
         if (e.IsDead) {
-          console.log(`killed ${e.accountInfo_.name}`);
+          if (e.accountInfo_) {
+            console.log(`killed ${e.accountInfo_.name}`);  
+          } else {
+            console.log("No account info on this event");
+            console.log(e);
+          }
           dead.push(e);
         } else {
           alive.push(e);
