@@ -2,11 +2,32 @@ import { io } from "./deps.js";
 import { Component } from "./entity.js";
 
 export class NetworkController extends Component {
+  socket_ = io("ws://localhost:3000", {
+    reconnection: false,
+    transports: ["websocket"],
+    timeout: 10000,
+  });
+  playerID_ = null;
+
   constructor(params) {
     super();
+    this.socket_.on("connect", () => {
+      console.log(this.socket_.id);
+      const randomName = this.GenerateRandomName_();
+      // Input validation is for losers
+      this.socket_.emit(
+        "login.commit",
+        randomName,
+      );
+    });
 
-    this.playerID_ = null;
-    this.SetupSocket_();
+    this.socket_.on("disconnect", () => {
+      console.log("DISCONNECTED: " + this.socket_.id); // undefined
+    });
+
+    this.socket_.onAny((e, d) => {
+      this.OnMessage_(e, d);
+    });
   }
 
   GenerateRandomName_() {
@@ -42,32 +63,6 @@ export class NetworkController extends Component {
       Math.floor(Math.random() * names2.length)
     ];
     return n1 + " " + n2;
-  }
-
-  SetupSocket_() {
-    this.socket_ = io("ws://localhost:3000", {
-      reconnection: false,
-      transports: ["websocket"],
-      timeout: 10000,
-    });
-
-    this.socket_.on("connect", () => {
-      console.log(this.socket_.id);
-      const randomName = this.GenerateRandomName_();
-      // Input validation is for losers
-      this.socket_.emit(
-        "login.commit",
-        "Test Value", //document.getElementById("login-input").value,
-      );
-    });
-
-    this.socket_.on("disconnect", () => {
-      console.log("DISCONNECTED: " + this.socket_.id); // undefined
-    });
-
-    this.socket_.onAny((e, d) => {
-      this.OnMessage_(e, d);
-    });
   }
 
   SendChat(txt) {
@@ -179,6 +174,13 @@ export class NetworkController extends Component {
         topic: "network.inventory",
         inventory: d[1],
       });
+    } else if (e == "world.stats") {
+      // TODO-DefinitelyMaybe: not worrying about this much yet
+    } else {
+      console.warn("Network controller unknown event");
+      console.log(e);
+      console.log(d);
+      debugger
     }
   }
 }
