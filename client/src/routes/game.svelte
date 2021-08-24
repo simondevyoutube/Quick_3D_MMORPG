@@ -1,45 +1,39 @@
 <script>
-  import { CrappyMMOAttempt } from "../main.js";
-  import HUD from "../components/game/hub.svelte";
-  import Menu from "../components/game/menu.svelte";
+  import { Game } from "../game.js";
+  import { onMount } from "svelte";
+  import HUD from "../ui/game/hud.svelte";
+  import Menu from "../ui/game/menu.svelte";
+  import Chat from "../ui/game/chat.svelte";
 
-  const game = new CrappyMMOAttempt()
-  
-  let menu;
-  let hud;
+  const game = new Game()
 
   let focused = false
 
-  let showHUD = false
+  let showHUD = true
   let showMenu = true;
-  
-  function handleKeydown(event) {
-		// console.log(event.key);
-    // console.log(event.keyCode);
-	}
+  let showChat = true
 
-  function handleKeyup(event) {
-		// console.log(event.key);
-    // console.log(event.keyCode);
-	}
+  onMount(() => {
+    game.load();
+    showHUD = true
+  })
 </script>
 
 <svelte:window on:blur="{() => {focused = false}}"
   on:focus="{() => {focused = true}}"
-  on:resize="{() => {game._OnWindowResize();}}"></svelte:window>
-<svelte:body on:keyup={handleKeyup}
-  on:keydown={handleKeydown}></svelte:body>
+  on:resize="{() => {game.resize();}}"></svelte:window>
+<svelte:body on:keyup={game.input.handleKeyup}
+  on:keydown={game.input.handleKeydown}></svelte:body>
 
-<canvas id="game"></canvas>
+<canvas id="game" on:pointerdown on:pointerup></canvas>
+{#if showChat}
+<Chat></Chat>
+{/if}
 {#if showHUD}
-  <HUD bind:this={hud}
-    bind:show={showHUD}></HUD>
+<HUD></HUD>
 {/if}
 {#if showMenu}
-  <Menu bind:this={menu}
-    on:click="{() => {
-      game.OnGameStarted_();
-      showHUD = true}}"></Menu>
+<Menu></Menu>
 {/if}
 
 <style>

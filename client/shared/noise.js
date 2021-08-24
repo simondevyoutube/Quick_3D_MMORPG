@@ -1,4 +1,4 @@
-import { simplex } from "./simplex-noise.js";
+import { simplex } from "./simplex.js";
 
 export class Noise {
   constructor(params) {
