@@ -1,5 +1,5 @@
 import { http, socket_io } from "./deps.js";
-import { WorldServer } from "./world-server.js";
+import { WorldServer } from "./world/server.js";
 
 function Main() {
   const port = process.env.PORT || 3000;

@@ -7,7 +7,7 @@
     "socket.io": "^3.1.1"
   },
   "scripts": {
-    "World Server": "node ./src/index.js"
+    "World Server": "node ./src/server.js"
   },
   "type": "module"
 }
