@@ -3,7 +3,7 @@ import { THREE } from "../deps.js";
 import { Component } from "./entity.js";
 import { BasicCharacterControllerProxy, CharacterFSM } from "./player.js";
 
-import { CHARACTER_MODELS } from "../../shared/defs.js";
+import { CHARACTER_MODELS } from "../data/defs.js";
 
 export class NPCController extends Component {
   constructor(params) {

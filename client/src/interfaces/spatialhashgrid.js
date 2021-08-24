@@ -1,4 +1,4 @@
-import { sat } from "./math.js";
+import { sat } from "../utils/math.js";
 
 export class SpatialHashGrid {
   constructor(bounds, dimensions) {

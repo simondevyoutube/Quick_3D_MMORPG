@@ -9,10 +9,11 @@ A recreation of simon's project with the following aims:
   - [x] rename files
   - [ ] remove code
     - [x] remain functionaly equivelent
-    - [x] remove in-line data about terrain workers url to top of file
+    - [x] move in-line data about terrain workers url to top of file
   - promises
   - Webstream websockets
   - ui themes
+  - Server to deno
   - game dev features
     - objects inventory / place
 - typescript (maybe)

@@ -1,6 +1,5 @@
 import { quat, vec3 } from "../deps.js";
-
-import { WEAPONS_DATA } from "../../../client/shared/defs.js";
+import { WEAPONS_DATA } from "../../../client/src/data/defs.js";
 
 export class Action_Attack {
   constructor(time, cooldown, onAction) {

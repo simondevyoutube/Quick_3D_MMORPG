@@ -7,7 +7,7 @@ import { LoadController } from "./interfaces/load.js";
 import { NetworkEntitySpawner, PlayerSpawner } from "./objects/spawner.js";
 import { TerrainChunkManager } from "./interfaces/terrain.js";
 
-import { SpatialHashGrid } from "../shared/spatialhashgrid.js";
+import { SpatialHashGrid } from "./interfaces/spatialhashgrid.js";
 // import { WEAPONS_DATA } from "../shared/defs.js";
 import { ThreeJSController } from "./interfaces/three.js";
 

@@ -2,7 +2,7 @@ import { THREE } from "../deps.js";
 
 import { Component } from "../objects/entity.js";
 
-import { CHARACTER_MODELS } from "../../shared/defs.js";
+import { CHARACTER_MODELS } from "../data/defs.js";
 
 export class FloatingName extends Component {
   constructor(params) {
