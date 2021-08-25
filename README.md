@@ -1,6 +1,6 @@
 # Quick_3D_MMORPG
 
-A recreation of simon's project with the following aims:
+A recreation of simon's project where the following happened:
 
 - Code refactoring (make it approach-able/use-able)
   - [x] ESmodules
