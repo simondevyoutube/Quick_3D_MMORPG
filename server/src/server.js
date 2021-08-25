@@ -1,11 +1,12 @@
-import { http, socket_io } from "./deps.js";
+import { http, socket_io as socketIo } from "./deps.js";
 import { WorldServer } from "./world/server.js";
 
 function Main() {
-  const port = process.env.PORT || 3000;
+  const port = 3000;
 
   const server = http.createServer();
-  const io = new socket_io.Server(server, {
+  // const server = Deno.serveHttp()
+  const io = new socketIo.Server(server, {
     cors: {
       origin: "*",
     },

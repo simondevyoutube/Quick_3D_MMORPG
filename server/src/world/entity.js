@@ -1,7 +1,7 @@
 import { quat, vec3 } from "../deps.js";
 import { WEAPONS_DATA } from "../../../client/src/data/defs.js";
 
-export class Action_Attack {
+export class ActionAttack {
   constructor(time, cooldown, onAction) {
     this.onAction_ = onAction;
     this.time_ = time;
@@ -127,7 +127,7 @@ export class WorldEntity {
       return;
     }
 
-    this.action_ = new Action_Attack(
+    this.action_ = new ActionAttack(
       this.characterDefinition_.attack.timing,
       this.characterDefinition_.attack.cooldown,
       () => {
@@ -150,7 +150,7 @@ export class WorldEntity {
     };
 
     const attackable = nearby.filter(_Filter);
-    for (let a of attackable) {
+    for (const a of attackable) {
       const target = a;
 
       const dirToTarget = vec3.create();

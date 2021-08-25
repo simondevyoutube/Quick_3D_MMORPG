@@ -1,5 +1,5 @@
 import { io } from "../deps.js";
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 
 export class NetworkController extends Component {
   port = 3000;

@@ -1,7 +1,7 @@
 import { THREE } from "../deps.js";
 
-import { Component } from "./entity.js";
-import { FiniteStateMachine } from "../utils/structures.js";
+import { Component } from "../utils/component.js";
+import { FiniteStateMachine } from "../utils/finitestatemachine.js";
 import {
   AttackState,
   DanceState,

@@ -1,5 +1,5 @@
 import { FBXLoader, THREE } from "../deps.js";
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 import { CHARACTER_MODELS } from "../data/defs.js";
 
 export class EquipWeapon extends Component {

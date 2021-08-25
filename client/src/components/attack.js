@@ -1,4 +1,4 @@
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 
 export class AttackController extends Component {
   constructor() {

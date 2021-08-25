@@ -1,6 +1,6 @@
 import { THREE } from "../deps.js";
 
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 import { CubeQuadTree } from "../utils/quadtree.js";
 import { PS1, PS2, VS1, VS2 } from "./shaders.js";
 import { TerrainChunkRebuilder_Threaded } from "./terrainbuilderthreaded.js";

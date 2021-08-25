@@ -1,19 +1,16 @@
 import { THREE } from "../deps.js";
 
 export class Entity {
-  constructor() {
-    this._name = null;
-    this._components = {};
-
-    this._position = new THREE.Vector3();
-    this._rotation = new THREE.Quaternion();
-    this._handlers = {};
-    this.parent_ = null;
-    this.dead_ = false;
-  }
+  _name = null;
+  _components = {};
+  _position = new THREE.Vector3();
+  _rotation = new THREE.Quaternion();
+  _handlers = {};
+  parent_ = null;
+  dead_ = false;
 
   Destroy() {
-    for (let k in this._components) {
+    for (const k in this._components) {
       this._components[k].Destroy();
     }
     this._components = null;
@@ -60,7 +57,7 @@ export class Entity {
   }
 
   InitEntity() {
-    for (let k in this._components) {
+    for (const k in this._components) {
       this._components[k].InitEntity();
     }
   }
@@ -78,7 +75,7 @@ export class Entity {
       return;
     }
 
-    for (let curHandler of this._handlers[msg.topic]) {
+    for (const curHandler of this._handlers[msg.topic]) {
       curHandler(msg);
     }
   }
@@ -108,51 +105,8 @@ export class Entity {
   }
 
   Update(timeElapsed) {
-    for (let k in this._components) {
+    for (const k in this._components) {
       this._components[k].Update(timeElapsed);
     }
-  }
-}
-
-export class Component {
-  constructor() {
-    this.parent_ = null;
-  }
-
-  Destroy() {
-  }
-
-  SetParent(p) {
-    this.parent_ = p;
-  }
-
-  InitComponent() {}
-
-  InitEntity() {}
-
-  GetComponent(n) {
-    return this.parent_.GetComponent(n);
-  }
-
-  get Manager() {
-    return this.parent_.Manager;
-  }
-
-  get Parent() {
-    return this.parent_;
-  }
-
-  FindEntity(n) {
-    return this.parent_.FindEntity(n);
-  }
-
-  Broadcast(m) {
-    this.parent_.Broadcast(m);
-  }
-
-  Update(_) {}
-
-  _RegisterHandler(n, h) {
-    this.parent_._RegisterHandler(n, h);
   }
 }

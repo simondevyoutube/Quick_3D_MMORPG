@@ -1,10 +1,10 @@
 import { GLTFLoader, OBJLoader, THREE } from "../deps.js";
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 
 export class RenderComponent extends Component {
+  group_ = new THREE.Group();
   constructor(params) {
     super();
-    this.group_ = new THREE.Group();
     this.params_ = params;
     this.params_.scene.add(this.group_);
   }

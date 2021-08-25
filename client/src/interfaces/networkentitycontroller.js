@@ -1,5 +1,5 @@
 import { THREE } from "../deps.js";
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 
 export class NetworkEntityController extends Component {
   constructor() {

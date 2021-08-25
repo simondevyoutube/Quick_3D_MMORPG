@@ -1,6 +1,6 @@
 import { THREE } from "../deps.js";
 
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 
 import { lerp } from "../utils/math.js";
 

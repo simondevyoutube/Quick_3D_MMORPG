@@ -1,17 +1,17 @@
 import { TerrainChunk } from "./terrainchunk.js";
 
-const workerURL = "src/interfaces/terrainworker.js";
-const workers = 4;
+const numWorkers = 4;
 let _IDs = 0;
 
 export class WorkerThread {
-  constructor(s) {
-    this._worker = new Worker(s, { type: "module" });
+  _worker = new Worker("src/interfaces/terrainworker.js", { type: "module" });
+  _resolve = null;
+  _id = _IDs++;
+  
+  constructor() {
     this._worker.onmessage = (e) => {
       this._OnMessage(e);
     };
-    this._resolve = null;
-    this._id = _IDs++;
   }
 
   _OnMessage(e) {
@@ -31,8 +31,8 @@ export class WorkerThread {
 }
 
 export class WorkerPool {
-  constructor(sz, entry) {
-    this._workers = [...Array(sz)].map((_) => new WorkerThread(entry));
+  constructor(num) {
+    this._workers = [...Array(num)].map((_) => new WorkerThread());
     this._free = [...this._workers];
     this._busy = {};
     this._queue = [];
@@ -73,10 +73,7 @@ export class TerrainChunkRebuilder_Threaded {
     this._pool = {};
     this._old = [];
 
-    this._workerPool = new WorkerPool(
-      workers,
-      workerURL,
-    );
+    this._workerPool = new WorkerPool(numWorkers);
 
     this._params = params;
   }

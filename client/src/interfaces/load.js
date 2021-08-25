@@ -1,5 +1,5 @@
 import { FBXLoader, GLTFLoader, SkeletonUtils, THREE } from "../deps.js";
-import { Component } from "../objects/entity.js";
+import { Component } from "../utils/component.js";
 
 export class LoadController extends Component {
   constructor() {

@@ -7,6 +7,8 @@ import { SpatialHashGrid } from "../../../client/src/interfaces/spatialhashgrid.
 import { HeightGenerator } from "../../../client/src/interfaces/terrainheight.js";
 import { CHARACTER_MODELS } from "../../../client/src/data/defs.js";
 
+const _TICK_RATE = 0.1;
+
 export class MonsterSpawner {
   constructor(params) {
     this.parent_ = params.parent;
@@ -49,8 +51,6 @@ export class MonsterSpawner {
     }
   }
 }
-
-const _TICK_RATE = 0.1;
 
 export class WorldManager {
   constructor() {

@@ -1,6 +1,5 @@
 import { EntityManager } from "./interfaces/entities.js";
-import { Entity } from "./objects/entity.js";
-import { LevelUpComponentSpawner } from "./components/level.js";
+import { Entity } from "./utils/entity.js"
 import { NetworkController } from "./interfaces/network.js";
 import { SceneryController } from "./interfaces/scenery.js";
 import { LoadController } from "./interfaces/load.js";
@@ -23,21 +22,10 @@ export class Game {
     [100, 100],
   );
   previousRAF_ = null;
-
-  // _gui = new GUI();
-  // _guiParams = {
-  //   general: {},
-  // };
   initialized = false;
-
-  // constructor() {
-  //   // this._gui.addFolder("General");
-  //   // this._gui.close();
-  // }
 
   load() {
     this.LoadControllers_();
-    this.LoadPlayer_();
 
     this.RAF_();
 
@@ -119,22 +107,6 @@ export class Game {
     //     WEAPONS_DATA[k],
     //   );
     // }
-  }
-
-  LoadPlayer_() {
-    const params = {
-      camera: this.camera_,
-      scene: this.scene_,
-    };
-
-    const levelUpSpawner = new Entity();
-    levelUpSpawner.AddComponent(
-      new LevelUpComponentSpawner({
-        camera: this.camera_,
-        scene: this.scene_,
-      }),
-    );
-    this.entities.Add(levelUpSpawner, "level-up-spawner");
   }
 
   resize() {
