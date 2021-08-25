@@ -107,7 +107,7 @@ export class SceneryController extends Component {
     };
     this.noise_ = new Noise(noiseParams);
 
-    this.center_ = null;
+    this.center_ = undefined;
     this.crap_ = [];
   }
 
@@ -224,7 +224,7 @@ export class SceneryController extends Component {
       return;
     }
 
-    const center = new THREE.Vector3().copy(player.Position);
+    const center = new THREE.Vector3().copy(player.position);
 
     center.x = Math.round(center.x / 50.0);
     center.y = 0.0;

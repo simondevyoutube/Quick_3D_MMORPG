@@ -10,12 +10,22 @@ A recreation of simon's project where the following happened:
   - [x] remove code
     - [x] remain functionaly equivelent
     - [x] move in-line data about terrain workers url to top of file
-  - [ ] clarity
-    - [ ] remove duplication / boilerplate
-    - [ ] what does x?
+    - [x] null -> undefined
+    - [x] rotation -> quaternion
+    - [x] most Getters and setters / boilerplate
   - [x] three.js glsl
     - [x] highlighted in vscode extensions
     - [x] variables changed
+  - [ ] clarity
+    - [ ] what does x?
+      - [ ] What is a Entity?
+        - Something in the game which has pos and rotation
+      - [ ] What is a component?
+        - attach themselves to entities, usually providing functionality
+    - [ ] how to I do x?
+      - [ ] Getting a model into the game
+      - [ ] Animating a model in game
+      - [ ] Changing functionality within the game
   - promises
   - Webstream websockets
   - ui themes

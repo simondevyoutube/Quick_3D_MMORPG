@@ -5,8 +5,8 @@ export class NetworkEntityController extends Component {
   constructor() {
     super();
     this.transformUpdates_ = [];
-    this.targetFrame_ = null;
-    this.lastFrame_ = null;
+    this.targetFrame_ = undefined;
+    this.lastFrame_ = undefined;
     this.lastUpdate_ = 0.0;
   }
 
@@ -31,7 +31,7 @@ export class NetworkEntityController extends Component {
       this.transformUpdates_.push({ time: 0.1, transform: msg.transform });
 
       // First update
-      if (this.targetFrame_ == null) {
+      if (this.targetFrame_ == undefined) {
         this.SetTransform_(msg.transform);
       }
     }
@@ -57,7 +57,7 @@ export class NetworkEntityController extends Component {
   Update(timeElapsed) {
     this.lastUpdate_ += timeElapsed;
     if (this.lastUpdate_ >= 10.0) {
-      this.Parent.SetDead();
+      this.parent.dead = true;
     }
 
     if (this.transformUpdates_.length == 0) {
@@ -75,8 +75,8 @@ export class NetworkEntityController extends Component {
       this.lastFrame_ = {
         transform: [
           this.targetFrame_.transform[0],
-          this.Parent.Position.toArray(),
-          this.Parent.Quaternion.toArray(),
+          this.parent.position.toArray(),
+          this.parent.quaternion.toArray(),
         ],
       };
       this.targetFrame_ = this.transformUpdates_.shift();
@@ -99,8 +99,8 @@ export class NetworkEntityController extends Component {
       pf.lerp(p2, t);
       qf.slerp(q2, t);
 
-      this.Parent.SetPosition(pf);
-      this.Parent.SetQuaternion(qf);
+      this.parent.SetPosition(pf);
+      this.parent.SetQuaternion(qf);
       const controller = this.GetComponent("NPCController");
       controller.SetState(this.lastFrame_.transform[0]);
     }

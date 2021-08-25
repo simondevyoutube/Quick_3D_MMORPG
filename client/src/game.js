@@ -3,7 +3,7 @@ import { Entity } from "./utils/entity.js"
 import { NetworkController } from "./interfaces/network.js";
 import { SceneryController } from "./interfaces/scenery.js";
 import { LoadController } from "./interfaces/load.js";
-import { NetworkEntitySpawner, PlayerSpawner } from "./objects/spawner.js";
+import { NetworkEntitySpawner, PlayerSpawner } from "./entities/spawner.js";
 import { TerrainChunkManager } from "./interfaces/terrain.js";
 
 import { SpatialHashGrid } from "./interfaces/spatialhashgrid.js";
@@ -21,7 +21,7 @@ export class Game {
     [[-1000, -1000], [1000, 1000]],
     [100, 100],
   );
-  previousRAF_ = null;
+  previousRAF_ = undefined;
   initialized = false;
 
   load() {
@@ -120,7 +120,7 @@ export class Game {
 
   RAF_() {
     requestAnimationFrame((t) => {
-      if (this.previousRAF_ === null) {
+      if (this.previousRAF_ === undefined) {
         this.previousRAF_ = t;
       }
 

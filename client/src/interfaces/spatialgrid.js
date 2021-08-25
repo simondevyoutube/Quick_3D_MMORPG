@@ -9,7 +9,7 @@ export class SpatialGridController extends Component {
 
   destroy() {
     this.grid_.Remove(this.client_);
-    this.client_ = null;
+    this.client_ = undefined;
   }
 
   InitComponent() {

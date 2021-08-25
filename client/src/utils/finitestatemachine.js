@@ -1,7 +1,7 @@
 export class FiniteStateMachine {
   constructor() {
     this._states = {};
-    this._currentState = null;
+    this._currentState = undefined;
   }
 
   _AddState(name, type) {

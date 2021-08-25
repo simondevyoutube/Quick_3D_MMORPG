@@ -36,7 +36,7 @@ export class MonsterSpawner {
     });
 
     const wc = new WorldAIClient(e, this.terrain_, () => {
-      this.entity_ = null;
+      this.entity_ = undefined;
       console.log("entity gone, spawner making now one soon");
     });
 

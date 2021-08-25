@@ -172,10 +172,10 @@ export class TerrainChunkManager extends Component {
     }
 
     for (let k in this._chunks) {
-      this._chunks[k].chunk.Update(target.Position);
+      this._chunks[k].chunk.Update(target.position);
     }
     for (let c of this._builder._old) {
-      c.chunk.Update(target.Position);
+      c.chunk.Update(target.position);
     }
 
     // this._params.scattering.uniforms.planetRadius.value = terrain_constants.PLANET_RADIUS;
@@ -191,7 +191,7 @@ export class TerrainChunkManager extends Component {
       radius: terrain_constants.PLANET_RADIUS,
       min_node_size: terrain_constants.QT_MIN_CELL_SIZE,
     });
-    q.Insert(target.Position);
+    q.Insert(target.position);
 
     const sides = q.GetChildren();
 

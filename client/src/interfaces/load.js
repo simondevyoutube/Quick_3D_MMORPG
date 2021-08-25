@@ -26,18 +26,18 @@ export class LoadController extends Component {
       const loader = new FBXLoader();
       loader.setPath(path);
 
-      this.models_[name] = { loader: loader, asset: null, queue: [onLoad] };
+      this.models_[name] = { loader: loader, asset: undefined, queue: [onLoad] };
       this.models_[name].loader.load(name, (fbx) => {
         this.models_[name].asset = fbx;
 
         const queue = this.models_[name].queue;
-        this.models_[name].queue = null;
+        this.models_[name].queue = undefined;
         for (let q of queue) {
           const clone = this.models_[name].asset.clone();
           q(clone);
         }
       });
-    } else if (this.models_[name].asset == null) {
+    } else if (this.models_[name].asset == undefined) {
       this.models_[name].queue.push(onLoad);
     } else {
       const clone = this.models_[name].asset.clone();
@@ -50,7 +50,7 @@ export class LoadController extends Component {
       const loader = new GLTFLoader();
       loader.setPath(path);
 
-      this.models_[name] = { loader: loader, asset: null, queue: [onLoad] };
+      this.models_[name] = { loader: loader, asset: undefined, queue: [onLoad] };
       this.models_[name].loader.load(name, (glb) => {
         this.models_[name].asset = glb;
 
@@ -71,7 +71,7 @@ export class LoadController extends Component {
         });
 
         const queue = this.models_[name].queue;
-        this.models_[name].queue = null;
+        this.models_[name].queue = undefined;
         for (let q of queue) {
           const clone = { ...glb };
           clone.scene = SkeletonUtils.clone(clone.scene);
@@ -79,7 +79,7 @@ export class LoadController extends Component {
           q(clone);
         }
       });
-    } else if (this.models_[name].asset == null) {
+    } else if (this.models_[name].asset == undefined) {
       this.models_[name].queue.push(onLoad);
     } else {
       const clone = { ...this.models_[name].asset };

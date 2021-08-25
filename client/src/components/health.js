@@ -88,7 +88,7 @@ export class HealthBar extends Component {
 
     this.material_.uniforms.health.value = this.animHealth_;
     this.material_.uniforms.colour.value = c;
-    this.bar_.position.copy(this.parent.Position);
+    this.bar_.position.copy(this.parent.position);
     this.bar_.position.y += 8.0;
     this.bar_.quaternion.copy(this.params_.camera.quaternion);
   }

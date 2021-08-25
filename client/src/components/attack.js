@@ -1,7 +1,7 @@
 import { Component } from "../utils/component.js";
 
 export class AttackController extends Component {
-  action_ = null;
+  action_ = undefined;
   
   constructor() {
     super();

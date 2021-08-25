@@ -51,12 +51,12 @@ export class WorldEntity {
     this.gridClient_.entity = this;
 
     this.updateTimer_ = 0.0;
-    this.action_ = null;
+    this.action_ = undefined;
   }
 
   destroy() {
     this.grid_.Remove(this.gridClient_);
-    this.gridClient_ = null;
+    this.gridClient_ = undefined;
   }
 
   get ID() {
@@ -64,7 +64,7 @@ export class WorldEntity {
   }
 
   get Valid() {
-    return this.gridClient_ != null;
+    return this.gridClient_ != undefined;
   }
 
   get Health() {
@@ -245,7 +245,7 @@ export class WorldEntity {
 
     this.action_.Update(timeElapsed);
     if (this.action_.Finished) {
-      this.action_ = null;
+      this.action_ = undefined;
       this.SetState("idle");
     }
   }

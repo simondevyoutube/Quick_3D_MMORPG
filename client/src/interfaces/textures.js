@@ -84,7 +84,7 @@ export class TextureAtlas {
   _LoadAtlas(atlas, names) {
     this._textures[atlas] = {
       textures: names.map((n) => this._LoadTexture(n)),
-      atlas: null,
+      atlas: undefined,
     };
   }
 }

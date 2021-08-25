@@ -1,6 +1,6 @@
 export class FiniteStateMachine {
   constructor(onEvent) {
-    this.currentState_ = null;
+    this.currentState_ = undefined;
     this.onEvent_ = onEvent;
   }
 

@@ -74,7 +74,7 @@ export class BasicCharacterController extends Component {
       },
     );
     this.registerHandler(
-      "update.rotation",
+      "update.quaternion",
       (m) => {
         this.OnUpdateRotation_(m);
       },
@@ -136,7 +136,7 @@ export class BasicCharacterController extends Component {
             };
           }
         }
-        return null;
+        return undefined;
       };
 
       this.animations_["idle"] = _FindAnim("Idle");
@@ -179,13 +179,13 @@ export class BasicCharacterController extends Component {
 
     for (let i = 0; i < nearby.length; ++i) {
       const e = nearby[i].entity;
-      const d = ((pos.x - e.Position.x) ** 2 + (pos.z - e.Position.z) ** 2) **
+      const d = ((pos.x - e.position.x) ** 2 + (pos.z - e.position.z) ** 2) **
         0.5;
 
       // HARDCODED
       if (d <= 4) {
         const d2 =
-          ((oldPos.x - e.Position.x) ** 2 + (oldPos.z - e.Position.z) ** 2) **
+          ((oldPos.x - e.position.x) ** 2 + (oldPos.z - e.position.z) ** 2) **
             0.5;
 
         // If they're already colliding, let them get untangled.
@@ -306,7 +306,7 @@ export class BasicCharacterController extends Component {
 
     controlObject.position.copy(pos);
 
-    this.Parent.SetPosition(controlObject.position);
-    this.Parent.SetQuaternion(controlObject.quaternion);
+    this.parent.SetPosition(controlObject.position);
+    this.parent.SetQuaternion(controlObject.quaternion);
   }
 }

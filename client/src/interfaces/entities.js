@@ -27,6 +27,7 @@ export class Entities {
 
     e.parent = this;
     e.name = n;
+    // TODO-DefinitelyMaybe: Why are entities initialized here? how about just bookkeeping.
     e.InitEntity();
   }
 

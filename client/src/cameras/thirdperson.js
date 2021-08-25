@@ -13,7 +13,7 @@ export class ThirdPersonCamera extends Component {
 
   _CalculateIdealOffset() {
     const idealOffset = new THREE.Vector3(-0, 10, -15);
-    idealOffset.applyQuaternion(this._params.target.rotation);
+    idealOffset.applyQuaternion(this._params.target.quaternion);
     idealOffset.add(this._params.target.position);
 
     const terrain = this.FindEntity("terrain").GetComponent(
@@ -29,7 +29,7 @@ export class ThirdPersonCamera extends Component {
 
   _CalculateIdealLookat() {
     const idealLookat = new THREE.Vector3(0, 5, 20);
-    idealLookat.applyQuaternion(this._params.target.rotation);
+    idealLookat.applyQuaternion(this._params.target.quaternion);
     idealLookat.add(this._params.target.position);
     return idealLookat;
   }

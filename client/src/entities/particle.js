@@ -92,7 +92,7 @@ export class ParticleEmitter {
     this.emissionRate_ = 0.0;
     this.emissionAccumulator_ = 0.0;
     this.particles_ = [];
-    this.emitterLife_ = null;
+    this.emitterLife_ = undefined;
   }
 
   UpdateParticles_(timeElapsed) {
@@ -151,7 +151,7 @@ export class ParticleEmitter {
   }
 
   get IsAlive() {
-    if (this.emitterLife_ === null) {
+    if (this.emitterLife_ === undefined) {
       return this.particles_.length > 0;
     } else {
       return this.emitterLife_ > 0.0 || this.particles_.length > 0;
@@ -172,7 +172,7 @@ export class ParticleEmitter {
   Update(timeElapsed) {
     this.OnUpdate_(timeElapsed);
 
-    if (this.emitterLife_ !== null) {
+    if (this.emitterLife_ !== undefined) {
       this.emitterLife_ -= timeElapsed;
     }
 

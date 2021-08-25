@@ -24,10 +24,10 @@ export class WorldClient {
 
   destroy() {
     this.client_.Disconnect();
-    this.client_ = null;
+    this.client_ = undefined;
 
     this.entity_.destroy();
-    this.entity_ = null;
+    this.entity_ = undefined;
   }
 
   OnDeath() {}
@@ -164,7 +164,7 @@ export class WorldNetworkClient extends WorldClient {
 
 export class AIStateMachine {
   constructor(entity, terrain) {
-    this.currentState_ = null;
+    this.currentState_ = undefined;
     this.entity_ = entity;
     this.terrain_ = terrain;
   }

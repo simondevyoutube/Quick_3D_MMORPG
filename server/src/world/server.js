@@ -5,7 +5,7 @@ import { LoginQueue } from "../loginqueue.js";
 export class SocketWrapper {
   constructor(params) {
     this.socket_ = params.socket;
-    this.onMessage = null;
+    this.onMessage = undefined;
     this.dead_ = false;
     this.SetupSocket_();
   }

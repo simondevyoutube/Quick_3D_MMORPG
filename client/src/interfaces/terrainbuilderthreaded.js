@@ -5,7 +5,7 @@ let _IDs = 0;
 
 export class WorkerThread {
   _worker = new Worker("src/interfaces/terrainworker.js", { type: "module" });
-  _resolve = null;
+  _resolve = undefined;
   _id = _IDs++;
   
   constructor() {
@@ -16,7 +16,7 @@ export class WorkerThread {
 
   _OnMessage(e) {
     const resolve = this._resolve;
-    this._resolve = null;
+    this._resolve = undefined;
     resolve(e.data);
   }
 
@@ -92,7 +92,7 @@ export class TerrainChunkRebuilder_Threaded {
       this._pool[w] = [];
     }
 
-    let c = null;
+    let c = undefined;
     if (this._pool[w].length > 0) {
       c = this._pool[w].pop();
       c._params = params;

@@ -54,8 +54,8 @@ export class NetworkPlayerController extends Component {
 
   OnUpdate_(msg) {
     if (msg.transform) {
-      this.Parent.SetPosition(new THREE.Vector3(...msg.transform[1]));
-      this.Parent.SetQuaternion(new THREE.Quaternion(...msg.transform[2]));
+      this.parent.SetPosition(new THREE.Vector3(...msg.transform[1]));
+      this.parent.SetQuaternion(new THREE.Quaternion(...msg.transform[2]));
     }
 
     if (msg.stats) {
@@ -85,8 +85,8 @@ export class NetworkPlayerController extends Component {
     // HACK
     return [
       controller.stateMachine_._currentState.Name,
-      this.Parent.Position.toArray(),
-      this.Parent.Quaternion.toArray(),
+      this.parent.position.toArray(),
+      this.parent.quaternion.toArray(),
     ];
   }
 

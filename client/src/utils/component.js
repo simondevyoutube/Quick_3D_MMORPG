@@ -1,11 +1,7 @@
 export class Component {
-  parent = null;
+  parent = undefined;
 
   destroy() {
-  }
-
-  SetParent(p) {
-    this.parent = p;
   }
 
   InitComponent() {}
@@ -18,10 +14,6 @@ export class Component {
 
   get Manager() {
     return this.parent.parent;
-  }
-
-  get Parent() {
-    return this.parent;
   }
 
   FindEntity(n) {

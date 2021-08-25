@@ -5,7 +5,7 @@ export class SpatialHashGrid {
   
   constructor(bounds, dimensions) {
     const [x, y] = dimensions;
-    this._cells = [...Array(x)].map((_) => [...Array(y)].map((_) => (null)));
+    this._cells = [...Array(x)].map((_) => [...Array(y)].map((_) => (undefined)));
     this._dimensions = dimensions;
     this._bounds = bounds;
   }
@@ -33,9 +33,9 @@ export class SpatialHashGrid {
       position: position,
       dimensions: dimensions,
       _cells: {
-        min: null,
-        max: null,
-        nodes: null,
+        min: undefined,
+        max: undefined,
+        nodes: undefined,
       },
       _queryId: -1,
     };
@@ -109,8 +109,8 @@ export class SpatialHashGrid {
         const xi = x - i1[0];
 
         const head = {
-          next: null,
-          prev: null,
+          next: undefined,
+          prev: undefined,
           client: client,
         };
 
@@ -153,8 +153,8 @@ export class SpatialHashGrid {
       }
     }
 
-    client._cells.min = null;
-    client._cells.max = null;
-    client._cells.nodes = null;
+    client._cells.min = undefined;
+    client._cells.max = undefined;
+    client._cells.nodes = undefined;
   }
 }

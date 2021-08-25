@@ -1,6 +1,6 @@
 import { THREE } from "../deps.js";
 
-import { ParticleSystem } from "../objects/particle.js";
+import { ParticleSystem } from "../entities/particle.jss";
 import { Component } from "../utils/component.js";
 
 export class LevelUpComponentSpawner extends Component {
@@ -44,13 +44,13 @@ export class LevelUpComponent extends Component {
   }
 
   InitComponent() {
-    this._particles.AddParticles(this.Parent.Position, 300);
+    this._particles.AddParticles(this.parent.position, 300);
   }
 
   Update(timeElapsed) {
     this._particles.Step(timeElapsed);
     if (this._particles._particles.length == 0) {
-      this.Parent.SetActive(false);
+      this.parent.SetActive(false);
     }
   }
 }

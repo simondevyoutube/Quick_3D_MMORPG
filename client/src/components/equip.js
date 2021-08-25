@@ -3,8 +3,8 @@ import { Component } from "../utils/component.js";
 import { CHARACTER_MODELS } from "../data/defs.js";
 
 export class EquipWeapon extends Component {
-  target_ = null;
-  name_ = null;
+  target_ = undefined;
+  name_ = undefined;
 
   constructor(params) {
     super();
@@ -65,7 +65,7 @@ export class EquipWeapon extends Component {
     if (this.target_) {
       this.target_.parent.remove(this.target_);
       // Probably need to free the memory properly, whatever
-      this.target_ = null;
+      this.target_ = undefined;
     }
   }
 

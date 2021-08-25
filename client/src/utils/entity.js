@@ -1,21 +1,21 @@
 import { THREE } from "../deps.js";
 
 export class Entity {
-  name = null;
-  components = {};
+  name = undefined;
   position = new THREE.Vector3();
-  rotation = new THREE.Quaternion();
+  quaternion = new THREE.Quaternion();
+  components = {};
   handlers = {};
-  parent = null;
+  parent = undefined;
   dead = false;
 
   destroy() {
     for (const k in this.components) {
       this.components[k].destroy();
     }
-    this.components = null;
-    this.parent = null;
-    this.handlers = null;
+    this.components = undefined;
+    this.parent = undefined;
+    this.handlers = undefined;
   }
 
   registerHandler(n, h) {
@@ -29,17 +29,14 @@ export class Entity {
     this.parent.SetActive(this, b);
   }
 
-  SetDead() {
-    this.dead = true;
-  }
-
   AddComponent(c) {
-    c.SetParent(this);
+    c.parent = this;
     this.components[c.constructor.name] = c;
 
     c.InitComponent();
   }
 
+  // TODO-DefinitelyMaybe: components should not need to be initialized like this
   InitEntity() {
     for (const k in this.components) {
       this.components[k].InitEntity();
@@ -56,6 +53,7 @@ export class Entity {
 
   Broadcast(msg) {
     if (!(msg.topic in this.handlers)) {
+      // console.warn(`${msg.topic} was not handled`);
       return;
     }
 
@@ -72,20 +70,12 @@ export class Entity {
     });
   }
 
-  SetQuaternion(r) {
-    this.rotation.copy(r);
+  SetQuaternion(q) {
+    this.quaternion.copy(q);
     this.Broadcast({
-      topic: "update.rotation",
-      value: this.rotation,
+      topic: "update.quaternion",
+      value: this.quaternion,
     });
-  }
-
-  get Position() {
-    return this.position;
-  }
-
-  get Quaternion() {
-    return this.rotation;
   }
 
   Update(timeElapsed) {

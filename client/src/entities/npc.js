@@ -6,6 +6,10 @@ import { BasicCharacterControllerProxy, CharacterFSM } from "./player.js";
 import { CHARACTER_MODELS } from "../data/defs.js";
 
 export class NPCController extends Component {
+  animations_ = {};
+  group_ = new THREE.Group();
+  queuedState_ = undefined;
+
   constructor(params) {
     super();
     this.params_ = params;
@@ -35,11 +39,8 @@ export class NPCController extends Component {
   }
 
   _Init() {
-    this.animations_ = {};
-    this.group_ = new THREE.Group();
 
     this.params_.scene.add(this.group_);
-    this.queuedState_ = null;
 
     this.LoadModels_();
   }
@@ -51,7 +52,7 @@ export class NPCController extends Component {
     this.registerHandler("update.position", (m) => {
       this.OnPosition_(m);
     });
-    this.registerHandler("update.rotation", (m) => {
+    this.registerHandler("update.quaternion", (m) => {
       this.OnRotation_(m);
     });
   }
@@ -128,7 +129,7 @@ export class NPCController extends Component {
             };
           }
         }
-        return null;
+        return undefined;
       };
 
       this.animations_["idle"] = _FindAnim("Idle");
@@ -146,7 +147,7 @@ export class NPCController extends Component {
 
       if (this.queuedState_) {
         this.stateMachine_.SetState(this.queuedState_);
-        this.queuedState_ = null;
+        this.queuedState_ = undefined;
       } else {
         this.stateMachine_.SetState("idle");
       }
@@ -163,7 +164,7 @@ export class NPCController extends Component {
     if (!this.stateMachine_) {
       return;
     }
-    this.stateMachine_.Update(timeInSeconds, null);
+    this.stateMachine_.Update(timeInSeconds, undefined);
 
     if (this.mixer_) {
       this.mixer_.update(timeInSeconds);

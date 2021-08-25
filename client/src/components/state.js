@@ -14,7 +14,7 @@ export class DeathState extends State {
   constructor(parent) {
     super(parent);
 
-    this._action = null;
+    this._action = undefined;
   }
 
   get Name() {
@@ -49,7 +49,7 @@ export class DanceState extends State {
   constructor(parent) {
     super(parent);
 
-    this._action = null;
+    this._action = undefined;
 
     this._FinishedCallback = () => {
       this._Finished();
@@ -105,7 +105,7 @@ export class AttackState extends State {
   constructor(parent) {
     super(parent);
 
-    this._action = null;
+    this._action = undefined;
 
     this._FinishedCallback = () => {
       this._Finished();

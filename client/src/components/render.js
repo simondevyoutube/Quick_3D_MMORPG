@@ -36,7 +36,7 @@ export class RenderComponent extends Component {
     this.registerHandler("update.position", (m) => {
       this._OnPosition(m);
     });
-    this.registerHandler("update.rotation", (m) => {
+    this.registerHandler("update.quaternion", (m) => {
       this._OnRotation(m);
     });
   }

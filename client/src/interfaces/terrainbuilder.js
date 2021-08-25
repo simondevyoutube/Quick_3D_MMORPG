@@ -14,7 +14,7 @@ export class TerrainChunkRebuilder {
       this._pool[w] = [];
     }
 
-    let c = null;
+    let c = undefined;
     if (this._pool[w].length > 0) {
       c = this._pool[w].pop();
       c._params = params;
@@ -44,7 +44,7 @@ export class TerrainChunkRebuilder {
   }
 
   _Reset() {
-    this._active = null;
+    this._active = undefined;
     this._queued = [];
     this._old = [];
     this._new = [];
@@ -67,7 +67,7 @@ export class TerrainChunkRebuilder {
     if (this._active) {
       const r = this._active.next();
       if (r.done) {
-        this._active = null;
+        this._active = undefined;
       }
     } else {
       const b = this._queued.pop();

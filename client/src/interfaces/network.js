@@ -8,7 +8,7 @@ export class NetworkController extends Component {
     transports: ["websocket"],
     timeout: 10000,
   });
-  playerID_ = null;
+  playerID_ = undefined;
 
   constructor(params) {
     super();
@@ -124,7 +124,7 @@ export class NetworkController extends Component {
       for (let u of updates) {
         const id = this.GetEntityID_(u.id);
 
-        let npc = null;
+        let npc = undefined;
         if ("desc" in u) {
           npc = spawner.Spawn(id, u.desc);
 
