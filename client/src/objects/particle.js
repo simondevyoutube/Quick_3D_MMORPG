@@ -1,6 +1,6 @@
 import { THREE } from "../deps.js";
 
-const _VS = `
+const _VS = /* glsl */`
   uniform float pointMultiplier;
   
   attribute float size;
@@ -15,7 +15,7 @@ const _VS = `
   void main() {
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
   
-    gl_Position = projectionMatrix * mvPosition;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
     gl_PointSize = size * pointMultiplier / gl_Position.w;
   
     vAngle = vec2(cos(angle), sin(angle));
@@ -23,7 +23,7 @@ const _VS = `
     vBlend = blend;
   }`;
 
-const _FS = `
+const _FS = /* glsl */`
   
   uniform sampler2D diffuseTexture;
   
@@ -204,7 +204,7 @@ export class ParticleSystem {
     };
 
     this.material_ = new THREE.ShaderMaterial({
-      uniforms: uniforms,
+      uniforms,
       vertexShader: _VS,
       fragmentShader: _FS,
       blending: THREE.CustomBlending,
@@ -217,7 +217,7 @@ export class ParticleSystem {
       vertexColors: true,
     });
 
-    this.camera_ = params.camera;
+    this.camera = params.camera;
     this.particles_ = [];
 
     this.geometry_ = new THREE.BufferGeometry();
@@ -252,7 +252,7 @@ export class ParticleSystem {
     this.UpdateGeometry_();
   }
 
-  Destroy() {
+  destroy() {
     this.material_.dispose();
     this.geometry_.dispose();
     if (this.points_.parent) {
@@ -318,8 +318,8 @@ export class ParticleSystem {
     this.particles_ = this.emitters_.map((e) => e.particles_);
     this.particles_ = this.particles_.flat();
     this.particles_.sort((a, b) => {
-      const d1 = this.camera_.position.distanceTo(a.position);
-      const d2 = this.camera_.position.distanceTo(b.position);
+      const d1 = this.camera.position.distanceTo(a.position);
+      const d2 = this.camera.position.distanceTo(b.position);
 
       if (d1 > d2) {
         return -1;

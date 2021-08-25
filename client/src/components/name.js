@@ -5,13 +5,14 @@ import { Component } from "../utils/component.js";
 import { CHARACTER_MODELS } from "../data/defs.js";
 
 export class FloatingName extends Component {
+  visible_ = true;
+  
   constructor(params) {
     super();
     this.params_ = params;
-    this.visible_ = true;
   }
 
-  Destroy() {
+  destroy() {
     if (!this.sprite_) {
       this.visible_ = false;
       return;
@@ -38,13 +39,13 @@ export class FloatingName extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler(
+    this.registerHandler(
       "load.character",
       (m) => {
         this.CreateSprite_(m);
       },
     );
-    this._RegisterHandler(
+    this.registerHandler(
       "health.death",
       (m) => {
         this.OnDeath_(m);
@@ -53,7 +54,7 @@ export class FloatingName extends Component {
   }
 
   OnDeath_() {
-    this.Destroy();
+    this.destroy();
   }
 
   CreateSprite_(msg) {

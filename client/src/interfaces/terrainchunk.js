@@ -6,7 +6,7 @@ export class TerrainChunk {
     this._Init(params);
   }
 
-  Destroy() {
+  destroy() {
     this._params.group.remove(this._plane);
   }
 

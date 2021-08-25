@@ -1,4 +1,4 @@
-export const VS1 = `
+export const VS1 = /* glsl */`
 
 // Triplanar Attributes
 in vec4 weights1;
@@ -12,7 +12,7 @@ out vec4 vWeights2;
 
 `;
 
-export const VS2 = `
+export const VS2 = /* glsl */`
 
 vCoords = transformed.xyz;
 vWeights1 = weights1;
@@ -20,7 +20,7 @@ vWeights2 = weights2;
 
 `;
 
-export const VS = `
+export const VS = /* glsl */`
 
 // Attributes
 in vec3 coords;
@@ -37,7 +37,7 @@ out vec4 vWeights1;
 out vec4 vWeights2;
 
 void main(){
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
   vUV = uv;
   vNormal = normal;
@@ -49,7 +49,7 @@ void main(){
 }
   `;
 
-export const PS = `
+export const PS = /* glsl */`
 
 precision highp float;
 precision highp int;
@@ -255,7 +255,7 @@ void main() {
 
   `;
 
-export const PS1 = `
+export const PS1 = /* glsl */`
 
 precision mediump sampler2DArray;
 
@@ -420,7 +420,7 @@ vec4 _TriplanarN(vec3 pos, vec3 normal, float texSlice, sampler2DArray tex) {
 
   `;
 
-export const PS2 = `
+export const PS2 = /* glsl */`
 
 {
   vec3 worldPosition = vCoords;

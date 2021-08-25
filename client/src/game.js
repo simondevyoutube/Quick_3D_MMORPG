@@ -1,4 +1,4 @@
-import { EntityManager } from "./interfaces/entities.js";
+import { Entities } from "./interfaces/entities.js";
 import { Entity } from "./utils/entity.js"
 import { NetworkController } from "./interfaces/network.js";
 import { SceneryController } from "./interfaces/scenery.js";
@@ -16,7 +16,7 @@ export class Game {
     handleKeyup: undefined,
     handleKeydown: undefined,
   };
-  entities = new EntityManager();
+  entities = new Entities();
   grid = new SpatialHashGrid(
     [[-1000, -1000], [1000, 1000]],
     [100, 100],
@@ -40,9 +40,9 @@ export class Game {
     this.entities.Add(threejs);
 
     // Hack
-    this.scene_ = threejs.GetComponent("ThreeJSController").scene_;
-    this.camera_ = threejs.GetComponent("ThreeJSController").camera_;
-    this.threejs_ = threejs.GetComponent("ThreeJSController").threejs_;
+    this.scene = threejs.GetComponent("ThreeJSController").scene;
+    this.camera = threejs.GetComponent("ThreeJSController").camera;
+    this.renderer = threejs.GetComponent("ThreeJSController").renderer;
 
     const ui = new Entity();
     // ui.AddComponent(new UIController());
@@ -55,11 +55,11 @@ export class Game {
     const t = new Entity();
     t.AddComponent(
       new TerrainChunkManager({
-        scene: this.scene_,
+        scene: this.scene,
         target: "player",
         // gui: this._gui,
         // guiParams: this._guiParams,
-        threejs: this.threejs_,
+        threejs: this.renderer,
       }),
     );
     this.entities.Add(t, "terrain");
@@ -71,7 +71,7 @@ export class Game {
     const scenery = new Entity();
     scenery.AddComponent(
       new SceneryController({
-        scene: this.scene_,
+        scene: this.scene,
         grid: this.grid,
       }),
     );
@@ -81,15 +81,15 @@ export class Game {
     spawner.AddComponent(
       new PlayerSpawner({
         grid: this.grid,
-        scene: this.scene_,
-        camera: this.camera_,
+        scene: this.scene,
+        camera: this.camera,
       }),
     );
     spawner.AddComponent(
       new NetworkEntitySpawner({
         grid: this.grid,
-        scene: this.scene_,
-        camera: this.camera_,
+        scene: this.scene,
+        camera: this.camera,
       }),
     );
     this.entities.Add(spawner, "spawners");
@@ -112,9 +112,9 @@ export class Game {
   resize() {
     if (this.initialized) {
       // TODO-DefinitelyMaybe: Adjusts game aspect ratio not layout.
-      this.camera_.aspect = window.innerWidth / window.innerHeight;
-      this.camera_.updateProjectionMatrix();
-      this.threejs_.setSize(window.innerWidth, window.innerHeight);
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
   }
 
@@ -124,7 +124,7 @@ export class Game {
         this.previousRAF_ = t;
       }
 
-      this.threejs_.render(this.scene_, this.camera_);
+      this.renderer.render(this.scene, this.camera);
       this.Step_(t - this.previousRAF_);
       this.previousRAF_ = t;
 

@@ -1,11 +1,11 @@
 export class Component {
-  parent_ = null;
+  parent = null;
 
-  Destroy() {
+  destroy() {
   }
 
   SetParent(p) {
-    this.parent_ = p;
+    this.parent = p;
   }
 
   InitComponent() {}
@@ -13,28 +13,28 @@ export class Component {
   InitEntity() {}
 
   GetComponent(n) {
-    return this.parent_.GetComponent(n);
+    return this.parent.GetComponent(n);
   }
 
   get Manager() {
-    return this.parent_.Manager;
+    return this.parent.parent;
   }
 
   get Parent() {
-    return this.parent_;
+    return this.parent;
   }
 
   FindEntity(n) {
-    return this.parent_.FindEntity(n);
+    return this.parent.FindEntity(n);
   }
 
   Broadcast(m) {
-    this.parent_.Broadcast(m);
+    this.parent.Broadcast(m);
   }
 
   Update(_) {}
 
-  _RegisterHandler(n, h) {
-    this.parent_._RegisterHandler(n, h);
+  registerHandler(n, h) {
+    this.parent.registerHandler(n, h);
   }
 }

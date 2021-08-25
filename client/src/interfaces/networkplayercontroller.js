@@ -10,25 +10,25 @@ export class NetworkPlayerController extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler(
+    this.registerHandler(
       "load.character",
       (m) => {
         this.OnLoaded_(m);
       },
     );
-    this._RegisterHandler(
+    this.registerHandler(
       "inventory.equip",
       (m) => {
         this.OnEquipChanged_(m);
       },
     );
-    this._RegisterHandler(
+    this.registerHandler(
       "network.update",
       (m) => {
         this.OnUpdate_(m);
       },
     );
-    this._RegisterHandler(
+    this.registerHandler(
       "action.attack",
       (m) => {
         this.OnActionAttack_(m);

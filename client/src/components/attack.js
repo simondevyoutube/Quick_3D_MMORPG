@@ -1,13 +1,14 @@
 import { Component } from "../utils/component.js";
 
 export class AttackController extends Component {
+  action_ = null;
+  
   constructor() {
     super();
-    this.action_ = null;
   }
 
   InitComponent() {
-    this._RegisterHandler("player.action", (m) => {
+    this.registerHandler("player.action", (m) => {
       this._OnAnimAction(m);
     });
   }

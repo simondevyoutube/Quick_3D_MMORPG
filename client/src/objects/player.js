@@ -64,16 +64,16 @@ export class BasicCharacterController extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler("health.death", (m) => {
+    this.registerHandler("health.death", (m) => {
       this.OnDeath_(m);
     });
-    this._RegisterHandler(
+    this.registerHandler(
       "update.position",
       (m) => {
         this.OnUpdatePosition_(m);
       },
     );
-    this._RegisterHandler(
+    this.registerHandler(
       "update.rotation",
       (m) => {
         this.OnUpdateRotation_(m);

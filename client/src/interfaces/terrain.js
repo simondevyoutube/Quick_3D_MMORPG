@@ -84,7 +84,6 @@ export class TerrainChunkManager extends Component {
     ]);
 
     this._material.onBeforeCompile = (s) => {
-      let a = 0;
       let vsh = s.vertexShader;
       vsh = VS1 + s.vertexShader;
       const vi1 = vsh.search("#include <fog_vertex>");

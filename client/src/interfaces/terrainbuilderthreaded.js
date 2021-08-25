@@ -138,7 +138,7 @@ export class TerrainChunkRebuilder_Threaded {
         this._pool[c.chunk._params.width] = [];
       }
 
-      c.chunk.Destroy();
+      c.chunk.destroy();
     }
   }
 

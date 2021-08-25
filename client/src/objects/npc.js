@@ -11,7 +11,7 @@ export class NPCController extends Component {
     this.params_ = params;
   }
 
-  Destroy() {
+  destroy() {
     this.group_.traverse((c) => {
       if (c.material) {
         let materials = c.material;
@@ -45,13 +45,13 @@ export class NPCController extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler("health.death", (m) => {
+    this.registerHandler("health.death", (m) => {
       this.OnDeath_(m);
     });
-    this._RegisterHandler("update.position", (m) => {
+    this.registerHandler("update.position", (m) => {
       this.OnPosition_(m);
     });
-    this._RegisterHandler("update.rotation", (m) => {
+    this.registerHandler("update.rotation", (m) => {
       this.OnRotation_(m);
     });
   }

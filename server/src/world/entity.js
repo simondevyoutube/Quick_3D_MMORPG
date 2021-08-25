@@ -54,7 +54,7 @@ export class WorldEntity {
     this.action_ = null;
   }
 
-  Destroy() {
+  destroy() {
     this.grid_.Remove(this.gridClient_);
     this.gridClient_ = null;
   }

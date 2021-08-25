@@ -1,12 +1,13 @@
 import { sat } from "../utils/math.js";
 
 export class SpatialHashGrid {
+  _queryIds = 0;
+  
   constructor(bounds, dimensions) {
     const [x, y] = dimensions;
     this._cells = [...Array(x)].map((_) => [...Array(y)].map((_) => (null)));
     this._dimensions = dimensions;
     this._bounds = bounds;
-    this._queryIds = 0;
   }
 
   _GetCellIndex(position) {

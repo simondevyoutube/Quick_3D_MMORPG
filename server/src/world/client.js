@@ -19,14 +19,14 @@ export class WorldClient {
     this.entityCache_ = {};
 
     // Hack
-    entity.parent_ = this;
+    entity.parent = this;
   }
 
-  Destroy() {
+  destroy() {
     this.client_.Disconnect();
     this.client_ = null;
 
-    this.entity_.Destroy();
+    this.entity_.destroy();
     this.entity_ = null;
   }
 
@@ -73,7 +73,7 @@ export class WorldClient {
     const nearby = this.entity_.FindNear(50, true);
 
     for (let n of nearby) {
-      n.parent_.client_.Send("world.inventory", [this.entity_.ID, inventory]);
+      n.parent.client_.Send("world.inventory", [this.entity_.ID, inventory]);
     }
   }
 
@@ -91,7 +91,7 @@ export class WorldClient {
 
     for (let i = 0; i < nearby.length; ++i) {
       const n = nearby[i];
-      n.parent_.client_.Send("chat.message", chatMessage);
+      n.parent.client_.Send("chat.message", chatMessage);
     }
   }
 
@@ -180,7 +180,7 @@ export class AIStateMachine {
     }
 
     this.currentState_ = state;
-    this.currentState_.parent_ = this;
+    this.currentState_.parent = this;
     this.currentState_.entity_ = this.entity_;
     this.currentState_.terrain_ = this.terrain_;
     state.Enter(prevState);
@@ -215,7 +215,7 @@ export class AIState_JustSitThere extends AIState {
       .filter(_IsPlayer);
 
     if (nearby.length > 0) {
-      this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
+      this.parent.SetState(new AIState_FollowToAttack(nearby[0]));
     }
   }
 
@@ -263,15 +263,15 @@ export class AIState_FollowToAttack extends AIState {
 
     if (distance < 10.0) {
       this.entity_.OnActionAttack();
-      this.parent_.SetState(new AIState_WaitAttackDone(this.target_));
+      this.parent.SetState(new AIState_WaitAttackDone(this.target_));
     } else if (distance > 100.0) {
-      this.parent_.SetState(new AIState_JustSitThere());
+      this.parent.SetState(new AIState_JustSitThere());
     }
   }
 
   Update(timeElapsed) {
     if (!this.target_.Valid || this.target_.Health == 0) {
-      this.parent_.SetState(new AIState_JustSitThere(this.target_));
+      this.parent.SetState(new AIState_JustSitThere(this.target_));
       return;
     }
 
@@ -291,7 +291,7 @@ export class AIState_WaitAttackDone extends AIState {
       return;
     }
 
-    this.parent_.SetState(new AIState_FollowToAttack(this.target_));
+    this.parent.SetState(new AIState_FollowToAttack(this.target_));
   }
 }
 

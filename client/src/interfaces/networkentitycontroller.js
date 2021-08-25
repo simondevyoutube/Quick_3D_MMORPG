@@ -11,7 +11,7 @@ export class NetworkEntityController extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler(
+    this.registerHandler(
       "network.update",
       (m) => {
         this.OnNetworkUpdate_(m);
@@ -20,8 +20,8 @@ export class NetworkEntityController extends Component {
   }
 
   SetTransform_(transform) {
-    this.parent_.SetPosition(new THREE.Vector3(...transform[1]));
-    this.parent_.SetQuaternion(new THREE.Quaternion(...transform[2]));
+    this.parent.SetPosition(new THREE.Vector3(...transform[1]));
+    this.parent.SetQuaternion(new THREE.Quaternion(...transform[2]));
     this.targetFrame_ = { time: 0.1, transform: transform };
   }
 

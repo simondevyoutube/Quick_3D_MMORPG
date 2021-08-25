@@ -1,22 +1,20 @@
-export class EntityManager {
-  constructor() {
-    this._ids = 0;
-    this._entitiesMap = {};
-    this._entities = [];
-  }
+export class Entities {
+  nextID = 0;
+  map = {};
+  entities = [];
 
   _GenerateName() {
-    this._ids += 1;
+    this.nextID += 1;
 
-    return "__name__" + this._ids;
+    return "__name__" + this.nextID;
   }
 
   Get(n) {
-    return this._entitiesMap[n];
+    return this.map[n];
   }
 
   Filter(cb) {
-    return this._entities.filter(cb);
+    return this.entities.filter(cb);
   }
 
   Add(e, n) {
@@ -24,37 +22,37 @@ export class EntityManager {
       n = this._GenerateName();
     }
 
-    this._entitiesMap[n] = e;
-    this._entities.push(e);
+    this.map[n] = e;
+    this.entities.push(e);
 
-    e.SetParent(this);
-    e.SetName(n);
+    e.parent = this;
+    e.name = n;
     e.InitEntity();
   }
 
   SetActive(e, b) {
-    const i = this._entities.indexOf(e);
+    const i = this.entities.indexOf(e);
 
     if (!b) {
       if (i < 0) {
         return;
       }
 
-      this._entities.splice(i, 1);
+      this.entities.splice(i, 1);
     } else {
       if (i >= 0) {
         return;
       }
 
-      this._entities.push(e);
+      this.entities.push(e);
     }
   }
 
   Update(timeElapsed) {
     const dead = [];
     const alive = [];
-    for (let i = 0; i < this._entities.length; ++i) {
-      const e = this._entities[i];
+    for (let i = 0; i < this.entities.length; ++i) {
+      const e = this.entities[i];
 
       e.Update(timeElapsed);
 
@@ -68,11 +66,11 @@ export class EntityManager {
     for (let i = 0; i < dead.length; ++i) {
       const e = dead[i];
 
-      delete this._entitiesMap[e.Name];
+      delete this.map[e.Name];
 
-      e.Destroy();
+      e.destroy();
     }
 
-    this._entities = alive;
+    this.entities = alive;
   }
 }

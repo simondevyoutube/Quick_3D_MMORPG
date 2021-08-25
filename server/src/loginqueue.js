@@ -24,7 +24,7 @@ export class FiniteStateMachine {
     }
 
     this.currentState_ = state;
-    this.currentState_.parent_ = this;
+    this.currentState_.parent = this;
     state.OnEnter(prevState);
   }
 }
@@ -33,7 +33,7 @@ export class State {
   constructor() {}
 
   Broadcast(evt) {
-    this.parent_.Broadcast(evt);
+    this.parent.Broadcast(evt);
   }
 
   OnEnter() {
@@ -58,7 +58,7 @@ export class Login_Await extends State {
     }
 
     this.params_.accountName = data;
-    this.parent_.SetState(new Login_Confirm(this.params_));
+    this.parent.SetState(new Login_Confirm(this.params_));
 
     return true;
   }

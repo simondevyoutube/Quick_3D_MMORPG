@@ -1,7 +1,7 @@
 import { THREE } from "../deps.js";
 import { Component } from "../utils/component.js";
 
-const _VS = `
+const _VS = /* glsl */`
   varying vec3 vWorldPosition;
   
   void main() {
@@ -11,7 +11,7 @@ const _VS = `
     gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
   }`;
 
-const _FS = `
+const _FS = /* glsl */`
   uniform vec3 topColor;
   uniform vec3 bottomColor;
   uniform float offset;
@@ -78,27 +78,27 @@ export class ThreeJSController extends Component {
         varying vec3 vWorldPosition;
       #endif`;
 
-    this.threejs_ = new THREE.WebGLRenderer({
+    this.renderer = new THREE.WebGLRenderer({
       antialias: false,
       canvas: document.querySelector("canvas#game"),
     });
-    this.threejs_.outputEncoding = THREE.sRGBEncoding;
-    this.threejs_.gammaFactor = 2.2;
-    this.threejs_.shadowMap.enabled = true;
-    this.threejs_.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.threejs_.setPixelRatio(window.devicePixelRatio);
-    this.threejs_.setSize(window.innerWidth, window.innerHeight);
-    this.threejs_.domElement.id = "threejs";
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.gammaFactor = 2.2;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.domElement.id = "threejs";
 
     const fov = 60;
     const aspect = 1920 / 1080;
     const near = 1.0;
     const far = 10000.0;
-    this.camera_ = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this.camera_.position.set(25, 10, 25);
+    this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    this.camera.position.set(25, 10, 25);
 
-    this.scene_ = new THREE.Scene();
-    this.scene_.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
+    this.scene = new THREE.Scene();
+    this.scene.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
 
     let light = new THREE.DirectionalLight(0x8088b3, 0.7);
     light.position.set(-10, 500, 10);
@@ -113,9 +113,9 @@ export class ThreeJSController extends Component {
     light.shadow.camera.right = -100;
     light.shadow.camera.top = 100;
     light.shadow.camera.bottom = -100;
-    this.scene_.add(light);
+    this.scene.add(light);
 
-    this.sun_ = light;
+    this.sun = light;
 
     this.LoadSky_();
   }
@@ -124,7 +124,7 @@ export class ThreeJSController extends Component {
     const hemiLight = new THREE.HemisphereLight(0x424a75, 0x6a88b5, 0.7);
     // hemiLight.color.setHSL(0.6, 1, 0.4);
     // hemiLight.groundColor.setHSL(0.095, 1, 0.5);
-    this.scene_.add(hemiLight);
+    this.scene.add(hemiLight);
 
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
@@ -146,18 +146,18 @@ export class ThreeJSController extends Component {
     };
     // uniforms["topColor"].value.copy(hemiLight.color);
 
-    this.scene_.fog.color.copy(uniforms["bottomColor"].value);
+    this.scene.fog.color.copy(uniforms["bottomColor"].value);
 
     const skyGeo = new THREE.SphereBufferGeometry(5000, 32, 15);
     const skyMat = new THREE.ShaderMaterial({
-      uniforms: uniforms,
+      uniforms,
       vertexShader: _VS,
       fragmentShader: _FS,
       side: THREE.BackSide,
     });
 
     const sky = new THREE.Mesh(skyGeo, skyMat);
-    this.scene_.add(sky);
+    this.scene.add(sky);
   }
 
   Update(_) {
@@ -165,12 +165,12 @@ export class ThreeJSController extends Component {
     if (!player) {
       return;
     }
-    const pos = player._position;
+    const pos = player.position;
 
-    this.sun_.position.copy(pos);
-    this.sun_.position.add(new THREE.Vector3(-50, 200, -10));
-    this.sun_.target.position.copy(pos);
-    this.sun_.updateMatrixWorld();
-    this.sun_.target.updateMatrixWorld();
+    this.sun.position.copy(pos);
+    this.sun.position.add(new THREE.Vector3(-50, 200, -10));
+    this.sun.target.position.copy(pos);
+    this.sun.updateMatrixWorld();
+    this.sun.target.updateMatrixWorld();
   }
 }

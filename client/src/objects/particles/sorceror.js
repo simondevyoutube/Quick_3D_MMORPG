@@ -6,19 +6,19 @@ import { Component } from "../../utils/component.js";
 export class SorcerorEffectEmitter extends ParticleEmitter {
   constructor(parent) {
     super();
-    this.parent_ = parent;
+    this.parent = parent;
     this.blend_ = 0.0;
   }
 
   OnUpdate_() {
-    this.parent_.updateMatrixWorld(true);
+    this.parent.updateMatrixWorld(true);
 
     this.SetEmissionRate(300.0 * (this.emitterLife_ / 3.0));
   }
 
   CreateParticle_() {
     const origin = new THREE.Vector3(0, 0, 0);
-    this.parent_.localToWorld(origin);
+    this.parent.localToWorld(origin);
 
     const radius = 1.0;
     const life = (Math.random() * 0.75 + 0.25) * 1.0;
@@ -60,15 +60,15 @@ export class SorcerorEffect extends Component {
     });
   }
 
-  Destroy() {
-    this.particles_.Destroy();
+  destroy() {
+    this.particles_.destroy();
   }
 
   InitComponent() {
-    this._RegisterHandler("action.attack", (m) => {
+    this.registerHandler("action.attack", (m) => {
       this.OnAttack_(m);
     });
-    this._RegisterHandler(
+    this.registerHandler(
       "load.character",
       (m) => this.OnCharacterLoaded_(m),
     );

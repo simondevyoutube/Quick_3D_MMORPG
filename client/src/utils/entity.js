@@ -1,112 +1,96 @@
 import { THREE } from "../deps.js";
 
 export class Entity {
-  _name = null;
-  _components = {};
-  _position = new THREE.Vector3();
-  _rotation = new THREE.Quaternion();
-  _handlers = {};
-  parent_ = null;
-  dead_ = false;
+  name = null;
+  components = {};
+  position = new THREE.Vector3();
+  rotation = new THREE.Quaternion();
+  handlers = {};
+  parent = null;
+  dead = false;
 
-  Destroy() {
-    for (const k in this._components) {
-      this._components[k].Destroy();
+  destroy() {
+    for (const k in this.components) {
+      this.components[k].destroy();
     }
-    this._components = null;
-    this.parent_ = null;
-    this._handlers = null;
+    this.components = null;
+    this.parent = null;
+    this.handlers = null;
   }
 
-  _RegisterHandler(n, h) {
-    if (!(n in this._handlers)) {
-      this._handlers[n] = [];
+  registerHandler(n, h) {
+    if (!(n in this.handlers)) {
+      this.handlers[n] = [];
     }
-    this._handlers[n].push(h);
-  }
-
-  SetParent(p) {
-    this.parent_ = p;
-  }
-
-  SetName(n) {
-    this._name = n;
-  }
-
-  get Name() {
-    return this._name;
-  }
-
-  get Manager() {
-    return this.parent_;
+    this.handlers[n].push(h);
   }
 
   SetActive(b) {
-    this.parent_.SetActive(this, b);
+    this.parent.SetActive(this, b);
   }
 
   SetDead() {
-    this.dead_ = true;
+    this.dead = true;
   }
 
   AddComponent(c) {
     c.SetParent(this);
-    this._components[c.constructor.name] = c;
+    this.components[c.constructor.name] = c;
 
     c.InitComponent();
   }
 
   InitEntity() {
-    for (const k in this._components) {
-      this._components[k].InitEntity();
+    for (const k in this.components) {
+      this.components[k].InitEntity();
     }
   }
 
   GetComponent(n) {
-    return this._components[n];
+    return this.components[n];
   }
 
   FindEntity(n) {
-    return this.parent_.Get(n);
+    return this.parent.Get(n);
   }
 
   Broadcast(msg) {
-    if (!(msg.topic in this._handlers)) {
+    if (!(msg.topic in this.handlers)) {
       return;
     }
 
-    for (const curHandler of this._handlers[msg.topic]) {
+    for (const curHandler of this.handlers[msg.topic]) {
       curHandler(msg);
     }
   }
 
   SetPosition(p) {
-    this._position.copy(p);
+    this.position.copy(p);
     this.Broadcast({
       topic: "update.position",
-      value: this._position,
+      value: this.position,
     });
   }
 
   SetQuaternion(r) {
-    this._rotation.copy(r);
+    this.rotation.copy(r);
     this.Broadcast({
       topic: "update.rotation",
-      value: this._rotation,
+      value: this.rotation,
     });
   }
 
   get Position() {
-    return this._position;
+    return this.position;
   }
 
   get Quaternion() {
-    return this._rotation;
+    return this.rotation;
   }
 
   Update(timeElapsed) {
-    for (const k in this._components) {
-      this._components[k].Update(timeElapsed);
+    for (const k in this.components) {
+      this.components[k].Update(timeElapsed);
     }
   }
 }

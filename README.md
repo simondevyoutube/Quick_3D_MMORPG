@@ -11,11 +11,16 @@ A recreation of simon's project with the following aims:
     - [x] remain functionaly equivelent
     - [x] move in-line data about terrain workers url to top of file
   - [ ] clarity
-    - [ ] what does x do?
+    - [ ] remove duplication / boilerplate
+    - [ ] what does x?
+  - [x] three.js glsl
+    - [x] highlighted in vscode extensions
+    - [x] variables changed
   - promises
   - Webstream websockets
   - ui themes
   - Server to deno
+    - [x] mockup ws test
   - game dev features
     - scene transitions (fade out and in + loading wheel)?
     - objects inventory / place

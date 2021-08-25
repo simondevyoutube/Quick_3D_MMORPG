@@ -3,13 +3,14 @@ import { Component } from "../utils/component.js";
 
 export class RenderComponent extends Component {
   group_ = new THREE.Group();
+
   constructor(params) {
     super();
     this.params_ = params;
     this.params_.scene.add(this.group_);
   }
 
-  Destroy() {
+  destroy() {
     this.group_.traverse((c) => {
       if (c.material) {
         c.material.dispose();
@@ -32,10 +33,10 @@ export class RenderComponent extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler("update.position", (m) => {
+    this.registerHandler("update.position", (m) => {
       this._OnPosition(m);
     });
-    this._RegisterHandler("update.rotation", (m) => {
+    this.registerHandler("update.rotation", (m) => {
       this._OnRotation(m);
     });
   }

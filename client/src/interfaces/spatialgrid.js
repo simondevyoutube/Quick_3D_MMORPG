@@ -7,20 +7,20 @@ export class SpatialGridController extends Component {
     this.grid_ = params.grid;
   }
 
-  Destroy() {
+  destroy() {
     this.grid_.Remove(this.client_);
     this.client_ = null;
   }
 
   InitComponent() {
     const pos = [
-      this.parent_._position.x,
-      this.parent_._position.z,
+      this.parent.position.x,
+      this.parent.position.z,
     ];
 
     this.client_ = this.grid_.NewClient(pos, [1, 1]);
-    this.client_.entity = this.parent_;
-    this._RegisterHandler("update.position", (m) => this._OnPosition(m));
+    this.client_.entity = this.parent;
+    this.registerHandler("update.position", (m) => this._OnPosition(m));
   }
 
   _OnPosition(msg) {
@@ -30,10 +30,10 @@ export class SpatialGridController extends Component {
 
   FindNearbyEntities(range) {
     const results = this.grid_.FindNear(
-      [this.parent_._position.x, this.parent_._position.z],
+      [this.parent.position.x, this.parent.position.z],
       [range, range],
     );
 
-    return results.filter((c) => c.entity != this.parent_);
+    return results.filter((c) => c.entity != this.parent);
   }
 }

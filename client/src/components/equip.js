@@ -3,11 +3,12 @@ import { Component } from "../utils/component.js";
 import { CHARACTER_MODELS } from "../data/defs.js";
 
 export class EquipWeapon extends Component {
+  target_ = null;
+  name_ = null;
+
   constructor(params) {
     super();
     this.params_ = params;
-    this.target_ = null;
-    this.name_ = null;
 
     const classType = this.params_.desc.character.class;
     const modelData = CHARACTER_MODELS[classType];
@@ -15,11 +16,11 @@ export class EquipWeapon extends Component {
   }
 
   InitComponent() {
-    this._RegisterHandler(
+    this.registerHandler(
       "load.character",
       (m) => this._OnCharacterLoaded(m),
     );
-    this._RegisterHandler("inventory.equip", (m) => this._OnEquip(m));
+    this.registerHandler("inventory.equip", (m) => this._OnEquip(m));
   }
 
   _OnCharacterLoaded(msg) {
