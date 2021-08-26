@@ -1,5 +1,4 @@
 import { THREE } from "../deps.js";
-import { Component } from "../utils/component.js";
 
 const _VS = /* glsl */`
   varying vec3 vWorldPosition;
@@ -33,13 +32,23 @@ const _FS = /* glsl */`
     gl_FragColor = vec4(sky, 1.0);
   }`;
 
-export class ThreeJSController extends Component {
-  constructor() {
-    super();
-  }
+export class ThreeInit {
 
-  InitEntity() {
-    THREE.ShaderChunk.fog_fragment = `
+  renderer = new THREE.WebGLRenderer({
+    antialias: false,
+    canvas: document.querySelector("canvas#game"),
+  });
+  scene = new THREE.Scene();
+  // TODO-DefinitelyMaybe: User variable for them to set at some point
+  fov = 60;
+
+  aspect = 1920 / 1080;
+  near = 1.0;
+  far = 10000.0;
+  camera = new THREE.PerspectiveCamera(this.fov, this.aspect, this.near, this.far);
+
+  constructor() {
+    THREE.ShaderChunk.fog_fragment = /* glsl */`
       #ifdef USE_FOG
         vec3 fogOrigin = cameraPosition;
         vec3 fogDirection = normalize(vWorldPosition - fogOrigin);
@@ -55,7 +64,7 @@ export class ThreeJSController extends Component {
         gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
       #endif`;
 
-    THREE.ShaderChunk.fog_pars_fragment = `
+    THREE.ShaderChunk.fog_pars_fragment = /* glsl */`
       #ifdef USE_FOG
         uniform float fogTime;
         uniform vec3 fogColor;
@@ -68,36 +77,25 @@ export class ThreeJSController extends Component {
         #endif
       #endif`;
 
-    THREE.ShaderChunk.fog_vertex = `
+    THREE.ShaderChunk.fog_vertex = /* glsl */`
       #ifdef USE_FOG
         vWorldPosition = (modelMatrix * vec4(transformed, 1.0 )).xyz;
       #endif`;
 
-    THREE.ShaderChunk.fog_pars_vertex = `
+    THREE.ShaderChunk.fog_pars_vertex = /* glsl */`
       #ifdef USE_FOG
         varying vec3 vWorldPosition;
       #endif`;
 
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: false,
-      canvas: document.querySelector("canvas#game"),
-    });
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.gammaFactor = 2.2;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.domElement.id = "threejs";
 
-    const fov = 60;
-    const aspect = 1920 / 1080;
-    const near = 1.0;
-    const far = 10000.0;
-    this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     this.camera.position.set(25, 10, 25);
 
-    this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
 
     let light = new THREE.DirectionalLight(0x8088b3, 0.7);

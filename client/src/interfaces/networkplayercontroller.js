@@ -3,10 +3,13 @@ import { THREE } from "../deps.js";
 import { Component } from "../utils/component.js";
 
 export class NetworkPlayerController extends Component {
-  constructor() {
+  updateTimer_ = 0.0;
+  loaded_ = false;
+  net_
+
+  constructor(network) {
     super();
-    this.updateTimer_ = 0.0;
-    this.loaded_ = false;
+    this.net_ = network
   }
 
   InitComponent() {
@@ -14,12 +17,6 @@ export class NetworkPlayerController extends Component {
       "load.character",
       (m) => {
         this.OnLoaded_(m);
-      },
-    );
-    this.registerHandler(
-      "inventory.equip",
-      (m) => {
-        this.OnEquipChanged_(m);
       },
     );
     this.registerHandler(
@@ -34,18 +31,6 @@ export class NetworkPlayerController extends Component {
         this.OnActionAttack_(m);
       },
     );
-  }
-
-  InitEntity() {
-    this.net_ = this.FindEntity("network").GetComponent(
-      "NetworkController",
-    );
-  }
-
-  OnEquipChanged_(msg) {
-    const inventory = this.GetComponent("InventoryController").CreatePacket();
-
-    this.net_.SendInventoryChange_(inventory);
   }
 
   OnActionAttack_(msg) {
@@ -94,7 +79,6 @@ export class NetworkPlayerController extends Component {
     this.updateTimer_ -= timeElapsed;
     if (this.updateTimer_ <= 0.0 && this.loaded_) {
       this.updateTimer_ = 0.1;
-
       this.net_.SendTransformUpdate(this.CreateTransformPacket());
     }
   }

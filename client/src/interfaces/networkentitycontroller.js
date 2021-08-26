@@ -2,12 +2,13 @@ import { THREE } from "../deps.js";
 import { Component } from "../utils/component.js";
 
 export class NetworkEntityController extends Component {
+  transformUpdates_ = [];
+  targetFrame_ = undefined;
+  lastFrame_ = undefined;
+  lastUpdate_ = 0.0;
+  
   constructor() {
     super();
-    this.transformUpdates_ = [];
-    this.targetFrame_ = undefined;
-    this.lastFrame_ = undefined;
-    this.lastUpdate_ = 0.0;
   }
 
   InitComponent() {

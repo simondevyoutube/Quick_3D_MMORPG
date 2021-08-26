@@ -75,25 +75,22 @@ export class LinearSpline {
 }
 
 export class ParticleEmitter {
-  constructor() {
-    this.alphaSpline_ = new LinearSpline((t, a, b) => {
-      return a + t * (b - a);
-    });
+  emissionRate_ = 0.0;
+  emissionAccumulator_ = 0.0;
+  particles_ = [];
+  emitterLife_ = undefined;
+  alphaSpline_ = new LinearSpline((t, a, b) => {
+    return a + t * (b - a);
+  });
 
-    this.colourSpline_ = new LinearSpline((t, a, b) => {
-      const c = a.clone();
-      return c.lerp(b, t);
-    });
+  colourSpline_ = new LinearSpline((t, a, b) => {
+    const c = a.clone();
+    return c.lerp(b, t);
+  });
 
-    this.sizeSpline_ = new LinearSpline((t, a, b) => {
-      return a + t * (b - a);
-    });
-
-    this.emissionRate_ = 0.0;
-    this.emissionAccumulator_ = 0.0;
-    this.particles_ = [];
-    this.emitterLife_ = undefined;
-  }
+  sizeSpline_ = new LinearSpline((t, a, b) => {
+    return a + t * (b - a);
+  });
 
   UpdateParticles_(timeElapsed) {
     for (let p of this.particles_) {
@@ -132,6 +129,7 @@ export class ParticleEmitter {
   }
 
   CreateParticle_() {
+    // TODO-DefinitelyMaybe: define particulars outside of the emitter
     const life = (Math.random() * 0.75 + 0.25) * 5.0;
     return {
       position: new THREE.Vector3(

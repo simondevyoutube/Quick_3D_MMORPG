@@ -1,6 +1,6 @@
 import { Entities } from "./interfaces/entities.js";
 import { Entity } from "./utils/entity.js"
-import { NetworkController } from "./interfaces/network.js";
+import { Network } from "./interfaces/network.js";
 import { SceneryController } from "./interfaces/scenery.js";
 import { LoadController } from "./interfaces/load.js";
 import { NetworkEntitySpawner, PlayerSpawner } from "./entities/spawner.js";
@@ -8,10 +8,13 @@ import { TerrainChunkManager } from "./interfaces/terrain.js";
 
 import { SpatialHashGrid } from "./interfaces/spatialhashgrid.js";
 // import { WEAPONS_DATA } from "../shared/defs.js";
-import { ThreeJSController } from "./interfaces/three.js";
+import { ThreeInit } from "./interfaces/graphics.js";
 
-export class Game {
+export class World {
   state = undefined;
+  scene;
+  camera;
+  renderer;
   input = {
     handleKeyup: undefined,
     handleKeydown: undefined,
@@ -21,44 +24,21 @@ export class Game {
     [[-1000, -1000], [1000, 1000]],
     [100, 100],
   );
+  network = new Network(this);
   previousRAF_ = undefined;
   initialized = false;
 
-  load() {
-    this.LoadControllers_();
-
-    this.RAF_();
-
-    this.initialized = true;
-    this.resize();
-    console.log(this);
-  }
-
-  LoadControllers_() {
-    const threejs = new Entity();
-    threejs.AddComponent(new ThreeJSController());
-    this.entities.Add(threejs);
-
-    // Hack
-    this.scene = threejs.GetComponent("ThreeJSController").scene;
-    this.camera = threejs.GetComponent("ThreeJSController").camera;
-    this.renderer = threejs.GetComponent("ThreeJSController").renderer;
-
-    const ui = new Entity();
-    // ui.AddComponent(new UIController());
-    this.entities.Add(ui, "ui");
-
-    const network = new Entity();
-    network.AddComponent(new NetworkController());
-    this.entities.Add(network, "network");
+  constructor() {
+    const threejs = new ThreeInit()
+    this.scene = threejs.scene;
+    this.camera = threejs.camera;
+    this.renderer = threejs.renderer;
 
     const t = new Entity();
     t.AddComponent(
       new TerrainChunkManager({
         scene: this.scene,
         target: "player",
-        // gui: this._gui,
-        // guiParams: this._guiParams,
         threejs: this.renderer,
       }),
     );
@@ -83,6 +63,7 @@ export class Game {
         grid: this.grid,
         scene: this.scene,
         camera: this.camera,
+        network: this.network,
       }),
     );
     spawner.AddComponent(
@@ -94,12 +75,6 @@ export class Game {
     );
     this.entities.Add(spawner, "spawners");
 
-    const database = new Entity();
-    // database.AddComponent(
-    //   new InventoryDatabaseController(),
-    // );
-    this.entities.Add(database, "database");
-
     // HACK
     // for (let k in WEAPONS_DATA) {
     //   database.GetComponent("InventoryDatabaseController").AddItem(
@@ -107,6 +82,12 @@ export class Game {
     //     WEAPONS_DATA[k],
     //   );
     // }
+
+    this.RAF_();
+
+    this.initialized = true;
+    this.resize();
+    console.log(this);
   }
 
   resize() {

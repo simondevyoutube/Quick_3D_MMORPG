@@ -3,13 +3,8 @@ export class Entities {
   map = {};
   entities = [];
 
-  _GenerateName() {
-    this.nextID += 1;
-
-    return "__name__" + this.nextID;
-  }
-
-  Get(n) {
+  // TODO-DefinitelyMaybe: What about removing entities?? where is that done
+  get(n) {
     return this.map[n];
   }
 
@@ -19,7 +14,7 @@ export class Entities {
 
   Add(e, n) {
     if (!n) {
-      n = this._GenerateName();
+      n = this.generateName();
     }
 
     this.map[n] = e;
@@ -50,6 +45,8 @@ export class Entities {
   }
 
   Update(timeElapsed) {
+    // TODO-DefinitelyMaybe: Some entities wont die in the current setup i.e. network, terrain, loader
+    // so not looping through some objects everytime would be great.
     const dead = [];
     const alive = [];
     for (let i = 0; i < this.entities.length; ++i) {
@@ -73,5 +70,11 @@ export class Entities {
     }
 
     this.entities = alive;
+  }
+
+  generateName() {
+    this.nextID += 1;
+
+    return "__name__" + this.nextID;
   }
 }

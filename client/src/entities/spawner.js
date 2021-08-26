@@ -24,6 +24,7 @@ export class PlayerSpawner extends Component {
   }
 
   Spawn(playerParams) {
+    console.log("Spawning a player");
     const params = {
       camera: this.params_.camera,
       scene: this.params_.scene,
@@ -72,10 +73,7 @@ export class PlayerSpawner extends Component {
       }),
     );
     player.AddComponent(
-      new NetworkPlayerController({
-        camera: this.params_.camera,
-        target: player,
-      }),
+      new NetworkPlayerController(this.params_.network)
     );
     player.AddComponent(
       new BloodEffect({

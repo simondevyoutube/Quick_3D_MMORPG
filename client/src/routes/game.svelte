@@ -1,11 +1,11 @@
 <script>
-  import { Game } from "../game.js";
+  import { World } from "../world.js";
   import { onMount } from "svelte";
   import HUD from "../ui/game/hud.svelte";
   import Menu from "../ui/game/menu.svelte";
   import Chat from "../ui/game/chat.svelte";
 
-  const game = new Game()
+  let world;
 
   let focused = false
 
@@ -14,16 +14,18 @@
   let showChat = true
 
   onMount(() => {
-    game.load();
+    // new Game expects to be able to make DOM calls
+    // i.e. three.js for the canvas element
+    world = new World()
     showHUD = true
   })
 </script>
 
 <svelte:window on:blur="{() => {focused = false}}"
   on:focus="{() => {focused = true}}"
-  on:resize="{() => {game.resize();}}"></svelte:window>
-<svelte:body on:keyup={game.input.handleKeyup}
-  on:keydown={game.input.handleKeydown}></svelte:body>
+  on:resize="{() => {world.resize();}}"></svelte:window>
+<svelte:body on:keyup={world.input.handleKeyup}
+  on:keydown={world.input.handleKeydown}></svelte:body>
 
 <canvas id="game" on:pointerdown on:pointerup></canvas>
 {#if showChat}

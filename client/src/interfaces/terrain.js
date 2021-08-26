@@ -50,6 +50,13 @@ export class TerrainChunkManager extends Component {
 
   constructor(params) {
     super();
+    /*
+    params = {
+        scene: this.scene,
+        target: "player",
+        threejs: this.renderer,
+      }
+    */
 
     const noiseTexture = this.loader.load(
       "./resources/terrain/simplex-noise.png",
@@ -128,7 +135,6 @@ export class TerrainChunkManager extends Component {
       material: this._material,
       width: width,
       offset: offset,
-      // origin: this._params.camera.position.clone(),
       radius: terrain_constants.PLANET_RADIUS,
       resolution: resolution,
       biomeGenerator: this._biomes,
@@ -177,9 +183,6 @@ export class TerrainChunkManager extends Component {
     for (let c of this._builder._old) {
       c.chunk.Update(target.position);
     }
-
-    // this._params.scattering.uniforms.planetRadius.value = terrain_constants.PLANET_RADIUS;
-    // this._params.scattering.uniforms.atmosphereRadius.value = terrain_constants.PLANET_RADIUS * 1.01;
   }
 
   _UpdateVisibleChunks_Quadtree(target) {

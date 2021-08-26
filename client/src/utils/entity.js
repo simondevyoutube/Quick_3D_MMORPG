@@ -18,11 +18,11 @@ export class Entity {
     this.handlers = undefined;
   }
 
-  registerHandler(n, h) {
-    if (!(n in this.handlers)) {
-      this.handlers[n] = [];
+  registerHandler(name, handler) {
+    if (!(name in this.handlers)) {
+      this.handlers[name] = [];
     }
-    this.handlers[n].push(h);
+    this.handlers[name].push(handler);
   }
 
   SetActive(b) {
@@ -47,8 +47,9 @@ export class Entity {
     return this.components[n];
   }
 
+  // TODO-DefinitelyMaybe: Finding an entity is not the job of the entity
   FindEntity(n) {
-    return this.parent.Get(n);
+    return this.parent.get(n);
   }
 
   Broadcast(msg) {

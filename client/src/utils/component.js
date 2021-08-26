@@ -1,8 +1,7 @@
 export class Component {
   parent = undefined;
 
-  destroy() {
-  }
+  destroy() {}
 
   InitComponent() {}
 
@@ -26,7 +25,7 @@ export class Component {
 
   Update(_) {}
 
-  registerHandler(n, h) {
-    this.parent.registerHandler(n, h);
+  registerHandler(name, handler) {
+    this.parent.registerHandler(name, handler);
   }
 }
