@@ -2,7 +2,7 @@ import { Entities } from "./interfaces/entities.js";
 import { Entity } from "./utils/entity.js"
 import { Network } from "./interfaces/network.js";
 import { SceneryController } from "./interfaces/scenery.js";
-import { LoadController } from "./interfaces/load.js";
+import { Assets } from "./interfaces/assets.js";
 import { NetworkEntitySpawner, PlayerSpawner } from "./entities/spawner.js";
 import { TerrainChunkManager } from "./interfaces/terrain.js";
 
@@ -45,8 +45,8 @@ export class World {
     this.entities.Add(t, "terrain");
 
     const l = new Entity();
-    l.AddComponent(new LoadController());
-    this.entities.Add(l, "loader");
+    l.AddComponent(new Assets());
+    this.entities.Add(l, "assets");
 
     const scenery = new Entity();
     scenery.AddComponent(

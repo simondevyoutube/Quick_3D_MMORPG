@@ -67,7 +67,7 @@ export class RenderComponent extends Component {
 
     const textures = {};
     if (this.params_.textures) {
-      const loader = this.FindEntity("loader").GetComponent("LoadController");
+      const loader = this.FindEntity("assets").GetComponent("Assets");
 
       for (let k in this.params_.textures.names) {
         const t = loader.LoadTexture(
@@ -139,7 +139,7 @@ export class RenderComponent extends Component {
   }
 
   _LoadFBX() {
-    const loader = this.FindEntity("loader").GetComponent("LoadController");
+    const loader = this.FindEntity("assets").GetComponent("Assets");
     loader.LoadFBX(
       this.params_.resourcePath,
       this.params_.resourceName,

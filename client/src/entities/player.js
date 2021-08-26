@@ -97,7 +97,7 @@ export class BasicCharacterController extends Component {
     const classType = this.params_.desc.character.class;
     const modelData = CHARACTER_MODELS[classType];
 
-    const loader = this.FindEntity("loader").GetComponent("LoadController");
+    const loader = this.FindEntity("assets").GetComponent("Assets");
     loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
       this.target_ = glb.scene;
       this.target_.scale.setScalar(modelData.scale);

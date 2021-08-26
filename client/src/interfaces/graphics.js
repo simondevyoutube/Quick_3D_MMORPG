@@ -159,6 +159,7 @@ export class ThreeInit {
   }
 
   Update(_) {
+    // TODO-DefinitelyMaybe: not currently working
     const player = this.FindEntity("player");
     if (!player) {
       return;
