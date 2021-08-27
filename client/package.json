@@ -1,0 +1,16 @@
+{
+  "name": "client",
+  "version": "0.0.1",
+  "author": "DefinitelyMaybe",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "Client Dev": "svelte-kit dev --port=8080",
+    "build": "svelte-kit build",
+    "preview": "svelte-kit preview"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "next",
+    "svelte": "^3.34.0"
+  }
+}

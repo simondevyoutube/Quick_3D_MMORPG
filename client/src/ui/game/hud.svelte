@@ -1,0 +1,34 @@
+<script>
+  import Actionbar from "./character/actionbar.svelte";
+  import Health from "./character/health.svelte";
+  import Inventory from "./character/inventory.svelte";
+  import Quests from "./character/quests.svelte";
+  import Stats from "./character/stats.svelte";
+
+  let showInventory = false;
+  let showQuests = false;
+  let showActionbar = true;
+  let showHealth = true;
+  let showStats = false;
+
+</script>
+
+<div id="hud">
+  {#if showActionbar}
+  <Actionbar on:toggleInventory="{()=>{showInventory = !showInventory}}"
+    on:toggleQuests="{()=>{showQuests = !showQuests}}"
+    on:toggleStats="{()=>{showStats = !showStats}}"></Actionbar>
+  {/if}
+  {#if showHealth}
+  <Health></Health>
+  {/if}
+  {#if showInventory}
+  <Inventory></Inventory>
+  {/if}
+  {#if showQuests}
+  <Quests></Quests>
+  {/if}
+  {#if showStats}
+  <Stats></Stats>
+  {/if}
+</div>

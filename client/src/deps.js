@@ -1,11 +1,9 @@
-export * as THREE from "https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js";
-export { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js";
-export { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js";
-export { OBJLoader } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/OBJLoader.js";
-export { SkeletonUtils } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/utils/SkeletonUtils.js";
-export { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
-
-export { GUI } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js";
-
-// TODO-DefinitelyMaybe: Networking
-// export { io } from "https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js";
+// export * as tweakpane from "https://cdn.skypack.dev/tweakpane";
+// TODO-DefinitelyMaybe: import only the required things from three
+export * as THREE from "https://cdn.skypack.dev/three";
+export { io } from "https://cdn.skypack.dev/socket.io-client";
+export { GLTFLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js";
+export { FBXLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/FBXLoader.js";
+export { OrbitControls } from "https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js";
+export { clone as SkeletonClone } from "https://cdn.skypack.dev/three/examples/jsm/utils/SkeletonUtils.js";
+export { OBJLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js";
