@@ -1,8 +1,8 @@
-import { THREE } from "../deps.js";
+import { THREE } from "../../deps.js";
 
-import { Component } from "../utils/component.js";
+import { Component } from "../../structures/component.js";
 
-import { CHARACTER_MODELS } from "../data/defs.js";
+import { CHARACTER_MODELS } from "../../data/defs.js";
 
 export class FloatingName extends Component {
   visible_ = true;

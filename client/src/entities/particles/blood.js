@@ -1,7 +1,7 @@
 import { THREE } from "../../deps.js";
 
 import { ParticleEmitter, ParticleSystem } from "../particle.js";
-import { Component } from "../../utils/component.js";
+import { Component } from "../../structures/component.js";
 
 export class BloodEffectEmitter extends ParticleEmitter {
   constructor(parent) {

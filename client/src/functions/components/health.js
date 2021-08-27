@@ -1,8 +1,8 @@
-import { THREE } from "../deps.js";
+import { THREE } from "../../deps.js";
 
-import { Component } from "../utils/component.js";
+import { Component } from "../../structures/component.js";
 
-import { lerp } from "../utils/math.js";
+import { lerp } from "../math.js";
 
 const _VS = /* glsl */`
 varying vec2 vUV;

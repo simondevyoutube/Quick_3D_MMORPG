@@ -1,27 +1,25 @@
 import { THREE } from "../deps.js";
-import { Component } from "../utils/component.js";
+import { Component } from "../structures/component.js";
 
 export class ThirdPersonCamera extends Component {
   currentPosition = new THREE.Vector3();
   currentLookat = new THREE.Vector3();
 
-  constructor(params) {
+  constructor(game, player) {
     super();
-    this._params = params;
-    this._camera = params.camera;
+    this.camera = game.camera;
+    this.target = player
+    this.terrain = game.terrain
   }
 
   _CalculateIdealOffset() {
     const idealOffset = new THREE.Vector3(-0, 10, -15);
-    idealOffset.applyQuaternion(this._params.target.quaternion);
-    idealOffset.add(this._params.target.position);
+    idealOffset.applyQuaternion(this.target.quaternion);
+    idealOffset.add(this.target.position);
 
-    const terrain = this.FindEntity("terrain").GetComponent(
-      "TerrainChunkManager",
-    );
     idealOffset.y = Math.max(
       idealOffset.y,
-      terrain.GetHeight(idealOffset)[0] + 5.0,
+      this.terrain.GetHeight(idealOffset)[0] + 5.0,
     );
 
     return idealOffset;
@@ -29,8 +27,8 @@ export class ThirdPersonCamera extends Component {
 
   _CalculateIdealLookat() {
     const idealLookat = new THREE.Vector3(0, 5, 20);
-    idealLookat.applyQuaternion(this._params.target.quaternion);
-    idealLookat.add(this._params.target.position);
+    idealLookat.applyQuaternion(this.target.quaternion);
+    idealLookat.add(this.target.position);
     return idealLookat;
   }
 
@@ -45,7 +43,7 @@ export class ThirdPersonCamera extends Component {
     this.currentPosition.lerp(idealOffset, t);
     this.currentLookat.lerp(idealLookat, t);
 
-    this._camera.position.copy(this.currentPosition);
-    this._camera.lookAt(this.currentLookat);
+    this.camera.position.copy(this.currentPosition);
+    this.camera.lookAt(this.currentLookat);
   }
 }

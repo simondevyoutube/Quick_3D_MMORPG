@@ -1,12 +1,12 @@
 import { Entities } from "./interfaces/entities.js";
-import { Entity } from "./utils/entity.js"
+import { Entity } from "./structures/entity.js"
 import { Network } from "./interfaces/network.js";
-import { SceneryController } from "./interfaces/scenery.js";
+import { Scenery } from "./interfaces/scenery.js";
 import { Assets } from "./interfaces/assets.js";
 import { NetworkEntitySpawner, PlayerSpawner } from "./entities/spawner.js";
-import { TerrainChunkManager } from "./interfaces/terrain.js";
+import { Terrain } from "./interfaces/terrain.js";
 
-import { SpatialHashGrid } from "./interfaces/spatialhashgrid.js";
+import { SpatialHashGrid } from "./structures/spatialhashgrid.js";
 // import { WEAPONS_DATA } from "../shared/defs.js";
 import { ThreeInit } from "./interfaces/graphics.js";
 
@@ -34,54 +34,21 @@ export class World {
     this.camera = threejs.camera;
     this.renderer = threejs.renderer;
 
-    const t = new Entity();
-    t.AddComponent(
-      new TerrainChunkManager({
-        scene: this.scene,
-        target: "player",
-        threejs: this.renderer,
-      }),
-    );
-    this.entities.Add(t, "terrain");
+    this.terrain = new Terrain(this)
+    this.scenery = new Scenery(this)
 
     const l = new Entity();
     l.AddComponent(new Assets());
     this.entities.Add(l, "assets");
 
-    const scenery = new Entity();
-    scenery.AddComponent(
-      new SceneryController({
-        scene: this.scene,
-        grid: this.grid,
-      }),
-    );
-    this.entities.Add(scenery, "scenery");
-
     const spawner = new Entity();
     spawner.AddComponent(
-      new PlayerSpawner({
-        grid: this.grid,
-        scene: this.scene,
-        camera: this.camera,
-        network: this.network,
-      }),
+      new PlayerSpawner(this),
     );
     spawner.AddComponent(
-      new NetworkEntitySpawner({
-        grid: this.grid,
-        scene: this.scene,
-        camera: this.camera,
-      }),
+      new NetworkEntitySpawner(this),
     );
     this.entities.Add(spawner, "spawners");
-
-    // HACK
-    // for (let k in WEAPONS_DATA) {
-    //   database.GetComponent("InventoryDatabaseController").AddItem(
-    //     k,
-    //     WEAPONS_DATA[k],
-    //   );
-    // }
 
     this.RAF_();
 
@@ -105,7 +72,12 @@ export class World {
         this.previousRAF_ = t;
       }
 
-      this.renderer.render(this.scene, this.camera);
+      try {
+        this.renderer.render(this.scene, this.camera); 
+      } catch (error) {
+        console.log(this.scene, this.camera);
+        console.error(error);
+      }
       this.Step_(t - this.previousRAF_);
       this.previousRAF_ = t;
 
@@ -119,5 +91,7 @@ export class World {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
 
     this.entities.Update(timeElapsedS);
+    this.terrain.Update(timeElapsed)
+    this.scenery.Update(timeElapsed)
   }
 }

@@ -1,5 +1,5 @@
-import { GLTFLoader, OBJLoader, THREE } from "../deps.js";
-import { Component } from "../utils/component.js";
+import { GLTFLoader, OBJLoader, THREE } from "../deps.js"
+import { Component } from "../structures/component.js"
 
 export class RenderComponent extends Component {
   group_ = new THREE.Group();

@@ -1,4 +1,4 @@
-import { sat } from "../utils/math.js";
+import { sat } from "../functions/math.js";
 
 export class SpatialHashGrid {
   _queryIds = 0;

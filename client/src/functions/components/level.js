@@ -1,7 +1,7 @@
-import { THREE } from "../deps.js";
+import { THREE } from "../../deps.js";
 
-import { ParticleSystem } from "../entities/particle.jss";
-import { Component } from "../utils/component.js";
+import { ParticleSystem } from "../../entities/particle.js";
+import { Component } from "../../structures/component.js";
 
 export class LevelUpComponentSpawner extends Component {
   constructor(params) {

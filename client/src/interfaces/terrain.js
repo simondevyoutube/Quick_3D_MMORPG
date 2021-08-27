@@ -1,28 +1,28 @@
 import { THREE } from "../deps.js";
 
-import { Component } from "../utils/component.js";
-import { CubeQuadTree } from "../utils/quadtree.js";
+import { CubeQuadTree } from "../structures/quadtree.js";
 import { PS1, PS2, VS1, VS2 } from "./shaders.js";
 import { TerrainChunkRebuilder_Threaded } from "./terrainbuilderthreaded.js";
 import { TextureSplatter } from "./texturesplatter.js";
 import { TextureAtlas } from "./textures.js";
-import { DictDifference, DictIntersection } from "../utils/functions.js";
+import { DictDifference, DictIntersection } from "../functions/utils/objects.js"
 
 import { terrain_constants } from "../data/constants.js";
 import { HeightGenerator } from "./terrainheight.js";
 
-import { Noise } from "../utils/noise.js";
+import { Noise } from "../functions/noise.js";
 
-export class TerrainChunkManager extends Component {
+export class Terrain {
+  game;
+  chunks = {};
   loader = new THREE.TextureLoader();
-  _material = new THREE.MeshStandardMaterial({
+  material = new THREE.MeshStandardMaterial({
     side: THREE.BackSide,
     vertexColors: true,
   });
 
-  _builder = new TerrainChunkRebuilder_Threaded();
+  builder = new TerrainChunkRebuilder_Threaded();
   heightGenerator_ = new HeightGenerator();
-  _chunks = {};
   noiseVars = {
     octaves: 2,
     persistence: 0.5,
@@ -33,8 +33,8 @@ export class TerrainChunkManager extends Component {
     exponentiation: 2,
     height: 1.0,
   };
-  _biomes = new Noise(this.noiseVars);
-  _groups = [...new Array(6)].map((_) => new THREE.Group());
+  biomes = new Noise(this.noiseVars);
+  groups = [...new Array(6)].map((_) => new THREE.Group());
 
   colourVars = {
     octaves: 1,
@@ -46,10 +46,10 @@ export class TerrainChunkManager extends Component {
     seed: 2,
     height: 1.0,
   };
-  _colourNoise = new Noise(this.colourVars);
+  colourNoise = new Noise(this.colourVars);
 
-  constructor(params) {
-    super();
+  constructor(game) {
+    this.game = game
     /*
     params = {
         scene: this.scene,
@@ -64,7 +64,9 @@ export class TerrainChunkManager extends Component {
     noiseTexture.wrapS = THREE.RepeatWrapping;
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
-    const diffuse = new TextureAtlas(params);
+    const cap = this.game.renderer.capabilities
+
+    const diffuse = new TextureAtlas(cap);
     diffuse.Load("diffuse", [
       "./resources/terrain/dirt_01_diffuse-1024.png",
       "./resources/terrain/grass1-albedo3-1024.png",
@@ -77,7 +79,7 @@ export class TerrainChunkManager extends Component {
       "./resources/terrain/bark1-albedo.jpg",
     ]);
 
-    const normal = new TextureAtlas(params);
+    const normal = new TextureAtlas(cap);
     normal.Load("normal", [
       "./resources/terrain/dirt_01_normal-1024.jpg",
       "./resources/terrain/grass1-normal-1024.jpg",
@@ -90,7 +92,7 @@ export class TerrainChunkManager extends Component {
       "./resources/terrain/bark1-normal3.jpg",
     ]);
 
-    this._material.onBeforeCompile = (s) => {
+    this.material.onBeforeCompile = (s) => {
       let vsh = s.vertexShader;
       vsh = VS1 + s.vertexShader;
       const vi1 = vsh.search("#include <fog_vertex>");
@@ -124,22 +126,21 @@ export class TerrainChunkManager extends Component {
       // s.fragmentShader += 'poop';
     };
 
-    params.scene.add(...this._groups);
-    this._params = params;
+    this.game.scene.add(...this.groups);
   }
 
   _CreateTerrainChunk(group, groupTransform, offset, width, resolution) {
     const params = {
       group: group,
       transform: groupTransform,
-      material: this._material,
+      material: this.material,
       width: width,
       offset: offset,
       radius: terrain_constants.PLANET_RADIUS,
       resolution: resolution,
-      biomeGenerator: this._biomes,
+      biomeGenerator: this.biomes,
       colourGenerator: new TextureSplatter(
-        { biomeGenerator: this._biomes, colourNoise: this._colourNoise },
+        { biomeGenerator: this.biomes, colourNoise: this.colourNoise },
       ),
       heightGenerators: [this.heightGenerator_],
       noiseParams: terrain_constants.NOISE_PARAMS,
@@ -155,7 +156,7 @@ export class TerrainChunkManager extends Component {
       },
     };
 
-    return this._builder.AllocateChunk(params);
+    return this.builder.AllocateChunk(params);
   }
 
   GetHeight(pos) {
@@ -163,24 +164,26 @@ export class TerrainChunkManager extends Component {
   }
 
   GetBiomeAt(pos) {
-    return this._biomes.Get(pos.x, 0.0, pos.z);
+    return this.biomes.Get(pos.x, 0.0, pos.z);
   }
 
   Update(_) {
-    const target = this.FindEntity(this._params.target);
+    // TODO-DefinitelyMaybe: Maybe this doesn't need to be called so oftened
+    // how about simply when close to chunk edges?
+    const target = this.game.entities.get("player");
     if (!target) {
       return;
     }
 
-    this._builder.Update();
-    if (!this._builder.Busy) {
+    this.builder.Update();
+    if (!this.builder.Busy) {
       this._UpdateVisibleChunks_Quadtree(target);
     }
 
-    for (let k in this._chunks) {
-      this._chunks[k].chunk.Update(target.position);
+    for (let k in this.chunks) {
+      this.chunks[k].chunk.Update(target.position);
     }
-    for (let c of this._builder._old) {
+    for (let c of this.builder._old) {
       c.chunk.Update(target.position);
     }
   }
@@ -208,7 +211,7 @@ export class TerrainChunkManager extends Component {
 
         const child = {
           index: i,
-          group: this._groups[i],
+          group: this.groups[i],
           transform: sides[i].transform,
           position: [center.x, center.y, center.z],
           bounds: c.bounds,
@@ -221,15 +224,15 @@ export class TerrainChunkManager extends Component {
     }
 
     const intersection = DictIntersection(
-      this._chunks,
+      this.chunks,
       newTerrainChunks,
     );
-    const difference = DictDifference(newTerrainChunks, this._chunks);
+    const difference = DictDifference(newTerrainChunks, this.chunks);
     const recycle = Object.values(
-      DictDifference(this._chunks, newTerrainChunks),
+      DictDifference(this.chunks, newTerrainChunks),
     );
 
-    this._builder.RetireChunks(recycle);
+    this.builder.RetireChunks(recycle);
 
     newTerrainChunks = intersection;
 
@@ -249,6 +252,6 @@ export class TerrainChunkManager extends Component {
       };
     }
 
-    this._chunks = newTerrainChunks;
+    this.chunks = newTerrainChunks;
   }
 }

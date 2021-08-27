@@ -1,7 +1,7 @@
 import { THREE } from "../deps.js";
 
-import { Component } from "../utils/component.js";
-import { FiniteStateMachine } from "../utils/finitestatemachine.js";
+import { Component } from "../structures/component.js";
+import { FiniteStateMachine } from "../structures/finitestatemachine.js";
 import {
   AttackState,
   DanceState,
@@ -9,7 +9,7 @@ import {
   IdleState,
   RunState,
   WalkState,
-} from "../components/state.js";
+} from "../functions/state.js"
 
 import { CHARACTER_MODELS } from "../data/defs.js";
 
@@ -41,9 +41,11 @@ export class BasicCharacterControllerProxy {
 }
 
 export class BasicCharacterController extends Component {
-  constructor(params) {
+  constructor(game, desc) {
     super();
-    this.params_ = params;
+    this.game = game
+    this.terrain = game.terrain
+    this.desc = desc
   }
 
   InitEntity() {
@@ -56,7 +58,7 @@ export class BasicCharacterController extends Component {
     this.velocity_ = new THREE.Vector3(0, 0, 0);
     this.group_ = new THREE.Group();
 
-    this.params_.scene.add(this.group_);
+    this.game.scene.add(this.group_);
 
     this.animations_ = {};
 
@@ -94,7 +96,7 @@ export class BasicCharacterController extends Component {
   }
 
   LoadModels_() {
-    const classType = this.params_.desc.character.class;
+    const classType = this.desc.character.class;
     const modelData = CHARACTER_MODELS[classType];
 
     const loader = this.FindEntity("assets").GetComponent("Assets");
@@ -173,7 +175,7 @@ export class BasicCharacterController extends Component {
       return h.Health > 0;
     };
 
-    const grid = this.GetComponent("SpatialGridController");
+    const grid = this.GetComponent("Grid");
     const nearby = grid.FindNearbyEntities(5).filter((e) => _IsAlive(e));
     const collisions = [];
 
@@ -299,10 +301,7 @@ export class BasicCharacterController extends Component {
       return;
     }
 
-    const terrain = this.FindEntity("terrain").GetComponent(
-      "TerrainChunkManager",
-    );
-    pos.y = terrain.GetHeight(pos)[0];
+    pos.y = this.terrain.GetHeight(pos)[0];
 
     controlObject.position.copy(pos);
 

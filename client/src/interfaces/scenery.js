@@ -1,12 +1,11 @@
 import { THREE } from "../deps.js";
 
-import { Entity } from "../utils/entity.js"
-import { Component } from "../utils/component.js";
-import { RenderComponent } from "../components/render.js";
-import { SpatialGridController } from "./spatialgrid.js";
+import { Entity } from "../structures/entity.js"
+import { RenderComponent } from "../functions/render.js"
+import { Grid } from "./spatialgrid.js";
 
-import { rand_int, rand_range, sat } from "../utils/math.js";
-import { Noise } from "../utils/noise.js";
+import { rand_int, rand_range, sat } from "../functions/math.js";
+import { Noise } from "../functions/noise.js";
 
 const _SCENERY = {
   birch1: {
@@ -90,10 +89,9 @@ for (let k in multiples) {
   }
 }
 
-export class SceneryController extends Component {
-  constructor(params) {
-    super();
-    this.params_ = params;
+export class Scenery {
+  constructor(game) {
+    this.game = game
 
     const noiseParams = {
       octaves: 1,
@@ -127,7 +125,7 @@ export class SceneryController extends Component {
       const e = new Entity();
       e.AddComponent(
         new RenderComponent({
-          scene: this.params_.scene,
+          scene: this.game.scene,
           resourcePath: "./resources/nature2/GLTF/",
           resourceName: "Cloud" + index + ".glb",
           scale: Math.random() * 20 + 40,
@@ -180,7 +178,7 @@ export class SceneryController extends Component {
     const e = new Entity();
     e.AddComponent(
       new RenderComponent({
-        scene: this.params_.scene,
+        scene: this.game.scene,
         resourcePath: randomProp.resourcePath,
         resourceName: randomProp.base,
         textures: {
@@ -203,8 +201,8 @@ export class SceneryController extends Component {
     );
     if (randomProp.collision) {
       e.AddComponent(
-        new SpatialGridController(
-          { grid: this.params_.grid },
+        new Grid(
+          { grid: this.game.grid, e },
         ),
       );
     }
@@ -219,7 +217,7 @@ export class SceneryController extends Component {
   }
 
   SpawnCrap_() {
-    const player = this.FindEntity("player");
+    const player = this.game.entities.get("player");
     if (!player) {
       return;
     }
@@ -238,9 +236,7 @@ export class SceneryController extends Component {
 
     const _P = new THREE.Vector3();
     const _V = new THREE.Vector3();
-    const terrain = this.FindEntity("terrain").GetComponent(
-      "TerrainChunkManager",
-    );
+    const terrain = this.game.terrain
 
     for (let x = -10; x <= 10; ++x) {
       for (let y = -10; y <= 10; ++y) {
@@ -249,7 +245,7 @@ export class SceneryController extends Component {
         _P.multiplyScalar(50.0);
 
         const key = "__scenery__[" + _P.x + "][" + _P.z + "]";
-        if (this.FindEntity(key)) {
+        if (this.game.entities.get(key)) {
           continue;
         }
 
@@ -270,7 +266,7 @@ export class SceneryController extends Component {
 
         e.SetPosition(_P);
 
-        this.Manager.Add(e, key);
+        this.game.entities.Add(e, key);
 
         e.SetActive(false);
         this.crap_.push(e);

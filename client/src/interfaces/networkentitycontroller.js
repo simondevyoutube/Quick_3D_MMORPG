@@ -1,5 +1,5 @@
 import { THREE } from "../deps.js";
-import { Component } from "../utils/component.js";
+import { Component } from "../structures/component.js";
 
 export class NetworkEntityController extends Component {
   transformUpdates_ = [];

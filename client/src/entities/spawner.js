@@ -1,33 +1,38 @@
-import { Entity } from "../utils/entity.js";
-import { Component } from "../utils/component.js";
+import { Entity } from "../structures/entity.js";
+import { Component } from "../structures/component.js";
 
 import { ThirdPersonCamera } from "../cameras/thirdperson.js";
 import { BasicCharacterController } from "./player.js";
 import { BasicCharacterControllerInput } from "../interfaces/playerinput.js";
 
-import { SpatialGridController } from "../interfaces/spatialgrid.js";
+import { Grid } from "../interfaces/spatialgrid.js";
 
-import { EquipWeapon } from "../components/equip.js";
-import { AttackController } from "../components/attack.js";
+import { EquipWeapon } from "../functions/actions/equip.js"
+import { Attack } from "../functions/actions/attack.js"
 
 import { NPCController } from "./npc.js";
 import { NetworkEntityController } from "../interfaces/networkentitycontroller.js";
 import { NetworkPlayerController } from "../interfaces/networkplayercontroller.js";
-import { FloatingName } from "../components/name.js";
+import { FloatingName } from "../functions/components/name.js";
 import { SorcerorEffect } from "./particles/sorceror.js";
 import { BloodEffect } from "./particles/blood.js";
 
 export class PlayerSpawner extends Component {
-  constructor(params) {
+  constructor(game) {
     super();
-    this.params_ = params;
+    this.game = game
+    this.grid = game.grid
+    this.scene = game.scene
+    this.camera = game.camera
+    this.network = game.network
   }
 
   Spawn(playerParams) {
+    // TODO-DefinitelyMaybe: Copy and paste player init into player entity file
     console.log("Spawning a player");
     const params = {
-      camera: this.params_.camera,
-      scene: this.params_.scene,
+      camera: this.camera,
+      scene: this.scene,
       desc: playerParams,
     };
 
@@ -36,49 +41,30 @@ export class PlayerSpawner extends Component {
     player.AddComponent(
       new BasicCharacterControllerInput(params),
     );
-    player.AddComponent(new BasicCharacterController(params));
+    player.AddComponent(new BasicCharacterController(this.game, playerParams));
     player.AddComponent(
       new EquipWeapon({ desc: playerParams }),
     );
-    // player.AddComponent(
-    //   new UIInventoryController(params),
-    // );
-    // player.AddComponent(new InventoryController(params));
-    // player.AddComponent(
-    //   new HealthComponent({
-    //     updateUI: true,
-    //     health: 1,
-    //     maxHealth: 1,
-    //     strength: 1,
-    //     wisdomness: 1,
-    //     benchpress: 1,
-    //     curl: 1,
-    //     experience: 1,
-    //     level: 1,
-    //     desc: playerParams,
-    //   }),
-    // );
     player.AddComponent(
-      new SpatialGridController(
-        { grid: this.params_.grid },
+      new Grid(
+        this.game, player
       ),
     );
     player.AddComponent(
-      new AttackController(),
+      new Attack(),
     );
     player.AddComponent(
-      new ThirdPersonCamera({
-        camera: this.params_.camera,
-        target: player,
-      }),
+      // TODO-DefinitelyMaybe: because the entity hasn't been added into the entities manager yet
+      // we pass in the player entity
+      new ThirdPersonCamera(this.game, player),
     );
     player.AddComponent(
-      new NetworkPlayerController(this.params_.network)
+      new NetworkPlayerController(this.network)
     );
     player.AddComponent(
       new BloodEffect({
-        camera: this.params_.camera,
-        scene: this.params_.scene,
+        camera: this.camera,
+        scene: this.scene,
       }),
     );
     if (playerParams.character.class == "sorceror") {
@@ -93,37 +79,28 @@ export class PlayerSpawner extends Component {
 }
 
 export class NetworkEntitySpawner extends Component {
-  constructor(params) {
+  constructor(game) {
     super();
-    this.params_ = params;
+    this.game = game
+    this.grid = game.grid
+    this.scene = game.scene
+    this.camera = game.camera
+    this.network = game.network
   }
 
   Spawn(name, desc) {
     const npc = new Entity();
-    npc.Account = desc.account;
+    // npc.Account = desc.account;
     npc.AddComponent(
       new NPCController({
-        camera: this.params_.camera,
-        scene: this.params_.scene,
+        camera: this.camera,
+        scene: this.scene,
         desc: desc,
       }),
     );
-    // npc.AddComponent(
-    //   new HealthComponent({
-    //     health: 50,
-    //     maxHealth: 50,
-    //     strength: 2,
-    //     wisdomness: 2,
-    //     benchpress: 3,
-    //     curl: 1,
-    //     experience: 0,
-    //     level: 1,
-    //     desc: desc,
-    //   }),
-    // );
     npc.AddComponent(
-      new SpatialGridController(
-        { grid: this.params_.grid },
+      new Grid(
+        this.game, npc
       ),
     );
     npc.AddComponent(
@@ -140,15 +117,15 @@ export class NetworkEntitySpawner extends Component {
     // npc.AddComponent(new InventoryController());
     npc.AddComponent(
       new BloodEffect({
-        camera: this.params_.camera,
-        scene: this.params_.scene,
+        camera: this.camera,
+        scene: this.scene,
       }),
     );
     if (desc.character.class == "sorceror") {
       npc.AddComponent(
         new SorcerorEffect({
-          camera: this.params_.camera,
-          scene: this.params_.scene,
+          camera: this.camera,
+          scene: this.scene,
         }),
       );
     }

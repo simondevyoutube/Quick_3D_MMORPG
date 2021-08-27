@@ -1,35 +1,37 @@
-import { Component } from "../utils/component.js";
+import { Component } from "../structures/component.js";
 
-export class SpatialGridController extends Component {
-  constructor(params) {
+export class Grid extends Component {
+  constructor(game, entity) {
     super();
-
-    this.grid_ = params.grid;
+    this.game = game
+    this.grid = game.grid;
+    
+    this.entity = entity
   }
 
   destroy() {
-    this.grid_.Remove(this.client_);
+    this.grid.Remove(this.client_);
     this.client_ = undefined;
   }
 
   InitComponent() {
     const pos = [
-      this.parent.position.x,
-      this.parent.position.z,
+      this.entity.position.x,
+      this.entity.position.z,
     ];
 
-    this.client_ = this.grid_.NewClient(pos, [1, 1]);
-    this.client_.entity = this.parent;
+    this.client_ = this.grid.NewClient(pos, [1, 1]);
+    this.client_.entity = this.entity;
     this.registerHandler("update.position", (m) => this._OnPosition(m));
   }
 
   _OnPosition(msg) {
     this.client_.position = [msg.value.x, msg.value.z];
-    this.grid_.UpdateClient(this.client_);
+    this.grid.UpdateClient(this.client_);
   }
 
   FindNearbyEntities(range) {
-    const results = this.grid_.FindNear(
+    const results = this.grid.FindNear(
       [this.parent.position.x, this.parent.position.z],
       [range, range],
     );

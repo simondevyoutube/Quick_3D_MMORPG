@@ -1,6 +1,6 @@
 import { THREE } from "../deps.js";
 
-import { Component } from "../utils/component.js";
+import { Component } from "../structures/component.js";
 
 export class NetworkPlayerController extends Component {
   updateTimer_ = 0.0;

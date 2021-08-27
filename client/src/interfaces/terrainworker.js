@@ -2,8 +2,8 @@ import { THREE } from "../deps.js";
 
 import { TextureSplatter } from "./texturesplatter.js";
 
-import { sat } from "../utils/math.js";
-import { Noise } from "../utils/noise.js";
+import { sat } from "../functions/math.js";
+import { Noise } from "../functions/noise.js";
 import { HeightGenerator } from "./terrainheight.js";
 
 class _TerrainBuilderThreadedWorker {

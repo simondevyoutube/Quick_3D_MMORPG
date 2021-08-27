@@ -1,4 +1,4 @@
-import { THREE } from "../deps.js";
+import { THREE } from "../deps.js"
 
 export class State {
   constructor(parent) {

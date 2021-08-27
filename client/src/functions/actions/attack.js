@@ -1,6 +1,6 @@
-import { Component } from "../utils/component.js";
+import { Component } from "../../structures/component.js";
 
-export class AttackController extends Component {
+export class Attack extends Component {
   action_ = undefined;
   
   constructor() {

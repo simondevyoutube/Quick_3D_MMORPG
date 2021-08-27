@@ -1,5 +1,5 @@
 import { FBXLoader, GLTFLoader, SkeletonClone, THREE } from "../deps.js";
-import { Component } from "../utils/component.js";
+import { Component } from "../structures/component.js";
 
 export class Assets extends Component {
 
@@ -13,7 +13,7 @@ export class Assets extends Component {
   LoadTexture(path, name) {
     if (!(name in this.textures)) { 
       // lookup in localstorage first
-      const cache = JSON.parse(localStorage.getItem(name))
+      const cache = false//JSON.parse(localStorage.getItem(name))
 
       if (!cache) {
         // otherwise load the texture
@@ -26,7 +26,7 @@ export class Assets extends Component {
         this.textures[name].encoding = THREE.sRGBEncoding;
 
         // and then save in localstorage
-        localStorage.setItem(name, JSON.stringify({texture}))
+        // localStorage.setItem(name, JSON.stringify({texture}))
       } else {
         let texture = cache.texture
         this.textures[name] = {texture}

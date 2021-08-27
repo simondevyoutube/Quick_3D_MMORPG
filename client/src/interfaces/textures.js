@@ -14,7 +14,8 @@ function _GetImageData(image) {
 
 export class TextureAtlas {
   constructor(params) {
-    this._threejs = params.threejs;
+    // threejs capabilities
+    this.capabilities = params
     this._Create();
     this.onLoad = () => {};
   }
@@ -70,7 +71,7 @@ export class TextureAtlas {
       diffuse.wrapT = THREE.RepeatWrapping;
       diffuse.generateMipmaps = true;
 
-      const caps = this._threejs.capabilities;
+      const caps = this.capabilities;
       const aniso = caps.getMaxAnisotropy();
 
       diffuse.anisotropy = 4;

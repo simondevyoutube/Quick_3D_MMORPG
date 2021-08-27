@@ -1,6 +1,6 @@
 import { THREE } from "../deps.js";
 
-import { Component } from "../utils/component.js";
+import { Component } from "../structures/component.js";
 import { BasicCharacterControllerProxy, CharacterFSM } from "./player.js";
 
 import { CHARACTER_MODELS } from "../data/defs.js";
