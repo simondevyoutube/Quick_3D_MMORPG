@@ -45,7 +45,7 @@ for await (const req of server) {
 
   if (url == "/") {
     console.log("sending html");
-    req.respond({ body:Deno.readTextFileSync("./src/index.html") }); 
+    req.respond({ body:Deno.readTextFileSync("./src/test.html") }); 
   } else if (url == "/ws") {
     console.log("websocket time");
     acceptWebSocket({
