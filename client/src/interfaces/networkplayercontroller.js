@@ -65,7 +65,7 @@ export class NetworkPlayerController extends Component {
   }
 
   CreateTransformPacket() {
-    const controller = this.GetComponent("BasicCharacterController");
+    const controller = this.GetComponent("Movement");
 
     // HACK
     return [

@@ -2,8 +2,8 @@ import { Entity } from "../structures/entity.js";
 import { Component } from "../structures/component.js";
 
 import { ThirdPersonCamera } from "../cameras/thirdperson.js";
-import { BasicCharacterController } from "./player.js";
-import { BasicCharacterControllerInput } from "../interfaces/playerinput.js";
+import { Movement } from "../functions/actions/move.js";
+import { BasicCharacterControllerInput } from "../functions/components/playerinput.js";
 
 import { Grid } from "../interfaces/spatialgrid.js";
 
@@ -18,13 +18,13 @@ import { SorcerorEffect } from "./particles/sorceror.js";
 import { BloodEffect } from "./particles/blood.js";
 
 export class PlayerSpawner extends Component {
-  constructor(game) {
+  constructor(world) {
     super();
-    this.game = game
-    this.grid = game.grid
-    this.scene = game.scene
-    this.camera = game.camera
-    this.network = game.network
+    this.world = world
+    this.grid = world.grid
+    this.scene = world.scene
+    this.camera = world.camera
+    this.network = world.network
   }
 
   Spawn(playerParams) {
@@ -41,12 +41,12 @@ export class PlayerSpawner extends Component {
     player.AddComponent(
       new BasicCharacterControllerInput(params),
     );
-    player.AddComponent(new BasicCharacterController(this.game, playerParams));
+    player.AddComponent(new Movement(this.world, playerParams));
     player.AddComponent(
       new EquipWeapon({ desc: playerParams }),
     );
     player.AddComponent(
-      new Grid(this.game, player),
+      new Grid(this.world, player),
     );
     player.AddComponent(
       new Attack(),
@@ -54,7 +54,7 @@ export class PlayerSpawner extends Component {
     player.AddComponent(
       // TODO-DefinitelyMaybe: because the entity hasn't been added into the entities manager yet
       // we pass in the player entity
-      new ThirdPersonCamera(this.game, player),
+      new ThirdPersonCamera(this.world, player),
     );
     player.AddComponent(
       new NetworkPlayerController(this.network)
@@ -77,23 +77,23 @@ export class PlayerSpawner extends Component {
 }
 
 export class NetworkEntitySpawner extends Component {
-  constructor(game) {
+  constructor(world) {
     super();
-    this.game = game
-    this.grid = game.grid
-    this.scene = game.scene
-    this.camera = game.camera
-    this.network = game.network
+    this.world = world
+    this.grid = world.grid
+    this.scene = world.scene
+    this.camera = world.camera
+    this.network = world.network
   }
 
   Spawn(name, desc) {
     const npc = new Entity();
     // npc.Account = desc.account;
     npc.AddComponent(
-      new NPCController(this.game, desc)
+      new NPCController(this.world, desc)
     );
     npc.AddComponent(
-      new Grid(this.game, npc),
+      new Grid(this.world, npc),
     );
     npc.AddComponent(
       new NetworkEntityController(),

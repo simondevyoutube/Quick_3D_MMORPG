@@ -1,10 +1,10 @@
 import { Component } from "../structures/component.js";
 
 export class Grid extends Component {
-  constructor(game, entity) {
+  constructor(world, entity) {
     super();
-    this.game = game
-    this.grid = game.grid;
+    this.world = world
+    this.grid = world.grid;
     
     this.entity = entity
   }

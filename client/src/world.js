@@ -49,11 +49,91 @@ export class World {
     );
     this.entities.Add(spawner, "spawners");
 
+    // Setup Network hooks
+    this.network.websocket.on("world.player", (d) => {
+      this.spawnPlayer(d)
+    })
+    this.network.websocket.on("world.update", (d) => {
+      this.update(d)
+    })
+
     this.RAF_();
 
     this.initialized = true;
     this.resize();
     console.log(this);
+  }
+
+  spawnPlayer(d) {
+    // find the spawner
+    const spawner = this.entities.get("spawners").GetComponent(
+      "PlayerSpawner",
+    );
+
+    // create the player
+    // const player = new Player()
+    // spawner.spawn(player)
+    const player = spawner.Spawn(d.desc);
+    player.Broadcast({
+      topic: "network.update",
+      transform: d.transform,
+    });
+
+    console.log("entering world: " + d.id);
+    // set the playerID that we care about
+    this.network.playerID_ = d.id;
+  }
+
+  update(d) {
+    const updates = d;
+
+    const spawner = this.entities.get("spawners").GetComponent(
+      "NetworkEntitySpawner",
+    );
+
+    for (let u of updates) {
+      const id = this.network.GetEntityID_(u.id);
+
+      let npc = undefined;
+      if ("desc" in u) {
+        // const npc = new NPC()
+        // spawner.spawn(npc)
+        npc = spawner.Spawn(id, u.desc);
+
+        npc.Broadcast({
+          topic: "network.inventory",
+          inventory: u.desc.character.inventory,
+        });
+      } else {
+        // TODO-DefinitelyMaybe: This sometimes fails
+        // it asks the entity manager for an element thats not there
+        npc = this.entities.get(id);
+        if (!npc) {
+          // TODO-DefinitelyMaybe: We're early out of this and not worry about it for now
+          break;
+        }
+      }
+
+      // Translate events, hardcoded, bad, sorry
+      let events = [];
+      if (u.events) {
+        for (let e of u.events) {
+          events.push({
+            type: e.type,
+            target: this.entities.get(this.network.GetEntityID_(e.target)),
+            attacker: this.entities.get(this.network.GetEntityID_(e.attacker)),
+            amount: e.amount,
+          });
+        }
+      }
+
+      npc.Broadcast({
+        topic: "network.update",
+        transform: u.transform,
+        stats: u.stats,
+        events: events,
+      });
+    }
   }
 
   resize() {

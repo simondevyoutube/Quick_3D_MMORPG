@@ -5,11 +5,11 @@ export class ThirdPersonCamera extends Component {
   currentPosition = new THREE.Vector3();
   currentLookat = new THREE.Vector3();
 
-  constructor(game, player) {
+  constructor(world, player) {
     super();
-    this.camera = game.camera;
+    this.camera = world.camera;
     this.target = player
-    this.terrain = game.terrain
+    this.terrain = world.terrain
   }
 
   _CalculateIdealOffset() {

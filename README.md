@@ -14,14 +14,15 @@ A recreation of simon's project where the following happened:
     - [x] rotation -> quaternion
     - [x] most Getters and setters / boilerplate
     - [x] networking extras
+      - Put some network logic outside of network script
   - [x] three.js glsl
     - [x] highlighted in vscode extensions
     - [x] variables changed
+  - organize file contents
   - some entities are not entities
   - how to readmes
     - Getting a model into the game
     - Animating a model in game
-    - Changing functionality within the game
   - promises
   - Webstream websockets
   - ui themes

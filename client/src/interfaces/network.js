@@ -7,13 +7,14 @@ export class Network {
     timeout: 10000,
   });
   playerID_;
-  game;
+  world;
 
-  constructor(game) {
-    this.game = game
+  constructor(world) {
+    this.world = world
     // let x = new URL(location.href);
     // console.log(`ws://${x.hostname}:${this.port}`);
-    // TODO-DefinitelyMaybe: reconnect via `ws.connet()`
+
+    // TODO-DefinitelyMaybe: attempt to reconnect via `ws.connet()`
     this.websocket.on("connect", () => {
       console.log(`ws id: ${this.websocket.id}`);
       const randomName = this.GenerateRandomName_();
@@ -25,101 +26,8 @@ export class Network {
     });
 
     this.websocket.on("disconnect", () => {
-      console.log("DISCONNECTED: " + this.websocket.id); // undefined
+      console.log("DISCONNECTED: " + this.websocket.id);
     });
-
-    // TODO-DefinitelyMaybe: Maybe this logic should live somewhere else
-    this.websocket.on("world.player", (d) => {
-      // find the spawner
-      const spawner = this.game.entities.get("spawners").GetComponent(
-        "PlayerSpawner",
-      );
-
-      // create the player
-      const player = spawner.Spawn(d.desc);
-      player.Broadcast({
-        topic: "network.update",
-        transform: d.transform,
-      });
-
-      console.log("entering world: " + d.id);
-      // set the playerID that we care about
-      this.playerID_ = d.id;
-    })
-
-    this.websocket.on("world.update", (d) => {
-      const updates = d;
-
-      const spawner = this.game.entities.get("spawners").GetComponent(
-        "NetworkEntitySpawner",
-      );
-
-      for (let u of updates) {
-        const id = this.GetEntityID_(u.id);
-
-        let npc = undefined;
-        if ("desc" in u) {
-          npc = spawner.Spawn(id, u.desc);
-
-          npc.Broadcast({
-            topic: "network.inventory",
-            inventory: u.desc.character.inventory,
-          });
-        } else {
-          // TODO-DefinitelyMaybe: This sometimes fails
-          // it asks the entity manager for an element thats not there
-          npc = this.game.entities.get(id);
-          if (!npc) {
-            // TODO-DefinitelyMaybe: We're early out of this and not worry about it for now
-            break;
-          }
-        }
-
-        // Translate events, hardcoded, bad, sorry
-        let events = [];
-        if (u.events) {
-          for (let e of u.events) {
-            events.push({
-              type: e.type,
-              target: this.game.entities.get(this.GetEntityID_(e.target)),
-              attacker: this.game.entities.get(this.GetEntityID_(e.attacker)),
-              amount: e.amount,
-            });
-          }
-        }
-
-        // ui.AddEventMessages(events);
-
-        npc.Broadcast({
-          topic: "network.update",
-          transform: u.transform,
-          stats: u.stats,
-          events: events,
-        });
-      }
-    })
-
-    this.websocket.on("world.stats", (d) => {
-      // TODO-DefinitelyMaybe: not worrying about this much yet
-    })
-
-    this.websocket.on("world.inventory", (d) => {
-      const id = this.GetEntityID_(d[0]);
-
-      const e = this.game.entities.get(id);
-      if (!e) {
-        return;
-      }
-
-      e.Broadcast({
-        topic: "network.inventory",
-        inventory: d[1],
-      });
-    })
-
-    this.websocket.on("chat.message", (d) => {
-      // this.game.entities.get("ui").GetComponent("UIController").AddChatMessage(d);
-    })
   }
 
   GenerateRandomName_() {

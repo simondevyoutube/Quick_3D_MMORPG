@@ -13,7 +13,7 @@ import { HeightGenerator } from "./terrainheight.js";
 import { Noise } from "../functions/noise.js";
 
 export class Terrain {
-  game;
+  world;
   chunks = {};
   loader = new THREE.TextureLoader();
   material = new THREE.MeshStandardMaterial({
@@ -48,8 +48,8 @@ export class Terrain {
   };
   colourNoise = new Noise(this.colourVars);
 
-  constructor(game) {
-    this.game = game
+  constructor(world) {
+    this.world = world
     /*
     params = {
         scene: this.scene,
@@ -64,7 +64,7 @@ export class Terrain {
     noiseTexture.wrapS = THREE.RepeatWrapping;
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
-    const cap = this.game.renderer.capabilities
+    const cap = this.world.renderer.capabilities
 
     const diffuse = new TextureAtlas(cap);
     diffuse.Load("diffuse", [
@@ -126,7 +126,7 @@ export class Terrain {
       // s.fragmentShader += 'poop';
     };
 
-    this.game.scene.add(...this.groups);
+    this.world.scene.add(...this.groups);
   }
 
   _CreateTerrainChunk(group, groupTransform, offset, width, resolution) {
@@ -170,7 +170,7 @@ export class Terrain {
   Update(_) {
     // TODO-DefinitelyMaybe: Maybe this doesn't need to be called so oftened
     // how about simply when close to chunk edges?
-    const target = this.game.entities.get("player");
+    const target = this.world.entities.get("player");
     if (!target) {
       return;
     }

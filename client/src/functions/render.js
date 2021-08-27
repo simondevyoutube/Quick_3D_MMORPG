@@ -4,11 +4,11 @@ import { Component } from "../structures/component.js"
 export class RenderComponent extends Component {
   group_ = new THREE.Group();
 
-  constructor(game, params) {
+  constructor(world, params) {
     super();
-    this.game = game
+    this.world = world
     this.params_ = params;
-    this.game.scene.add(this.group_);
+    this.world.scene.add(this.group_);
   }
 
   destroy() {
@@ -20,7 +20,7 @@ export class RenderComponent extends Component {
         c.geometry.dispose();
       }
     });
-    this.game.scene.remove(this.group_);
+    this.world.scene.remove(this.group_);
   }
 
   InitEntity() {
@@ -68,7 +68,7 @@ export class RenderComponent extends Component {
 
     const textures = {};
     if (this.params_.textures) {
-      const loader = this.game.assets
+      const loader = this.world.assets
 
       for (let k in this.params_.textures.names) {
         const t = loader.LoadTexture(
@@ -140,7 +140,7 @@ export class RenderComponent extends Component {
   }
 
   _LoadFBX() {
-    const loader = this.game.assets
+    const loader = this.world.assets
     loader.LoadFBX(
       this.params_.resourcePath,
       this.params_.resourceName,

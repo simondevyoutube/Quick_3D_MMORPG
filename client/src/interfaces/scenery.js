@@ -90,8 +90,8 @@ for (let k in multiples) {
 }
 
 export class Scenery {
-  constructor(game) {
-    this.game = game
+  constructor(world) {
+    this.world = world
 
     const noiseParams = {
       octaves: 1,
@@ -124,7 +124,7 @@ export class Scenery {
 
       const e = new Entity();
       e.AddComponent(
-        new RenderComponent(this.game, {
+        new RenderComponent(this.world, {
           resourcePath: "./resources/nature2/GLTF/",
           resourceName: "Cloud" + index + ".glb",
           scale: Math.random() * 20 + 40,
@@ -176,7 +176,7 @@ export class Scenery {
 
     const e = new Entity();
     e.AddComponent(
-      new RenderComponent(this.game, {
+      new RenderComponent(this.world, {
         resourcePath: randomProp.resourcePath,
         resourceName: randomProp.base,
         textures: {
@@ -199,7 +199,7 @@ export class Scenery {
     );
     if (randomProp.collision) {
       e.AddComponent(
-        new Grid(this.game, e),
+        new Grid(this.world, e),
       );
     }
 
@@ -213,7 +213,7 @@ export class Scenery {
   }
 
   SpawnCrap_() {
-    const player = this.game.entities.get("player");
+    const player = this.world.entities.get("player");
     if (!player) {
       return;
     }
@@ -232,7 +232,7 @@ export class Scenery {
 
     const _P = new THREE.Vector3();
     const _V = new THREE.Vector3();
-    const terrain = this.game.terrain
+    const terrain = this.world.terrain
 
     for (let x = -10; x <= 10; ++x) {
       for (let y = -10; y <= 10; ++y) {
@@ -241,7 +241,7 @@ export class Scenery {
         _P.multiplyScalar(50.0);
 
         const key = "__scenery__[" + _P.x + "][" + _P.z + "]";
-        if (this.game.entities.get(key)) {
+        if (this.world.entities.get(key)) {
           continue;
         }
 
@@ -262,7 +262,7 @@ export class Scenery {
 
         e.SetPosition(_P);
 
-        this.game.entities.Add(e, key);
+        this.world.entities.Add(e, key);
 
         e.SetActive(false);
         this.crap_.push(e);
