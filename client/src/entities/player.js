@@ -1,34 +1,8 @@
 import { THREE } from "../deps.js";
-
 import { Component } from "../structures/component.js";
-import { FiniteStateMachine } from "../structures/finitestatemachine.js";
-import {
-  AttackState,
-  DanceState,
-  DeathState,
-  IdleState,
-  RunState,
-  WalkState,
-} from "../functions/state.js"
-
+import { Entity } from "../structures/entity.js";
+import { CharacterFSM } from "../functions/components/characterFSM.js";
 import { CHARACTER_MODELS } from "../data/defs.js";
-
-export class CharacterFSM extends FiniteStateMachine {
-  constructor(proxy) {
-    super();
-    this._proxy = proxy;
-    this.Init_();
-  }
-
-  Init_() {
-    this._AddState("idle", IdleState);
-    this._AddState("walk", WalkState);
-    this._AddState("run", RunState);
-    this._AddState("attack", AttackState);
-    this._AddState("death", DeathState);
-    this._AddState("dance", DanceState);
-  }
-}
 
 export class BasicCharacterControllerProxy {
   constructor(animations) {
@@ -99,7 +73,7 @@ export class BasicCharacterController extends Component {
     const classType = this.desc.character.class;
     const modelData = CHARACTER_MODELS[classType];
 
-    const loader = this.FindEntity("assets").GetComponent("Assets");
+    const loader = this.game.assets
     loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
       this.target_ = glb.scene;
       this.target_.scale.setScalar(modelData.scale);
@@ -161,8 +135,6 @@ export class BasicCharacterController extends Component {
         model: this.target_,
         bones: this.bones_,
       });
-
-      // this.FindEntity("ui").GetComponent("UIController").FadeoutLogin();
     });
   }
 
@@ -307,5 +279,26 @@ export class BasicCharacterController extends Component {
 
     this.parent.SetPosition(controlObject.position);
     this.parent.SetQuaternion(controlObject.quaternion);
+  }
+}
+
+export class Player extends Entity {
+  constructor () {
+    super()
+    this.account = playerParams.account;
+    this.input = new BasicCharacterControllerInput(params)
+    this.controller = new BasicCharacterController(this.game, playerParams);
+    this.equip = new EquipWeapon({ desc: playerParams })
+    this.grid = new Grid(this.game, player)
+    this.attack = new Attack()
+    this.camera = new ThirdPersonCamera(this.game, this),
+    this.network = new NetworkPlayerController(this.network)
+    // this.bloodEffect = new BloodEffect({
+    //     camera: this.camera,
+    //     scene: this.scene,
+    //   }),
+    // if (playerParams.character.class == "sorceror") {
+    //   this.sorcerorEffect = new SorcerorEffect(params)
+    // }
   }
 }

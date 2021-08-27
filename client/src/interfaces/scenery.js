@@ -124,8 +124,7 @@ export class Scenery {
 
       const e = new Entity();
       e.AddComponent(
-        new RenderComponent({
-          scene: this.game.scene,
+        new RenderComponent(this.game, {
           resourcePath: "./resources/nature2/GLTF/",
           resourceName: "Cloud" + index + ".glb",
           scale: Math.random() * 20 + 40,
@@ -177,8 +176,7 @@ export class Scenery {
 
     const e = new Entity();
     e.AddComponent(
-      new RenderComponent({
-        scene: this.game.scene,
+      new RenderComponent(this.game, {
         resourcePath: randomProp.resourcePath,
         resourceName: randomProp.base,
         textures: {
@@ -201,9 +199,7 @@ export class Scenery {
     );
     if (randomProp.collision) {
       e.AddComponent(
-        new Grid(
-          { grid: this.game.grid, e },
-        ),
+        new Grid(this.game, e),
       );
     }
 

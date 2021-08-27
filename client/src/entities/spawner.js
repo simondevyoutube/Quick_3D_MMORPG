@@ -46,9 +46,7 @@ export class PlayerSpawner extends Component {
       new EquipWeapon({ desc: playerParams }),
     );
     player.AddComponent(
-      new Grid(
-        this.game, player
-      ),
+      new Grid(this.game, player),
     );
     player.AddComponent(
       new Attack(),
@@ -92,16 +90,10 @@ export class NetworkEntitySpawner extends Component {
     const npc = new Entity();
     // npc.Account = desc.account;
     npc.AddComponent(
-      new NPCController({
-        camera: this.camera,
-        scene: this.scene,
-        desc: desc,
-      }),
+      new NPCController(this.game, desc)
     );
     npc.AddComponent(
-      new Grid(
-        this.game, npc
-      ),
+      new Grid(this.game, npc),
     );
     npc.AddComponent(
       new NetworkEntityController(),
@@ -133,5 +125,18 @@ export class NetworkEntitySpawner extends Component {
     this.Manager.Add(npc, name);
 
     return npc;
+  }
+}
+
+export class Spawner extends Entity {
+  constructor() {
+    super()
+  }
+
+  spawn(entity) {
+    console.log(`Spawning ${entity.name}`);
+    entity.position = this.position
+    entity.quaternion = this.quaternion
+    // this.SetActive(true) // ?
   }
 }

@@ -34,3 +34,6 @@ A recreation of simon's project where the following happened:
     - objects inventory / place
 - typescript (maybe)
 - Electron app (maybe)
+
+
+Structure will set you free

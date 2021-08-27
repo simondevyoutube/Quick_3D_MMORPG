@@ -1,7 +1,8 @@
 import { THREE } from "../deps.js";
 
 import { Component } from "../structures/component.js";
-import { BasicCharacterControllerProxy, CharacterFSM } from "./player.js";
+import { CharacterFSM } from "../functions/components/characterFSM.js";
+import { BasicCharacterControllerProxy } from "./player.js";
 
 import { CHARACTER_MODELS } from "../data/defs.js";
 
@@ -10,9 +11,10 @@ export class NPCController extends Component {
   group_ = new THREE.Group();
   queuedState_ = undefined;
 
-  constructor(params) {
+  constructor(game, desc) {
     super();
-    this.params_ = params;
+    this.game = game
+    this.desc = desc
   }
 
   destroy() {
@@ -40,7 +42,7 @@ export class NPCController extends Component {
 
   _Init() {
 
-    this.params_.scene.add(this.group_);
+    this.game.scene.add(this.group_);
 
     this.LoadModels_();
   }
@@ -87,10 +89,10 @@ export class NPCController extends Component {
   }
 
   LoadModels_() {
-    const classType = this.params_.desc.character.class;
+    const classType = this.desc.character.class;
     const modelData = CHARACTER_MODELS[classType];
 
-    const loader = this.FindEntity("assets").GetComponent("Assets");
+    const loader = this.game.assets
     loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
       this.target_ = glb.scene;
       this.target_.scale.setScalar(modelData.scale);

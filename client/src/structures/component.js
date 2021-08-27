@@ -15,10 +15,6 @@ export class Component {
     return this.parent.parent;
   }
 
-  FindEntity(n) {
-    return this.parent.FindEntity(n);
-  }
-
   Broadcast(m) {
     this.parent.Broadcast(m);
   }

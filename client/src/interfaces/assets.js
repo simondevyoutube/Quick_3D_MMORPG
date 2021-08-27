@@ -1,19 +1,14 @@
 import { FBXLoader, GLTFLoader, SkeletonClone, THREE } from "../deps.js";
-import { Component } from "../structures/component.js";
 
-export class Assets extends Component {
+export class Assets {
 
-  constructor() {
-    super();
-
-    this.textures = {};
-    this.models = {};
-  }
+  textures = {};
+  models = {};
 
   LoadTexture(path, name) {
     if (!(name in this.textures)) { 
       // lookup in localstorage first
-      const cache = false//JSON.parse(localStorage.getItem(name))
+      const cache = false //JSON.parse(localStorage.getItem(name))
 
       if (!cache) {
         // otherwise load the texture

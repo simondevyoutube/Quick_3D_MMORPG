@@ -34,13 +34,6 @@ export class EquipWeapon extends Component {
     }
   }
 
-  GetItemDefinition_(name) {
-    const database = this.FindEntity("database").GetComponent(
-      "InventoryDatabaseController",
-    );
-    return database.Find(name);
-  }
-
   _OnEquip(msg) {
     if (msg.value == this.name_) {
       return;

@@ -29,18 +29,17 @@ export class World {
   initialized = false;
 
   constructor() {
-    const threejs = new ThreeInit()
-    this.scene = threejs.scene;
-    this.camera = threejs.camera;
-    this.renderer = threejs.renderer;
+    // TODO-DefinitelyMaybe: do better eventually
+    this.threejs = new ThreeInit()
+    this.scene = this.threejs.scene;
+    this.camera = this.threejs.camera;
+    this.renderer = this.threejs.renderer;
 
     this.terrain = new Terrain(this)
     this.scenery = new Scenery(this)
+    this.assets = new Assets()
 
-    const l = new Entity();
-    l.AddComponent(new Assets());
-    this.entities.Add(l, "assets");
-
+    // TODO-DefinitelyMaybe: const spawner = new Spawner()
     const spawner = new Entity();
     spawner.AddComponent(
       new PlayerSpawner(this),
@@ -93,5 +92,8 @@ export class World {
     this.entities.Update(timeElapsedS);
     this.terrain.Update(timeElapsed)
     this.scenery.Update(timeElapsed)
+
+    // terrible hack
+    this.threejs.Update(this.entities.get("player"))
   }
 }

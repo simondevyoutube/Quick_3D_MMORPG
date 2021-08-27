@@ -47,11 +47,6 @@ export class Entity {
     return this.components[n];
   }
 
-  // TODO-DefinitelyMaybe: Finding an entity is not the job of the entity
-  FindEntity(n) {
-    return this.parent.get(n);
-  }
-
   Broadcast(msg) {
     if (!(msg.topic in this.handlers)) {
       // console.warn(`${msg.topic} was not handled`);

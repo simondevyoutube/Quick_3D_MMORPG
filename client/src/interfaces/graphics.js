@@ -158,9 +158,7 @@ export class ThreeInit {
     this.scene.add(sky);
   }
 
-  Update(_) {
-    // TODO-DefinitelyMaybe: not currently working
-    const player = this.FindEntity("player");
+  Update(player) {
     if (!player) {
       return;
     }
