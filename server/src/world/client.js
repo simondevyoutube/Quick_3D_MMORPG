@@ -83,10 +83,10 @@ export class WorldClient {
       text: message,
     };
 
-    this.BroadcastChat(chatMessage);
+    this.broadcastChat(chatMessage);
   }
 
-  BroadcastChat(chatMessage) {
+  broadcastChat(chatMessage) {
     const nearby = this.entity_.FindNear(50, true);
 
     for (let i = 0; i < nearby.length; ++i) {

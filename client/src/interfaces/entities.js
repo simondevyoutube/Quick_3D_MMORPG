@@ -8,43 +8,16 @@ export class Entities {
     return this.map[n];
   }
 
-  Filter(cb) {
+  filter(cb) {
     return this.entities.filter(cb);
   }
 
-  Add(e, n) {
-    if (!n) {
-      n = this.generateName();
-    }
-
-    this.map[n] = e;
-    this.entities.push(e);
-
-    e.parent = this;
-    e.name = n;
-    // TODO-DefinitelyMaybe: Why are entities initialized here? how about just bookkeeping.
-    e.InitEntity();
+  add(entity) {
+    this.map[entity.name] = entity;
+    this.entities.push(entity);
   }
 
-  SetActive(e, b) {
-    const i = this.entities.indexOf(e);
-
-    if (!b) {
-      if (i < 0) {
-        return;
-      }
-
-      this.entities.splice(i, 1);
-    } else {
-      if (i >= 0) {
-        return;
-      }
-
-      this.entities.push(e);
-    }
-  }
-
-  Update(timeElapsed) {
+  update(timeElapsed) {
     // TODO-DefinitelyMaybe: Some entities wont die in the current setup i.e. network, terrain, loader
     // so not looping through some objects everytime would be great.
     const dead = [];
@@ -52,9 +25,11 @@ export class Entities {
     for (let i = 0; i < this.entities.length; ++i) {
       const e = this.entities[i];
 
-      e.Update(timeElapsed);
+      if (e.update) {
+        e.update(timeElapsed);
+      }
 
-      if (e.dead_) {
+      if (e.dead) {
         dead.push(e);
       } else {
         alive.push(e);
@@ -63,18 +38,12 @@ export class Entities {
 
     for (let i = 0; i < dead.length; ++i) {
       const e = dead[i];
-
-      delete this.map[e.Name];
-
-      e.destroy();
+      delete this.map[e.name];
+      if (e.destroy) {
+        e.destroy(); 
+      }
     }
 
     this.entities = alive;
-  }
-
-  generateName() {
-    this.nextID += 1;
-
-    return "__name__" + this.nextID;
   }
 }

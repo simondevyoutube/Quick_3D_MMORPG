@@ -119,7 +119,7 @@ export class BloodEffect extends Component {
     this.fireFX_.destroy();
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler("events.network", (m) => {
       this.OnEvents_(m);
     });

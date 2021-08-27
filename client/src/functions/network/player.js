@@ -1,8 +1,7 @@
-import { THREE } from "../deps.js";
+import { THREE } from "../../deps.js";
+import { Component } from "../../structures/component.js";
 
-import { Component } from "../structures/component.js";
-
-export class NetworkPlayerController extends Component {
+export class NetworkPlayer extends Component {
   updateTimer_ = 0.0;
   loaded_ = false;
   net_
@@ -12,7 +11,7 @@ export class NetworkPlayerController extends Component {
     this.net_ = network
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler(
       "load.character",
       (m) => {
@@ -39,12 +38,12 @@ export class NetworkPlayerController extends Component {
 
   OnUpdate_(msg) {
     if (msg.transform) {
-      this.parent.SetPosition(new THREE.Vector3(...msg.transform[1]));
-      this.parent.SetQuaternion(new THREE.Quaternion(...msg.transform[2]));
+      this.parent.setPosition(new THREE.Vector3(...msg.transform[1]));
+      this.parent.setQuaternion(new THREE.Quaternion(...msg.transform[2]));
     }
 
     if (msg.stats) {
-      this.Broadcast({
+      this.broadcast({
         topic: "stats.network",
         value: msg.stats,
       });
@@ -52,7 +51,7 @@ export class NetworkPlayerController extends Component {
 
     if (msg.events) {
       if (msg.events.length > 0) {
-        this.Broadcast({
+        this.broadcast({
           topic: "events.network",
           value: msg.events,
         });
@@ -65,7 +64,7 @@ export class NetworkPlayerController extends Component {
   }
 
   CreateTransformPacket() {
-    const controller = this.GetComponent("Movement");
+    const controller = this.GetComponent("PlayerMovement");
 
     // HACK
     return [

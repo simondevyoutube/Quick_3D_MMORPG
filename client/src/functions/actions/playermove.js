@@ -4,7 +4,7 @@ import { Component } from "../../structures/component.js";
 import { CharacterFSM } from "../components/characterFSM.js";
 import { CHARACTER_MODELS } from "../../data/defs.js";
 
-export class Movement extends Component {
+export class PlayerMovement extends Component {
   constructor(world, desc) {
     super();
     this.world = world
@@ -29,7 +29,7 @@ export class Movement extends Component {
     this.LoadModels_();
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler("health.death", (m) => {
       this.OnDeath_(m);
     });
@@ -120,7 +120,7 @@ export class Movement extends Component {
 
       this.stateMachine_.SetState("idle");
 
-      this.Broadcast({
+      this.broadcast({
         topic: "load.character",
         model: this.target_,
         bones: this.bones_,
@@ -169,7 +169,7 @@ export class Movement extends Component {
       return;
     }
 
-    const input = this.GetComponent("BasicCharacterControllerInput");
+    const input = this.GetComponent("Input");
     this.stateMachine_.Update(timeInSeconds, input);
 
     if (this._mixer) {
@@ -177,7 +177,7 @@ export class Movement extends Component {
     }
 
     // HARDCODED
-    this.Broadcast({
+    this.broadcast({
       topic: "player.action",
       action: this.stateMachine_._currentState.Name,
     });
@@ -267,7 +267,7 @@ export class Movement extends Component {
 
     controlObject.position.copy(pos);
 
-    this.parent.SetPosition(controlObject.position);
-    this.parent.SetQuaternion(controlObject.quaternion);
+    this.parent.setPosition(controlObject.position);
+    this.parent.setQuaternion(controlObject.quaternion);
   }
 }

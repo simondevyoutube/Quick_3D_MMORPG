@@ -30,10 +30,10 @@ export class RenderComponent extends Component {
   _Init(params) {
     this.params_ = params;
 
-    this._LoadModels();
+    this.loadModels();
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler("update.position", (m) => {
       this._OnPosition(m);
     });
@@ -50,7 +50,7 @@ export class RenderComponent extends Component {
     this.group_.quaternion.copy(m.value);
   }
 
-  _LoadModels() {
+  loadModels() {
     if (this.params_.resourceName.endsWith("glb")) {
       this._LoadGLB();
     } else if (this.params_.resourceName.endsWith("fbx")) {
@@ -124,7 +124,7 @@ export class RenderComponent extends Component {
         c.visible = this.params_.visible;
       }
 
-      this.Broadcast({
+      this.broadcast({
         topic: "render.loaded",
         value: this._target,
       });

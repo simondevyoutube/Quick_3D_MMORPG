@@ -1,7 +1,7 @@
 import { THREE } from "../../deps.js";
 import { Component } from "../../structures/component.js";
 
-export class BasicCharacterControllerInput extends Component {
+export class Input extends Component {
   _keys = {
     forward: false,
     backward: false,

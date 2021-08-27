@@ -8,7 +8,7 @@ export class FiniteStateMachine {
     return this.currentState_;
   }
 
-  Broadcast(evt) {
+  broadcast(evt) {
     this.onEvent_(evt);
   }
 
@@ -32,8 +32,8 @@ export class FiniteStateMachine {
 export class State {
   constructor() {}
 
-  Broadcast(evt) {
-    this.parent.Broadcast(evt);
+  broadcast(evt) {
+    this.parent.broadcast(evt);
   }
 
   OnEnter() {
@@ -72,7 +72,7 @@ export class Login_Confirm extends State {
 
   OnEnter() {
     console.log("login confirmed: " + this.params_.accountName);
-    this.Broadcast({ topic: "login.complete", params: this.params_ });
+    this.broadcast({ topic: "login.complete", params: this.params_ });
   }
 
   OnMessage() {

@@ -1,20 +1,18 @@
 import { Entities } from "./interfaces/entities.js";
-import { Entity } from "./structures/entity.js"
 import { Network } from "./interfaces/network.js";
 import { Scenery } from "./interfaces/scenery.js";
 import { Assets } from "./interfaces/assets.js";
-import { NetworkEntitySpawner, PlayerSpawner } from "./entities/spawner.js";
 import { Terrain } from "./interfaces/terrain.js";
 
 import { SpatialHashGrid } from "./structures/spatialhashgrid.js";
 // import { WEAPONS_DATA } from "../shared/defs.js";
 import { ThreeInit } from "./interfaces/graphics.js";
 
+import { Spawner } from "./entities/spawner.js";
+import { Player } from "./entities/player.js";
+
 export class World {
   state = undefined;
-  scene;
-  camera;
-  renderer;
   input = {
     handleKeyup: undefined,
     handleKeydown: undefined,
@@ -25,6 +23,7 @@ export class World {
     [100, 100],
   );
   network = new Network(this);
+  assets = new Assets()
   previousRAF_ = undefined;
   initialized = false;
 
@@ -35,19 +34,12 @@ export class World {
     this.camera = this.threejs.camera;
     this.renderer = this.threejs.renderer;
 
+    // terrain and scenery dont make sense unless three has already been initialized
     this.terrain = new Terrain(this)
     this.scenery = new Scenery(this)
-    this.assets = new Assets()
 
-    // TODO-DefinitelyMaybe: const spawner = new Spawner()
-    const spawner = new Entity();
-    spawner.AddComponent(
-      new PlayerSpawner(this),
-    );
-    spawner.AddComponent(
-      new NetworkEntitySpawner(this),
-    );
-    this.entities.Add(spawner, "spawners");
+    const spawner = new Spawner(this)
+    this.entities.add(spawner, "spawner")
 
     // Setup Network hooks
     this.network.websocket.on("world.player", (d) => {
@@ -66,15 +58,12 @@ export class World {
 
   spawnPlayer(d) {
     // find the spawner
-    const spawner = this.entities.get("spawners").GetComponent(
-      "PlayerSpawner",
-    );
+    const spawner = this.entities.get("spawner")
 
     // create the player
-    // const player = new Player()
-    // spawner.spawn(player)
-    const player = spawner.Spawn(d.desc);
-    player.Broadcast({
+    const player = new Player(this, {account:"player"})
+    spawner.spawn(player)
+    player.broadcast({
       topic: "network.update",
       transform: d.transform,
     });
@@ -84,25 +73,20 @@ export class World {
     this.network.playerID_ = d.id;
   }
 
-  update(d) {
-    const updates = d;
+  update(data) {
+    const spawner = this.entities.get("spawner")
 
-    const spawner = this.entities.get("spawners").GetComponent(
-      "NetworkEntitySpawner",
-    );
-
-    for (let u of updates) {
-      const id = this.network.GetEntityID_(u.id);
+    for (let update of data) {
+      const id = this.network.GetEntityID_(update.id);
 
       let npc = undefined;
-      if ("desc" in u) {
-        // const npc = new NPC()
-        // spawner.spawn(npc)
-        npc = spawner.Spawn(id, u.desc);
+      if ("desc" in update) {
+        const npc = new NPC(id, update.desc)
+        spawner.spawn(npc)
 
-        npc.Broadcast({
+        npc.broadcast({
           topic: "network.inventory",
-          inventory: u.desc.character.inventory,
+          inventory: update.desc.character.inventory,
         });
       } else {
         // TODO-DefinitelyMaybe: This sometimes fails
@@ -116,8 +100,8 @@ export class World {
 
       // Translate events, hardcoded, bad, sorry
       let events = [];
-      if (u.events) {
-        for (let e of u.events) {
+      if (update.events) {
+        for (let e of update.events) {
           events.push({
             type: e.type,
             target: this.entities.get(this.network.GetEntityID_(e.target)),
@@ -127,10 +111,10 @@ export class World {
         }
       }
 
-      npc.Broadcast({
+      npc.broadcast({
         topic: "network.update",
-        transform: u.transform,
-        stats: u.stats,
+        transform: update.transform,
+        stats: update.stats,
         events: events,
       });
     }

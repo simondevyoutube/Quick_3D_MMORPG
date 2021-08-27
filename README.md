@@ -9,6 +9,8 @@ A recreation of simon's project where the following happened:
   - [x] rename files
   - [x] remove code
     - [x] remain functionaly equivelent
+      - [x] components are not initialized the same way
+        - The entities interface does the bookkeeping.
     - [x] move in-line data about terrain workers url to top of file
     - [x] null -> undefined
     - [x] rotation -> quaternion

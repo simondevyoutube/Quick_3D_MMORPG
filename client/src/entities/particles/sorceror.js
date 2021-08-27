@@ -64,7 +64,7 @@ export class SorcerorEffect extends Component {
     this.particles_.destroy();
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler("action.attack", (m) => {
       this.OnAttack_(m);
     });

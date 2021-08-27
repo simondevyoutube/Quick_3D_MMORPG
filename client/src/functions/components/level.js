@@ -11,7 +11,7 @@ export class LevelUpComponentSpawner extends Component {
 
   Spawn(pos) {
     const e = new Entity();
-    e.SetPosition(pos);
+    e.setPosition(pos);
     e.AddComponent(new LevelUpComponent(this._params));
     this.Manager.Add(e);
 
@@ -43,7 +43,7 @@ export class LevelUpComponent extends Component {
     this._particles._sizeSpline.AddPoint(1.0, 0.0);
   }
 
-  InitComponent() {
+  initComponent() {
     this._particles.AddParticles(this.parent.position, 300);
   }
 

@@ -3,7 +3,7 @@ export class Component {
 
   destroy() {}
 
-  InitComponent() {}
+  initComponent() {}
 
   InitEntity() {}
 
@@ -15,8 +15,8 @@ export class Component {
     return this.parent.parent;
   }
 
-  Broadcast(m) {
-    this.parent.Broadcast(m);
+  broadcast(m) {
+    this.parent.broadcast(m);
   }
 
   Update(_) {}

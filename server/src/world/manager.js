@@ -124,7 +124,7 @@ export class WorldManager {
 
     this.entities_.push(wc);
 
-    wc.BroadcastChat({
+    wc.broadcastChat({
       name: "",
       server: true,
       text: "[" + params.accountName + " has entered the game]",

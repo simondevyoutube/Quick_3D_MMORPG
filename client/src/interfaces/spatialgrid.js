@@ -14,7 +14,7 @@ export class Grid extends Component {
     this.client_ = undefined;
   }
 
-  InitComponent() {
+  initComponent() {
     const pos = [
       this.entity.position.x,
       this.entity.position.z,

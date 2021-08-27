@@ -38,7 +38,7 @@ export class FloatingName extends Component {
     }
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler(
       "load.character",
       (m) => {

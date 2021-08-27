@@ -7,7 +7,7 @@ export class Attack extends Component {
     super();
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler("player.action", (m) => {
       this._OnAnimAction(m);
     });
@@ -19,7 +19,7 @@ export class Attack extends Component {
       return;
     } else if (m.action != this.action_) {
       this.action_ = m.action;
-      this.Broadcast({
+      this.broadcast({
         topic: "action.attack",
       });
     }

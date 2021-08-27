@@ -6,7 +6,7 @@ export class SocketWrapper {
   constructor(params) {
     this.socket_ = params.socket;
     this.onMessage = undefined;
-    this.dead_ = false;
+    this.dead = false;
     this.SetupSocket_();
   }
 
@@ -15,7 +15,7 @@ export class SocketWrapper {
   }
 
   get IsAlive() {
-    return !this.dead_;
+    return !this.dead;
   }
 
   SetupSocket_() {
@@ -24,7 +24,7 @@ export class SocketWrapper {
     });
     this.socket_.on("disconnect", () => {
       console.log("Client disconnected.");
-      this.dead_ = true;
+      this.dead = true;
     });
     this.socket_.onAny((e, d) => {
       try {

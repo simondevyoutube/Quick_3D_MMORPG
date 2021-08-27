@@ -64,7 +64,7 @@ export class HealthBar extends Component {
     this.geometry_.dispose();
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler("health.update", (m) => {
       this.OnHealth_(m);
     });

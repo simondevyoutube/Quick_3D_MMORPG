@@ -1,7 +1,7 @@
-import { THREE } from "../deps.js";
-import { Component } from "../structures/component.js";
+import { THREE } from "../../deps.js";
+import { Component } from "../../structures/component.js";
 
-export class NetworkEntityController extends Component {
+export class NetworkEntity extends Component {
   transformUpdates_ = [];
   targetFrame_ = undefined;
   lastFrame_ = undefined;
@@ -11,7 +11,7 @@ export class NetworkEntityController extends Component {
     super();
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler(
       "network.update",
       (m) => {
@@ -21,8 +21,8 @@ export class NetworkEntityController extends Component {
   }
 
   SetTransform_(transform) {
-    this.parent.SetPosition(new THREE.Vector3(...transform[1]));
-    this.parent.SetQuaternion(new THREE.Quaternion(...transform[2]));
+    this.parent.setPosition(new THREE.Vector3(...transform[1]));
+    this.parent.setQuaternion(new THREE.Quaternion(...transform[2]));
     this.targetFrame_ = { time: 0.1, transform: transform };
   }
 
@@ -39,7 +39,7 @@ export class NetworkEntityController extends Component {
 
     // All of this should be LCT'd, but whatever
     if ("stats" in msg) {
-      this.Broadcast({
+      this.broadcast({
         topic: "stats.network",
         value: msg.stats,
       });
@@ -47,7 +47,7 @@ export class NetworkEntityController extends Component {
 
     if ("events" in msg) {
       if (msg.events.length > 0) {
-        this.Broadcast({
+        this.broadcast({
           topic: "events.network",
           value: msg.events,
         });
@@ -100,8 +100,8 @@ export class NetworkEntityController extends Component {
       pf.lerp(p2, t);
       qf.slerp(q2, t);
 
-      this.parent.SetPosition(pf);
-      this.parent.SetQuaternion(qf);
+      this.parent.setPosition(pf);
+      this.parent.setQuaternion(qf);
       const controller = this.GetComponent("NPCController");
       controller.SetState(this.lastFrame_.transform[0]);
     }

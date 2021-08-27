@@ -2,77 +2,45 @@ import { FBXLoader, THREE } from "../../deps.js";
 import { Component } from "../../structures/component.js";
 import { CHARACTER_MODELS } from "../../data/defs.js";
 
-export class EquipWeapon extends Component {
-  target_ = undefined;
-  name_ = undefined;
+export class Equip extends Component {
+  target = undefined;
 
-  constructor(params) {
+  constructor() {
     super();
-    this.params_ = params;
-
-    const classType = this.params_.desc.character.class;
-    const modelData = CHARACTER_MODELS[classType];
-    this.anchor_ = modelData.anchors.rightHand;
+    // TODO-DefinitelyMaybe: for now we'll pretend that everything is a palidin
+    const modelData = CHARACTER_MODELS["paladin"];
+    this.anchor = modelData.anchors.rightHand;
   }
 
-  InitComponent() {
+  initComponent() {
     this.registerHandler(
       "load.character",
-      (m) => this._OnCharacterLoaded(m),
+      (m) => this.onCharacterLoaded(m),
     );
-    this.registerHandler("inventory.equip", (m) => this._OnEquip(m));
   }
 
-  _OnCharacterLoaded(msg) {
-    this._bones = msg.bones;
-    this._AttachTarget();
+  onCharacterLoaded(msg) {
+    this.bones = msg.bones;
+    this.attachTarget();
   }
 
-  _AttachTarget() {
-    if (this._bones && this.target_) {
-      this._bones[this.anchor_].add(this.target_);
+  attachTarget() {
+    if (this.bones && this.target) {
+      this.bones[this.anchor].add(this.target);
     }
   }
 
-  _OnEquip(msg) {
-    if (msg.value == this.name_) {
-      return;
-    }
-
-    if (this.target_) {
-      this._UnloadModels();
-    }
-    const inventory = this.GetComponent("InventoryController");
-    const item = this.GetItemDefinition_(msg.value);
-
-    this.name_ = msg.value;
-
-    if (item) {
-      this._LoadModels(item, () => {
-        this._AttachTarget();
-      });
-    }
-  }
-
-  _UnloadModels() {
-    if (this.target_) {
-      this.target_.parent.remove(this.target_);
-      // Probably need to free the memory properly, whatever
-      this.target_ = undefined;
-    }
-  }
-
-  _LoadModels(item, cb) {
+  loadModels(item, cb) {
     const loader = new FBXLoader();
     loader.setPath("./resources/weapons/FBX/");
     loader.load(item.renderParams.name + ".fbx", (fbx) => {
-      this.target_ = fbx;
-      this.target_.scale.setScalar(item.renderParams.scale);
-      // this.target_.rotateY(Math.PI);
-      this.target_.rotateX(Math.PI / 2);
-      // this.target_.rotateY(-1);
+      this.target = fbx;
+      this.target.scale.setScalar(item.renderParams.scale);
+      // this.target.rotateY(Math.PI);
+      this.target.rotateX(Math.PI / 2);
+      // this.target.rotateY(-1);
 
-      this.target_.traverse((c) => {
+      this.target.traverse((c) => {
         c.castShadow = true;
         c.receiveShadow = true;
 
@@ -106,10 +74,10 @@ export class EquipWeapon extends Component {
 
       cb();
 
-      this.Broadcast({
+      this.broadcast({
         topic: "load.weapon",
-        model: this.target_,
-        bones: this._bones,
+        model: this.target,
+        bones: this.bones,
       });
     });
   }

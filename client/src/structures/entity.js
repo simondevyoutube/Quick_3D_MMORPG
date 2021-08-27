@@ -1,20 +1,15 @@
 import { THREE } from "../deps.js";
 
+let ID = 0
+
 export class Entity {
-  name = undefined;
+  name = `entity_${ID++}`;
   position = new THREE.Vector3();
   quaternion = new THREE.Quaternion();
-  components = {};
   handlers = {};
-  parent = undefined;
   dead = false;
 
   destroy() {
-    for (const k in this.components) {
-      this.components[k].destroy();
-    }
-    this.components = undefined;
-    this.parent = undefined;
     this.handlers = undefined;
   }
 
@@ -25,29 +20,7 @@ export class Entity {
     this.handlers[name].push(handler);
   }
 
-  SetActive(b) {
-    this.parent.SetActive(this, b);
-  }
-
-  AddComponent(c) {
-    c.parent = this;
-    this.components[c.constructor.name] = c;
-
-    c.InitComponent();
-  }
-
-  // TODO-DefinitelyMaybe: components should not need to be initialized like this
-  InitEntity() {
-    for (const k in this.components) {
-      this.components[k].InitEntity();
-    }
-  }
-
-  GetComponent(n) {
-    return this.components[n];
-  }
-
-  Broadcast(msg) {
+  broadcast(msg) {
     if (!(msg.topic in this.handlers)) {
       // console.warn(`${msg.topic} was not handled`);
       return;
@@ -58,25 +31,19 @@ export class Entity {
     }
   }
 
-  SetPosition(p) {
+  setPosition(p) {
     this.position.copy(p);
-    this.Broadcast({
+    this.broadcast({
       topic: "update.position",
       value: this.position,
     });
   }
 
-  SetQuaternion(q) {
+  setQuaternion(q) {
     this.quaternion.copy(q);
-    this.Broadcast({
+    this.broadcast({
       topic: "update.quaternion",
       value: this.quaternion,
     });
-  }
-
-  Update(timeElapsed) {
-    for (const k in this.components) {
-      this.components[k].Update(timeElapsed);
-    }
   }
 }

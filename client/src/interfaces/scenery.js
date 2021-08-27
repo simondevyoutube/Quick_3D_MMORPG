@@ -132,13 +132,13 @@ export class Scenery {
           color: new THREE.Color(0x202020),
         }),
       );
-      e.SetPosition(pos);
+      e.setPosition(pos);
 
       const q = new THREE.Quaternion().setFromAxisAngle(
         new THREE.Vector3(0, 1, 0),
         rand_range(0, 360),
       );
-      e.SetQuaternion(q);
+      e.setQuaternion(q);
 
       this.Manager.Add(e);
       e.SetActive(false);
@@ -207,7 +207,7 @@ export class Scenery {
       new THREE.Vector3(0, 1, 0),
       this.noise_.Get(spawnPos.x, 5.0, spawnPos.z) * 360,
     );
-    e.SetQuaternion(q);
+    e.setQuaternion(q);
 
     return e;
   }
@@ -260,7 +260,7 @@ export class Scenery {
 
         const e = this.SpawnAt_(biome, _P);
 
-        e.SetPosition(_P);
+        e.setPosition(_P);
 
         this.world.entities.Add(e, key);
 
