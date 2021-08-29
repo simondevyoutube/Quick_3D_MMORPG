@@ -1,12 +1,10 @@
 import { THREE } from "../deps.js";
-import { Component } from "../structures/component.js";
 
-export class ThirdPersonCamera extends Component {
+export class ThirdPersonCamera {
   currentPosition = new THREE.Vector3();
   currentLookat = new THREE.Vector3();
 
   constructor(world, player) {
-    super();
     this.camera = world.camera;
     this.target = player
     this.terrain = world.terrain
@@ -19,7 +17,7 @@ export class ThirdPersonCamera extends Component {
 
     idealOffset.y = Math.max(
       idealOffset.y,
-      this.terrain.GetHeight(idealOffset)[0] + 5.0,
+      this.terrain.getHeight(idealOffset)[0] + 5.0,
     );
 
     return idealOffset;
@@ -32,7 +30,7 @@ export class ThirdPersonCamera extends Component {
     return idealLookat;
   }
 
-  Update(timeElapsed) {
+  update(timeElapsed) {
     const idealOffset = this._CalculateIdealOffset();
     const idealLookat = this._CalculateIdealLookat();
 

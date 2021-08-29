@@ -44,6 +44,7 @@ export class Entities {
       }
     }
 
+    // TODO-DefinitelyMaybe: Might need a better way of removing entities in future
     this.entities = alive;
   }
 }

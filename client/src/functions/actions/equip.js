@@ -1,15 +1,13 @@
 import { FBXLoader, THREE } from "../../deps.js";
-import { Component } from "../../structures/component.js";
-import { CHARACTER_MODELS } from "../../data/defs.js";
+import { paladin } from "../../data/models/mod.js";
 
-export class Equip extends Component {
+export class Equip {
   target = undefined;
 
   constructor() {
-    super();
     // TODO-DefinitelyMaybe: for now we'll pretend that everything is a palidin
-    const modelData = CHARACTER_MODELS["paladin"];
-    this.anchor = modelData.anchors.rightHand;
+    const modelData = paladin
+    this.anchor = modelData.equip.rightHand;
   }
 
   initComponent() {

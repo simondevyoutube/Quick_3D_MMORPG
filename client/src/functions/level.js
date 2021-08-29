@@ -1,11 +1,8 @@
-import { THREE } from "../../deps.js";
+import { THREE } from "../deps.js";
+import { ParticleSystem } from "../entities/particle.js";
 
-import { ParticleSystem } from "../../entities/particle.js";
-import { Component } from "../../structures/component.js";
-
-export class LevelUpComponentSpawner extends Component {
+export class LevelUpComponentSpawner {
   constructor(params) {
-    super();
     this._params = params;
   }
 
@@ -13,15 +10,14 @@ export class LevelUpComponentSpawner extends Component {
     const e = new Entity();
     e.setPosition(pos);
     e.AddComponent(new LevelUpComponent(this._params));
-    this.Manager.Add(e);
+    this.Manager.add(e);
 
     return e;
   }
 }
 
-export class LevelUpComponent extends Component {
+export class LevelUpComponent {
   constructor(params) {
-    super();
     this._params = params;
 
     this._particles = new ParticleSystem({
@@ -47,7 +43,7 @@ export class LevelUpComponent extends Component {
     this._particles.AddParticles(this.parent.position, 300);
   }
 
-  Update(timeElapsed) {
+  update(timeElapsed) {
     this._particles.Step(timeElapsed);
     if (this._particles._particles.length == 0) {
       this.parent.SetActive(false);

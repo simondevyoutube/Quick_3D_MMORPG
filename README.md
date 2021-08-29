@@ -9,8 +9,7 @@ A recreation of simon's project where the following happened:
   - [x] rename files
   - [x] remove code
     - [x] remain functionaly equivelent
-      - [x] components are not initialized the same way
-        - The entities interface does the bookkeeping.
+      - [x] components have been removed. Integrate a class or function instead.
     - [x] move in-line data about terrain workers url to top of file
     - [x] null -> undefined
     - [x] rotation -> quaternion
@@ -21,6 +20,7 @@ A recreation of simon's project where the following happened:
     - [x] highlighted in vscode extensions
     - [x] variables changed
   - organize file contents
+    - The interfaces folder should only have files responsible for book-keeping.
   - some entities are not entities
   - how to readmes
     - Getting a model into the game
@@ -38,5 +38,8 @@ A recreation of simon's project where the following happened:
 - typescript (maybe)
 - Electron app (maybe)
 
-
 Structure will set you free
+
+# Starting the frontend client
+
+`cd ./client` then `npm i` then `npm dev`

@@ -1,4 +1,5 @@
 import { THREE } from "../deps.js";
+import { LinearSpline } from "../functions/spline.js";
 
 const _VS = /* glsl */`
   uniform float pointMultiplier;
@@ -37,42 +38,6 @@ const _FS = /* glsl */`
     gl_FragColor.xyz *= gl_FragColor.w;
     gl_FragColor.w *= vBlend;
   }`;
-
-export class LinearSpline {
-  constructor(lerp) {
-    this.points_ = [];
-    this._lerp = lerp;
-  }
-
-  AddPoint(t, d) {
-    this.points_.push([t, d]);
-  }
-
-  Get(t) {
-    let p1 = 0;
-
-    for (let i = 0; i < this.points_.length; i++) {
-      if (this.points_[i][0] >= t) {
-        break;
-      }
-      p1 = i;
-    }
-
-    const p2 = Math.min(this.points_.length - 1, p1 + 1);
-
-    if (p1 == p2) {
-      return this.points_[p1][1];
-    }
-
-    return this._lerp(
-      (t - this.points_[p1][0]) / (
-        this.points_[p2][0] - this.points_[p1][0]
-      ),
-      this.points_[p1][1],
-      this.points_[p2][1],
-    );
-  }
-}
 
 export class ParticleEmitter {
   emissionRate_ = 0.0;
@@ -167,7 +132,7 @@ export class ParticleEmitter {
   OnUpdate_(_) {
   }
 
-  Update(timeElapsed) {
+  update(timeElapsed) {
     this.OnUpdate_(timeElapsed);
 
     if (this.emitterLife_ !== undefined) {
@@ -191,6 +156,7 @@ export class ParticleEmitter {
 
 export class ParticleSystem {
   constructor(params) {
+    // TODO-DefinitelyMaybe: Load particle textures via the asset interface
     const uniforms = {
       diffuseTexture: {
         value: new THREE.TextureLoader().load(params.texture),
@@ -333,13 +299,13 @@ export class ParticleSystem {
 
   UpdateEmitters_(timeElapsed) {
     for (let i = 0; i < this.emitters_.length; ++i) {
-      this.emitters_[i].Update(timeElapsed);
+      this.emitters_[i].update(timeElapsed);
     }
 
     this.emitters_ = this.emitters_.filter((e) => e.IsAlive);
   }
 
-  Update(timeElapsed) {
+  update(timeElapsed) {
     this.UpdateEmitters_(timeElapsed);
     this.UpdateParticles_(timeElapsed);
     this.UpdateGeometry_();

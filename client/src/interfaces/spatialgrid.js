@@ -1,8 +1,5 @@
-import { Component } from "../structures/component.js";
-
-export class Grid extends Component {
+export class Grid {
   constructor(world, entity) {
-    super();
     this.world = world
     this.grid = world.grid;
     

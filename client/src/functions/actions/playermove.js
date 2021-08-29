@@ -1,12 +1,21 @@
 import { THREE } from "../../deps.js";
 import { Animate } from "../animate.js";
-import { Component } from "../../structures/component.js";
-import { CharacterFSM } from "../components/characterFSM.js";
-import { CHARACTER_MODELS } from "../../data/defs.js";
+import { CharacterFSM } from "../characterFSM.js";
+import { paladin, sorceror } from "../../data/models/characters/mod.js";
 
-export class PlayerMovement extends Component {
+const CHARACTER_MODELS = (arg) => {
+  switch (arg) {
+    case "paladin":
+      return paladin
+    case "sorceror":
+      return sorceror
+    default:
+      return undefined
+  } 
+}
+
+export class PlayerMovement {
   constructor(world, desc) {
-    super();
     this.world = world
     this.terrain = world.terrain
     this.desc = desc
@@ -61,7 +70,7 @@ export class PlayerMovement extends Component {
 
   LoadModels_() {
     const classType = this.desc.character.class;
-    const modelData = CHARACTER_MODELS[classType];
+    const modelData = CHARACTER_MODELS(classType);
 
     const loader = this.world.assets
     loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
@@ -163,14 +172,14 @@ export class PlayerMovement extends Component {
     return collisions;
   }
 
-  Update(timeInSeconds) {
+  update(timeInSeconds) {
     // TODO-DefinitelyMaybe: This is responsible for movement
     if (!this.stateMachine_) {
       return;
     }
 
     const input = this.GetComponent("Input");
-    this.stateMachine_.Update(timeInSeconds, input);
+    this.stateMachine_.update(timeInSeconds, input);
 
     if (this._mixer) {
       this._mixer.update(timeInSeconds);
@@ -263,7 +272,7 @@ export class PlayerMovement extends Component {
       return;
     }
 
-    pos.y = this.terrain.GetHeight(pos)[0];
+    pos.y = this.terrain.getHeight(pos)[0];
 
     controlObject.position.copy(pos);
 

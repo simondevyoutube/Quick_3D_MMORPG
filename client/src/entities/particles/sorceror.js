@@ -1,7 +1,5 @@
 import { THREE } from "../../deps.js";
-
 import { ParticleEmitter, ParticleSystem } from "../particle.js";
-import { Component } from "../../structures/component.js";
 
 export class SorcerorEffectEmitter extends ParticleEmitter {
   constructor(parent) {
@@ -48,9 +46,8 @@ export class SorcerorEffectEmitter extends ParticleEmitter {
   }
 }
 
-export class SorcerorEffect extends Component {
+export class SorcerorEffect {
   constructor(params) {
-    super();
     this.params_ = params;
 
     this.particles_ = new ParticleSystem({
@@ -119,7 +116,7 @@ export class SorcerorEffect extends Component {
     }
   }
 
-  Update(timeElapsed) {
-    this.particles_.Update(timeElapsed);
+  update(timeElapsed) {
+    this.particles_.update(timeElapsed);
   }
 }

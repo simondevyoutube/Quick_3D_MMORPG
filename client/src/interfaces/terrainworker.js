@@ -34,7 +34,7 @@ class _TerrainBuilderThreadedWorker {
     return this._params.heightGenerators[0].Get(v.x, v.y, v.z)[0];
   }
 
-  Rebuild() {
+  rebuild() {
     const _D = new THREE.Vector3();
     const _D1 = new THREE.Vector3();
     const _D2 = new THREE.Vector3();
@@ -344,7 +344,7 @@ self.onmessage = (msg) => {
   if (msg.data.subject == "build_chunk") {
     _CHUNK.Init(msg.data.params);
 
-    const rebuiltData = _CHUNK.Rebuild();
+    const rebuiltData = _CHUNK.rebuild();
     self.postMessage({ subject: "build_chunk_result", data: rebuiltData });
   }
 };

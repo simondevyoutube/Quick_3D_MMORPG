@@ -1,7 +1,5 @@
 import { THREE } from "../../deps.js";
-
 import { ParticleEmitter, ParticleSystem } from "../particle.js";
-import { Component } from "../../structures/component.js";
 
 export class BloodEffectEmitter extends ParticleEmitter {
   constructor(parent) {
@@ -97,9 +95,8 @@ export class FireFXEmitter extends ParticleEmitter {
   }
 }
 
-export class BloodEffect extends Component {
+export class BloodEffect {
   constructor(params) {
-    super();
     this.params_ = params;
 
     this.bloodFX_ = new ParticleSystem({
@@ -218,8 +215,8 @@ export class BloodEffect extends Component {
     }
   }
 
-  Update(timeElapsed) {
-    this.bloodFX_.Update(timeElapsed);
-    this.fireFX_.Update(timeElapsed);
+  update(timeElapsed) {
+    this.bloodFX_.update(timeElapsed);
+    this.fireFX_.update(timeElapsed);
   }
 }

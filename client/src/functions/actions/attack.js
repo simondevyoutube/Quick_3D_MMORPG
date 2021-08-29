@@ -1,11 +1,5 @@
-import { Component } from "../../structures/component.js";
-
-export class Attack extends Component {
+export class Attack {
   action_ = undefined;
-  
-  constructor() {
-    super();
-  }
 
   initComponent() {
     this.registerHandler("player.action", (m) => {

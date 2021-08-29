@@ -1,8 +1,5 @@
-import { THREE } from "../../deps.js";
-
-import { Component } from "../../structures/component.js";
-
-import { lerp } from "../math.js";
+import { THREE } from "../deps.js";
+import { lerp } from "./math.js";
 
 const _VS = /* glsl */`
 varying vec2 vUV;
@@ -25,7 +22,7 @@ void main() {
 }
 `;
 
-export class HealthBar extends Component {
+export class HealthBar {
   material_ = new THREE.ShaderMaterial({
     uniforms: {
       colour: {
@@ -51,7 +48,6 @@ export class HealthBar extends Component {
   
 
   constructor(params) {
-    super();
     this.params_ = params;
     this.bar_.frustumCulled = false;
     this.bar_.scale.set(2, 0.125, 1);
@@ -76,7 +72,7 @@ export class HealthBar extends Component {
     this.realHealth_ = healthPercent;
   }
 
-  Update(timeElapsed) {
+  update(timeElapsed) {
     const t = 1.0 - Math.pow(0.001, timeElapsed);
 
     this.animHealth_ = lerp(t, this.animHealth_, this.realHealth_);

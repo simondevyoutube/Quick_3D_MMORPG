@@ -1,15 +1,10 @@
 import { THREE } from "../../deps.js";
-import { Component } from "../../structures/component.js";
 
-export class NetworkEntity extends Component {
+export class NetworkEntity {
   transformUpdates_ = [];
   targetFrame_ = undefined;
   lastFrame_ = undefined;
   lastUpdate_ = 0.0;
-  
-  constructor() {
-    super();
-  }
 
   initComponent() {
     this.registerHandler(
@@ -18,6 +13,12 @@ export class NetworkEntity extends Component {
         this.OnNetworkUpdate_(m);
       },
     );
+    this.registerHandler("update.position", (m) => {
+      this._OnPosition(m);
+    });
+    this.registerHandler("update.quaternion", (m) => {
+      this._OnRotation(m);
+    });
   }
 
   SetTransform_(transform) {
@@ -36,26 +37,9 @@ export class NetworkEntity extends Component {
         this.SetTransform_(msg.transform);
       }
     }
-
-    // All of this should be LCT'd, but whatever
-    if ("stats" in msg) {
-      this.broadcast({
-        topic: "stats.network",
-        value: msg.stats,
-      });
-    }
-
-    if ("events" in msg) {
-      if (msg.events.length > 0) {
-        this.broadcast({
-          topic: "events.network",
-          value: msg.events,
-        });
-      }
-    }
   }
 
-  Update(timeElapsed) {
+  update(timeElapsed) {
     this.lastUpdate_ += timeElapsed;
     if (this.lastUpdate_ >= 10.0) {
       this.parent.dead = true;

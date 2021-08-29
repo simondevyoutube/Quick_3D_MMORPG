@@ -1,7 +1,6 @@
-import { THREE } from "../../deps.js";
-import { Component } from "../../structures/component.js";
+import { THREE } from "../deps.js";
 
-export class Input extends Component {
+export class Input {
   _keys = {
     forward: false,
     backward: false,
@@ -14,7 +13,6 @@ export class Input extends Component {
   _raycaster = new THREE.Raycaster();
   
   constructor(params) {
-    super();
     this._params = params;
     document.addEventListener("keydown", (e) => this._onKeyDown(e), false);
     document.addEventListener("keyup", (e) => this._onKeyUp(e), false);

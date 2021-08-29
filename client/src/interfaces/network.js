@@ -6,14 +6,9 @@ export class Network {
     transports: ["websocket"],
     timeout: 10000,
   });
-  playerID_;
-  world;
+  playerID;
 
-  constructor(world) {
-    this.world = world
-    // let x = new URL(location.href);
-    // console.log(`ws://${x.hostname}:${this.port}`);
-
+  constructor() {
     // TODO-DefinitelyMaybe: attempt to reconnect via `ws.connet()`
     this.websocket.on("connect", () => {
       console.log(`ws id: ${this.websocket.id}`);
@@ -28,8 +23,14 @@ export class Network {
     this.websocket.on("disconnect", () => {
       console.log("DISCONNECTED: " + this.websocket.id);
     });
+
+    this.websocket.on("world.player", (data) => {
+      // remember the playerID that we care about
+      this.playerID = data.id;
+    })
   }
 
+  // TODO-DefinitelyMaybe: Placeholder until Login queue / Actual Account is tackled
   GenerateRandomName_() {
     const names1 = [
       "Aspiring",
@@ -63,25 +64,5 @@ export class Network {
       Math.floor(Math.random() * names2.length)
     ];
     return `${n1} ${n2}`;
-  }
-
-  SendTransformUpdate(transform) {
-    this.websocket.emit("world.update", transform);
-  }
-
-  SendActionAttack_() {
-    this.websocket.emit("action.attack");
-  }
-
-  SendInventoryChange_(packet) {
-    this.websocket.emit("world.inventory", packet);
-  }
-
-  GetEntityID_(serverID) {
-    if (serverID == this.playerID_) {
-      return "player";
-    } else {
-      return "__npc__" + serverID;
-    }
   }
 }

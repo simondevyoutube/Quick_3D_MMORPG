@@ -1,5 +1,18 @@
 import { quat, vec3 } from "../deps.js";
-import { WEAPONS_DATA } from "../../../client/src/data/defs.js";
+import { axe, hammer, sword } from "../../../client/src/data/models/weapons/mod.js";
+
+const WEAPONS_DATA = (arg) => {
+  switch (arg) {
+    case "axe":
+      return axe
+    case "hammer":
+      return hammer
+    case "sword":
+      return sword
+    default:
+      return undefined
+  } 
+}
 
 export class ActionAttack {
   constructor(time, cooldown, onAction) {
@@ -177,7 +190,7 @@ export class WorldEntity {
         const equipped = this.characterInfo_.inventory["inventory-equip-1"];
         if (equipped) {
           console.log(" equipped: " + equipped);
-          const weapon = WEAPONS_DATA[equipped];
+          const weapon = WEAPONS_DATA(equipped);
           if (weapon) {
             damage *= weapon.damage * 10;
           }

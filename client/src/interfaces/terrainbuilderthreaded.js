@@ -42,7 +42,7 @@ export class WorkerPool {
     return this._workers.length;
   }
 
-  get Busy() {
+  get busy() {
     return this._queue.length > 0 || Object.keys(this._busy).length > 0;
   }
 
@@ -78,14 +78,14 @@ export class TerrainChunkRebuilder_Threaded {
     this._params = params;
   }
 
-  _OnResult(chunk, msg) {
+  onResult(chunk, msg) {
     if (msg.subject == "build_chunk_result") {
-      chunk.RebuildMeshFromData(msg.data);
-      chunk.Show();
+      chunk.rebuildMeshFromData(msg.data);
+      chunk.show();
     }
   }
 
-  AllocateChunk(params) {
+  allocateChunk(params) {
     const w = params.width;
 
     if (!(w in this._pool)) {
@@ -100,7 +100,7 @@ export class TerrainChunkRebuilder_Threaded {
       c = new TerrainChunk(params);
     }
 
-    c.Hide();
+    c.hide();
 
     const threadedParams = {
       noiseParams: params.noiseParams,
@@ -122,17 +122,17 @@ export class TerrainChunkRebuilder_Threaded {
     };
 
     this._workerPool.Enqueue(msg, (m) => {
-      this._OnResult(c, m);
+      this.onResult(c, m);
     });
 
     return c;
   }
 
-  RetireChunks(chunks) {
+  retireChunks(chunks) {
     this._old.push(...chunks);
   }
 
-  _RecycleChunks(chunks) {
+  recycleChunks(chunks) {
     for (let c of chunks) {
       if (!(c.chunk._params.width in this._pool)) {
         this._pool[c.chunk._params.width] = [];
@@ -142,19 +142,19 @@ export class TerrainChunkRebuilder_Threaded {
     }
   }
 
-  get Busy() {
-    return this._workerPool.Busy;
+  get busy() {
+    return this._workerPool.busy;
   }
 
-  Rebuild(chunks) {
+  rebuild(chunks) {
     for (let k in chunks) {
       this._workerPool.Enqueue(chunks[k].chunk._params);
     }
   }
 
-  Update() {
-    if (!this.Busy) {
-      this._RecycleChunks(this._old);
+  update() {
+    if (!this.busy) {
+      this.recycleChunks(this._old);
       this._old = [];
     }
   }

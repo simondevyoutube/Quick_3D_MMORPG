@@ -7,7 +7,7 @@ export class State {
 
   Enter() {}
   Exit() {}
-  Update() {}
+  update() {}
 }
 
 export class DeathState extends State {
@@ -41,7 +41,7 @@ export class DeathState extends State {
   Exit() {
   }
 
-  Update(_) {
+  update(_) {
   }
 }
 
@@ -97,7 +97,7 @@ export class DanceState extends State {
     this._Cleanup();
   }
 
-  Update(_) {
+  update(_) {
   }
 }
 
@@ -152,7 +152,7 @@ export class AttackState extends State {
     this._Cleanup();
   }
 
-  Update(_) {
+  update(_) {
   }
 }
 
@@ -192,7 +192,7 @@ export class WalkState extends State {
   Exit() {
   }
 
-  Update(timeElapsed, input) {
+  update(timeElapsed, input) {
     if (!input) {
       return;
     }
@@ -244,7 +244,7 @@ export class RunState extends State {
   Exit() {
   }
 
-  Update(timeElapsed, input) {
+  update(timeElapsed, input) {
     if (!input) {
       return;
     }
@@ -287,7 +287,7 @@ export class IdleState extends State {
   Exit() {
   }
 
-  Update(_, input) {
+  update(_, input) {
     if (!input) {
       return;
     }

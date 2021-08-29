@@ -1,66 +1,39 @@
 import { THREE } from "../../deps.js";
-import { Component } from "../../structures/component.js";
 
-export class NetworkPlayer extends Component {
+export class NetworkPlayer {
   updateTimer_ = 0.0;
   loaded_ = false;
   net_
 
-  constructor(network) {
-    super();
+  constructor(network, entity) {
     this.net_ = network
+    this.entity = entity
   }
 
   initComponent() {
     this.registerHandler(
-      "load.character",
-      (m) => {
-        this.OnLoaded_(m);
-      },
-    );
-    this.registerHandler(
       "network.update",
       (m) => {
-        this.OnUpdate_(m);
+        this.onUpdate(m);
       },
     );
     this.registerHandler(
       "action.attack",
       (m) => {
-        this.OnActionAttack_(m);
+        this.onActionAttack(m);
       },
     );
   }
 
-  OnActionAttack_(msg) {
+  onActionAttack(msg) {
     this.net_.SendActionAttack_();
   }
 
-  OnUpdate_(msg) {
-    if (msg.transform) {
-      this.parent.setPosition(new THREE.Vector3(...msg.transform[1]));
-      this.parent.setQuaternion(new THREE.Quaternion(...msg.transform[2]));
+  onUpdate(data) {
+    if (data.transform) {
+      this.entity.setPosition(new THREE.Vector3(...data.transform[1]));
+      this.entity.setQuaternion(new THREE.Quaternion(...data.transform[2]));
     }
-
-    if (msg.stats) {
-      this.broadcast({
-        topic: "stats.network",
-        value: msg.stats,
-      });
-    }
-
-    if (msg.events) {
-      if (msg.events.length > 0) {
-        this.broadcast({
-          topic: "events.network",
-          value: msg.events,
-        });
-      }
-    }
-  }
-
-  OnLoaded_(_) {
-    this.loaded_ = true;
   }
 
   CreateTransformPacket() {
@@ -74,11 +47,11 @@ export class NetworkPlayer extends Component {
     ];
   }
 
-  Update(timeElapsed) {
+  update(timeElapsed) {
     this.updateTimer_ -= timeElapsed;
-    if (this.updateTimer_ <= 0.0 && this.loaded_) {
+    if (this.updateTimer_ <= 0.0) {
       this.updateTimer_ = 0.1;
-      this.net_.SendTransformUpdate(this.CreateTransformPacket());
+      this.net_.SendTransformupdate(this.CreateTransformPacket());
     }
   }
 }

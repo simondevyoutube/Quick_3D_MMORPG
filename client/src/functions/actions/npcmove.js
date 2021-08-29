@@ -1,16 +1,29 @@
 import { THREE } from "../../deps.js";
-import { Component } from "../../structures/component.js";
 import { Animate } from "../animate.js";
-import { CharacterFSM } from "../../functions/components/characterFSM.js";
-import { CHARACTER_MODELS } from "../../data/defs.js";
+import { CharacterFSM } from "../characterFSM.js";
+import { paladin, sorceror, warrok, zombie } from "../../data/models/characters/mod.js";
 
-export class NPCMovement extends Component {
+const CHARACTER_MODELS = (arg) => {
+  switch (arg) {
+    case "paladin":
+      return paladin
+    case "sorceror":
+      return sorceror
+    case "warrok":
+      return warrok
+    case "zombie":
+      return zombie
+    default:
+      return undefined
+  } 
+}
+
+export class NPCMovement {
   animations_ = {};
   group_ = new THREE.Group();
   queuedState_ = undefined;
 
   constructor(world, desc) {
-    super();
     this.world = world
     this.desc = desc
   }
@@ -87,10 +100,25 @@ export class NPCMovement extends Component {
   }
 
   LoadModels_() {
+    // TODO-DefinitelyMaybe: maybe don't worry about models within the move functionality
     const classType = this.desc.character.class;
-    const modelData = CHARACTER_MODELS[classType];
+    const modelData = CHARACTER_MODELS(classType);
 
     const loader = this.world.assets
+    /*
+    import {SkeletonClone} from "../deps.js"
+            // TODO-DefinitelyMaybe: Sort out the skeleton
+        // glb.scene.traverse((c) => {
+        //   c.frustumCulled = false;
+        // });
+
+        // const clone = { ...glb };
+        // clone.scene = SkeletonClone(clone.scene);
+
+        onload(clone);
+        ^^^
+        onload = anon function below
+    */
     loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
       this.target_ = glb.scene;
       this.target_.scale.setScalar(modelData.scale);
@@ -160,11 +188,11 @@ export class NPCMovement extends Component {
     });
   }
 
-  Update(timeInSeconds) {
+  update(timeInSeconds) {
     if (!this.stateMachine_) {
       return;
     }
-    this.stateMachine_.Update(timeInSeconds, undefined);
+    this.stateMachine_.update(timeInSeconds, undefined);
 
     if (this.mixer_) {
       this.mixer_.update(timeInSeconds);

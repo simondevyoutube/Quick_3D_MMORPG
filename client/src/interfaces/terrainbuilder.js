@@ -4,10 +4,14 @@ export class TerrainChunkRebuilder {
   constructor(params) {
     this._pool = {};
     this._params = params;
-    this._Reset();
+    
+    this._active = undefined;
+    this._queued = [];
+    this._old = [];
+    this._new = [];
   }
 
-  AllocateChunk(params) {
+  allocateChunk(params) {
     const w = params.width;
 
     if (!(w in this._pool)) {
@@ -22,18 +26,18 @@ export class TerrainChunkRebuilder {
       c = new TerrainChunk(params);
     }
 
-    c.Hide();
+    c.hide();
 
     this._queued.push(c);
 
     return c;
   }
 
-  RetireChunks(chunks) {
+  retireChunks(chunks) {
     this._old.push(...chunks);
   }
 
-  _RecycleChunks(chunks) {
+  recycleChunks(chunks) {
     for (let c of chunks) {
       if (!(c.chunk._params.width in this._pool)) {
         this._pool[c.chunk._params.width] = [];
@@ -43,19 +47,19 @@ export class TerrainChunkRebuilder {
     }
   }
 
-  _Reset() {
+  reset() {
     this._active = undefined;
     this._queued = [];
     this._old = [];
     this._new = [];
   }
 
-  get Busy() {
+  busy() {
     return this._active || this._queued.length > 0;
   }
 
-  Rebuild(chunks) {
-    if (this.Busy) {
+  rebuild(chunks) {
+    if (this.busy) {
       return;
     }
     for (let k in chunks) {
@@ -63,7 +67,7 @@ export class TerrainChunkRebuilder {
     }
   }
 
-  Update() {
+  update() {
     if (this._active) {
       const r = this._active.next();
       if (r.done) {
@@ -72,7 +76,7 @@ export class TerrainChunkRebuilder {
     } else {
       const b = this._queued.pop();
       if (b) {
-        this._active = b._Rebuild();
+        this._active = b.rebuild();
         this._new.push(b);
       }
     }
@@ -82,11 +86,11 @@ export class TerrainChunkRebuilder {
     }
 
     if (!this._queued.length) {
-      this._RecycleChunks(this._old);
+      this.recycleChunks(this._old);
       for (let b of this._new) {
-        b.Show();
+        b.show();
       }
-      this._Reset();
+      this.reset();
     }
   }
 }

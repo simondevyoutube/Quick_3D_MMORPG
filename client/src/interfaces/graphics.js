@@ -41,7 +41,6 @@ export class ThreeInit {
   scene = new THREE.Scene();
   // TODO-DefinitelyMaybe: User variable for them to set at some point
   fov = 60;
-
   aspect = 1920 / 1080;
   near = 1.0;
   far = 10000.0;
@@ -115,10 +114,10 @@ export class ThreeInit {
 
     this.sun = light;
 
-    this.LoadSky_();
+    this.loadSky();
   }
 
-  LoadSky_() {
+  loadSky() {
     const hemiLight = new THREE.HemisphereLight(0x424a75, 0x6a88b5, 0.7);
     // hemiLight.color.setHSL(0.6, 1, 0.4);
     // hemiLight.groundColor.setHSL(0.095, 1, 0.5);
@@ -158,7 +157,7 @@ export class ThreeInit {
     this.scene.add(sky);
   }
 
-  Update(player) {
+  update(player) {
     if (!player) {
       return;
     }

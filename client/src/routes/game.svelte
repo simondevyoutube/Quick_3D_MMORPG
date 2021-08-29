@@ -13,6 +13,14 @@
   let showMenu = true;
   let showChat = true
 
+  function test() {
+    console.log(world);
+  }
+
+  function test2() {
+    console.log("test2");
+  }
+
   onMount(() => {
     // new Game expects to be able to make DOM calls
     // i.e. three.js for the canvas element
@@ -35,7 +43,8 @@
 <HUD></HUD>
 {/if}
 {#if showMenu}
-<Menu></Menu>
+<Menu on:test="{test}"
+  on:test2="{test2}"></Menu>
 {/if}
 
 <style>

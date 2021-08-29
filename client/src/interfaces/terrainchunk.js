@@ -3,42 +3,34 @@ import { THREE } from "../deps.js";
 export class TerrainChunk {
   constructor(params) {
     this._params = params;
-    this._Init(params);
-  }
-
-  destroy() {
-    this._params.group.remove(this._plane);
-  }
-
-  Hide() {
-    this._plane.visible = false;
-  }
-
-  Show() {
-    this._plane.visible = true;
-  }
-
-  _Init(params) {
     this._geometry = new THREE.BufferGeometry();
     this._plane = new THREE.Mesh(this._geometry, params.material);
     this._plane.castShadow = false;
     this._plane.receiveShadow = true;
     this._plane.frustumCulled = false;
     this._params.group.add(this._plane);
-    this.Reinit(params);
+    this._plane.position.set(0, 0, 0);
   }
 
-  Update(cameraPosition) {
+  destroy() {
+    this._params.group.remove(this._plane);
+  }
+
+  hide() {
+    this._plane.visible = false;
+  }
+
+  show() {
+    this._plane.visible = true;
+  }
+
+  update(cameraPosition) {
+    // TODO-DefinitelyMaybe: What was this doing?
     // this._plane.position.copy(this._params.origin);
     // this._plane.position.sub(cameraPosition);
   }
 
-  Reinit(params) {
-    this._params = params;
-    this._plane.position.set(0, 0, 0);
-  }
-
-  RebuildMeshFromData(data) {
+  rebuildMeshFromData(data) {
     this._geometry.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(data.positions, 3),

@@ -13,7 +13,6 @@ import { HeightGenerator } from "./terrainheight.js";
 import { Noise } from "../functions/noise.js";
 
 export class Terrain {
-  world;
   chunks = {};
   loader = new THREE.TextureLoader();
   material = new THREE.MeshStandardMaterial({
@@ -50,13 +49,6 @@ export class Terrain {
 
   constructor(world) {
     this.world = world
-    /*
-    params = {
-        scene: this.scene,
-        target: "player",
-        threejs: this.renderer,
-      }
-    */
 
     const noiseTexture = this.loader.load(
       "./resources/terrain/simplex-noise.png",
@@ -129,7 +121,7 @@ export class Terrain {
     this.world.scene.add(...this.groups);
   }
 
-  _CreateTerrainChunk(group, groupTransform, offset, width, resolution) {
+  createTerrainChunk(group, groupTransform, offset, width, resolution) {
     const params = {
       group: group,
       transform: groupTransform,
@@ -156,18 +148,18 @@ export class Terrain {
       },
     };
 
-    return this.builder.AllocateChunk(params);
+    return this.builder.allocateChunk(params);
   }
 
-  GetHeight(pos) {
+  getHeight(pos) {
     return this.heightGenerator_.Get(pos.x, 0.0, pos.z);
   }
 
-  GetBiomeAt(pos) {
+  getBiomeAt(pos) {
     return this.biomes.Get(pos.x, 0.0, pos.z);
   }
 
-  Update(_) {
+  update(_) {
     // TODO-DefinitelyMaybe: Maybe this doesn't need to be called so oftened
     // how about simply when close to chunk edges?
     const target = this.world.entities.get("player");
@@ -175,20 +167,20 @@ export class Terrain {
       return;
     }
 
-    this.builder.Update();
+    this.builder.update();
     if (!this.builder.Busy) {
-      this._UpdateVisibleChunks_Quadtree(target);
+      this.updateVisibleChunks_Quadtree(target);
     }
 
     for (let k in this.chunks) {
-      this.chunks[k].chunk.Update(target.position);
+      this.chunks[k].chunk.update(target.position);
     }
     for (let c of this.builder._old) {
-      c.chunk.Update(target.position);
+      c.chunk.update(target.position);
     }
   }
 
-  _UpdateVisibleChunks_Quadtree(target) {
+  updateVisibleChunks_Quadtree(target) {
     function _Key(c) {
       return c.position[0] + "/" + c.position[2] + " [" + c.size + "]";
     }
@@ -232,7 +224,7 @@ export class Terrain {
       DictDifference(this.chunks, newTerrainChunks),
     );
 
-    this.builder.RetireChunks(recycle);
+    this.builder.retireChunks(recycle);
 
     newTerrainChunks = intersection;
 
@@ -242,7 +234,7 @@ export class Terrain {
       const offset = new THREE.Vector3(xp, yp, zp);
       newTerrainChunks[k] = {
         position: [xp, zp],
-        chunk: this._CreateTerrainChunk(
+        chunk: this.createTerrainChunk(
           difference[k].group,
           difference[k].transform,
           offset,

@@ -1,14 +1,25 @@
-import { THREE } from "../../deps.js";
+import { THREE } from "../deps.js";
+import { paladin, sorceror, warrok, zombie } from "../data/models/characters/mod.js";
 
-import { Component } from "../../structures/component.js";
+const modelData = (arg) => {
+  switch (arg) {
+    case "paladin":
+      return paladin
+    case "sorceror":
+      return sorceror
+    case "warrok":
+      return warrok
+    case "zombie":
+      return zombie
+    default:
+      return undefined
+  } 
+}
 
-import { CHARACTER_MODELS } from "../../data/defs.js";
-
-export class FloatingName extends Component {
+export class FloatingName {
   visible_ = true;
   
   constructor(params) {
-    super();
     this.params_ = params;
   }
 
@@ -61,9 +72,9 @@ export class FloatingName extends Component {
     if (!this.visible_) {
       return;
     }
-    const modelData = CHARACTER_MODELS[
+    const modelInfo = modelData(
       this.params_.desc.character.class
-    ];
+    );
 
     this.element_ = document.createElement("canvas");
     this.context2d_ = this.element_.getContext("2d");
@@ -84,7 +95,7 @@ export class FloatingName extends Component {
       new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false }),
     );
     this.sprite_.scale.set(10, 5, 1);
-    this.sprite_.position.y += modelData.nameOffset;
+    this.sprite_.position.y += modelInfo.nameOffset;
     msg.model.add(this.sprite_);
   }
 }

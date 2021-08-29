@@ -24,9 +24,9 @@ export class FiniteStateMachine {
     state.Enter(prevState);
   }
 
-  Update(timeElapsed, input) {
+  update(timeElapsed, input) {
     if (this._currentState) {
-      this._currentState.Update(timeElapsed, input);
+      this._currentState.update(timeElapsed, input);
     }
   }
 }

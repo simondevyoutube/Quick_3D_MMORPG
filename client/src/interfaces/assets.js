@@ -1,90 +1,56 @@
-import { FBXLoader, GLTFLoader, SkeletonClone, THREE } from "../deps.js";
+import { GLTFLoader, FBXLoader, OBJLoader, TextureLoader } from "../functions/loaders/mod.js";
+
 
 export class Assets {
+  assets = {}
+  pending = {}
 
-  textures = {};
-  models = {};
+  // constructor() {
+  //   // TODO-DefinitelyMaybe: initialize from localstorage
+  // }
 
-  LoadTexture(path, name) {
-    if (!(name in this.textures)) { 
-      // lookup in localstorage first
-      const cache = false //JSON.parse(localStorage.getItem(name))
-
-      if (!cache) {
-        // otherwise load the texture
-        const loader = new THREE.TextureLoader();
-        loader.setPath(path);
-
-        let texture = loader.load(name)
-
-        this.textures[name] = { texture };
-        this.textures[name].encoding = THREE.sRGBEncoding;
-
-        // and then save in localstorage
-        // localStorage.setItem(name, JSON.stringify({texture}))
-      } else {
-        let texture = cache.texture
-        this.textures[name] = {texture}
+  async load(url){
+    if (url in this.pending) {
+      return await this.assets[url]
+    } else {
+      if (!(url in this.assets)) {
+        const ext = this.getExtFor(url)
+        const loader = this.getLoaderFor(ext)
+        try {
+          this.pending[url] = true
+          this.assets[url] = loader.load(url)
+          await this.assets[url]
+          delete this.pending[url]
+        } catch (error) {
+          console.error(error);
+        } 
       }
     }
-
-    return this.textures[name].texture;
+    return this.assets[url]
   }
 
-  LoadFBX(path, name, onLoad) {
-    if (!(name in this.models)) {
-      const loader = new FBXLoader();
-      loader.setPath(path);
-
-      this.models[name] = { loader: loader, asset: undefined, queue: [onLoad] };
-      this.models[name].loader.load(name, (fbx) => {
-        this.models[name].asset = fbx;
-
-        const queue = this.models[name].queue;
-        this.models[name].queue = undefined;
-        for (let q of queue) {
-          const clone = this.models[name].asset.clone();
-          q(clone);
-        }
-      });
-    } else if (this.models[name].asset == undefined) {
-      this.models[name].queue.push(onLoad);
-    } else {
-      const clone = this.models[name].asset.clone();
-      onLoad(clone);
-    }
+  getExtFor(url) {
+    const split = url.split(".")
+    return split[split.length-1]
   }
 
-  LoadSkinnedGLB(path, name, onLoad) {
-    if (!(name in this.models)) {
-      const loader = new GLTFLoader();
-      loader.setPath(path);
-
-      this.models[name] = { loader: loader, asset: undefined, queue: [onLoad] };
-      this.models[name].loader.load(name, (glb) => {
-        this.models[name].asset = glb;
-
-        // TODO-DefinitelyMaybe: LocalStoage continues tomorrow :)
-        glb.scene.traverse((c) => {
-          c.frustumCulled = false;
-        });
-
-        const queue = this.models[name].queue;
-        this.models[name].queue = undefined;
-        for (let q of queue) {
-          const clone = { ...glb };
-          clone.scene = SkeletonClone(clone.scene);
-
-          q(clone);
-        }
-      });
-    } else if (this.models[name].asset == undefined) {
-      this.models[name].queue.push(onLoad);
-    } else {
-      const clone = { ...this.models[name].asset };
-      clone.scene = SkeletonClone(clone.scene);
-
-      onLoad(clone);
+  getLoaderFor(ext) {
+    switch (ext) {
+      case "png":
+        return new TextureLoader();
+      case "jpg":
+        return new TextureLoader();
+      case "obj":
+        return new OBJLoader();
+      case "fbx":
+        return new FBXLoader();
+      case "gltf":
+        return new GLTFLoader();
+      case "glb":
+        return new GLTFLoader();
+      default:
+        console.warn(`Unknown loader for ext: ${ext}`);
+        return undefined
     }
   }
 }

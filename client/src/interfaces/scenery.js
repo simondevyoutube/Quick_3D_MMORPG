@@ -1,91 +1,19 @@
 import { THREE } from "../deps.js";
-
-import { Entity } from "../structures/entity.js"
-import { RenderComponent } from "../functions/render.js"
-import { Grid } from "./spatialgrid.js";
-
-import { rand_int, rand_range, sat } from "../functions/math.js";
+import { rand_range, sat } from "../functions/math.js";
 import { Noise } from "../functions/noise.js";
+import { BIOMES } from "../data/biomes/mod.js";
+import { Cloud, Plant, Rock, Tree } from "../entities/mod.js";
 
-const _SCENERY = {
-  birch1: {
-    base: "Birch_1.fbx",
-    resourcePath: "./resources/trees/FBX/",
-    names: {
-      Bark: "Birch_Bark.png",
-      Leaves: "Birch_Leaves_Yellow.png",
-    },
-    scale: 0.075,
-    biomes: ["forest"],
-    collision: true,
-  },
-  tree1: {
-    base: "Tree_1.fbx",
-    resourcePath: "./resources/trees/FBX/",
-    names: {
-      Bark: "Tree_Bark.jpg",
-      Leaves: "Leaves_Blue.png",
-    },
-    scale: 0.1,
-    biomes: ["forest"],
-    collision: true,
-  },
-  rock1: {
-    base: "Rock_1.fbx",
-    resourcePath: "./resources/nature/FBX/",
-    names: {},
-    scale: 0.025,
-    biomes: ["arid", "desert"],
-  },
-  rockMoss1: {
-    base: "Rock_Moss_1.fbx",
-    resourcePath: "./resources/nature/FBX/",
-    names: {},
-    scale: 0.025,
-    biomes: ["forest"],
-  },
-  plant1: {
-    base: "Plant_1.fbx",
-    resourcePath: "./resources/nature/FBX/",
-    names: {},
-    scale: 0.05,
-    biomes: ["forest", "arid"],
-  },
-  grass1: {
-    base: "Grass_1.fbx",
-    resourcePath: "./resources/nature/FBX/",
-    names: {},
-    scale: 0.05,
-    biomes: ["forest", "arid"],
-  },
-  flowers1: {
-    base: "Flowers.fbx",
-    resourcePath: "./resources/nature/FBX/",
-    names: {},
-    scale: 0.05,
-    biomes: ["forest"],
-  },
-};
-
-const _BIOMES = {
-  desert: 0.1,
-  forest: 0.8,
-  arid: 0.6,
-};
-
-const multiples = {
-  birch1: { name: "Birch_", key: "birch", num: 10 },
-  tree1: { name: "Tree_", key: "tree", num: 10 },
-  rock1: { name: "Rock_", key: "rock", num: 7 },
-  rockMoss1: { name: "Rock_Moss_", key: "rockMoss", num: 7 },
-  plant1: { name: "Plant_", key: "plant", num: 5 },
-  grass1: { name: "Grass_", key: "grass", num: 2 },
-};
-
-for (let k in multiples) {
-  for (let i = 2; i < multiples[k].num; ++i) {
-    _SCENERY[multiples[k].key + i] = { ..._SCENERY[k] };
-    _SCENERY[multiples[k].key + i].base = multiples[k].name + i + ".fbx";
+const _SCENERY = (biome) => {
+  switch (biome) {
+    case "desert":
+      return [Plant, Rock]
+    case "forest":
+      return [Plant, Rock, Tree]
+    case "arid":
+      return [Rock]
+    default:
+      return []
   }
 }
 
@@ -103,50 +31,34 @@ export class Scenery {
       seed: 2,
       height: 1.0,
     };
-    this.noise_ = new Noise(noiseParams);
+    this.noise = new Noise(noiseParams);
 
     this.center_ = undefined;
-    this.crap_ = [];
+    this.scenery = [];
+    this.spawnClouds();
   }
 
-  InitEntity() {
-    this.SpawnClouds_();
-  }
-
-  SpawnClouds_() {
+  spawnClouds() {
     for (let i = 0; i < 20; ++i) {
-      const index = rand_int(1, 3);
       const pos = new THREE.Vector3(
         (Math.random() * 2.0 - 1.0) * 5000,
         500,
         (Math.random() * 2.0 - 1.0) * 5000,
       );
 
-      const e = new Entity();
-      e.AddComponent(
-        new RenderComponent(this.world, {
-          resourcePath: "./resources/nature2/GLTF/",
-          resourceName: "Cloud" + index + ".glb",
-          scale: Math.random() * 20 + 40,
-          emissive: new THREE.Color(0x000000),
-          color: new THREE.Color(0x202020),
-        }),
-      );
-      e.setPosition(pos);
-
+      const cloud = new Cloud(this.world)
+      cloud.setPosition(pos)
       const q = new THREE.Quaternion().setFromAxisAngle(
         new THREE.Vector3(0, 1, 0),
         rand_range(0, 360),
       );
-      e.setQuaternion(q);
-
-      this.Manager.Add(e);
-      e.SetActive(false);
+      cloud.setQuaternion(q);
+      this.world.entities.add(cloud)
     }
   }
 
-  FindBiome_(terrain, pos) {
-    const biome = terrain.GetBiomeAt(pos);
+  getBiomeAt(pos) {
+    const biome = this.world.terrain.getBiomeAt(pos);
 
     // HACK: duplicaed code from texture-splatter
     const m = biome;
@@ -161,58 +73,16 @@ export class Scenery {
     }
   }
 
-  SpawnAt_(biome, spawnPos) {
-    const matchingScenery = [];
-    for (let k in _SCENERY) {
-      if (_SCENERY[k].biomes.indexOf(biome) >= 0) {
-        matchingScenery.push(k);
-      }
-    }
+  createSceneryEntity(biome, spawnPos) {
+    const matchingScenery = _SCENERY(biome);
 
-    const roll = this.noise_.Get(spawnPos.x, 3.0, spawnPos.z);
-    const randomProp = _SCENERY[
-      matchingScenery[Math.round(roll * (matchingScenery.length - 1))]
-    ];
+    const roll = this.noise.Get(spawnPos.x, 3.0, spawnPos.z);
+    const semiRandomEntity = matchingScenery[Math.round(roll * (matchingScenery.length - 1))];
 
-    const e = new Entity();
-    e.AddComponent(
-      new RenderComponent(this.world, {
-        resourcePath: randomProp.resourcePath,
-        resourceName: randomProp.base,
-        textures: {
-          resourcePath: "./resources/trees/Textures/",
-          names: randomProp.names,
-          wrap: true,
-        },
-        emissive: new THREE.Color(0x000000),
-        specular: new THREE.Color(0x000000),
-        scale: randomProp.scale *
-          (0.8 + this.noise_.Get(spawnPos.x, 4.0, spawnPos.z) * 0.4),
-        castShadow: true,
-        receiveShadow: true,
-        onMaterial: (m) => {
-          if (m.name.search("Leaves") >= 0) {
-            m.alphaTest = 0.5;
-          }
-        },
-      }),
-    );
-    if (randomProp.collision) {
-      e.AddComponent(
-        new Grid(this.world, e),
-      );
-    }
-
-    const q = new THREE.Quaternion().setFromAxisAngle(
-      new THREE.Vector3(0, 1, 0),
-      this.noise_.Get(spawnPos.x, 5.0, spawnPos.z) * 360,
-    );
-    e.setQuaternion(q);
-
-    return e;
+    return new semiRandomEntity(this.world)
   }
 
-  SpawnCrap_() {
+  createScenery() {
     const player = this.world.entities.get("player");
     if (!player) {
       return;
@@ -232,7 +102,6 @@ export class Scenery {
 
     const _P = new THREE.Vector3();
     const _V = new THREE.Vector3();
-    const terrain = this.world.terrain
 
     for (let x = -10; x <= 10; ++x) {
       for (let y = -10; y <= 10; ++y) {
@@ -247,30 +116,33 @@ export class Scenery {
 
         _V.copy(_P);
 
-        _P.x += (this.noise_.Get(_P.x, 0.0, _P.z) * 2.0 - 1.0) * 25.0;
-        _P.z += (this.noise_.Get(_P.x, 1.0, _P.z) * 2.0 - 1.0) * 25.0;
-        _P.y = terrain.GetHeight(_P)[0];
+        _P.x += (this.noise.Get(_P.x, 0.0, _P.z) * 2.0 - 1.0) * 25.0;
+        _P.z += (this.noise.Get(_P.x, 1.0, _P.z) * 2.0 - 1.0) * 25.0;
+        _P.y = this.world.terrain.getHeight(_P)[0];
 
-        const biome = this.FindBiome_(terrain, _P);
+        const biome = this.getBiomeAt(_P);
 
-        const roll = this.noise_.Get(_V.x, 2.0, _V.z);
-        if (roll > _BIOMES[biome]) {
+        const roll = this.noise.Get(_V.x, 2.0, _V.z);
+        if (roll > BIOMES[biome]) {
           continue;
         }
 
-        const e = this.SpawnAt_(biome, _P);
-
+        const e = this.createSceneryEntity(biome, _P);
         e.setPosition(_P);
+        const q = new THREE.Quaternion().setFromAxisAngle(
+          new THREE.Vector3(0, 1, 0),
+          this.noise.Get(_P.x, 5.0, _P.z) * 360,
+        );
+        e.setQuaternion(q);
 
-        this.world.entities.Add(e, key);
+        this.world.entities.add(e);
 
-        e.SetActive(false);
-        this.crap_.push(e);
+        this.scenery.push(e);
       }
     }
   }
 
-  Update(_) {
-    this.SpawnCrap_();
+  update(_) {
+    this.createScenery();
   }
 }

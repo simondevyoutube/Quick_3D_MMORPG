@@ -1,4 +1,4 @@
-import { FiniteStateMachine } from "../../structures/finitestatemachine.js";
+import { FiniteStateMachine } from "../structures/finitestatemachine.js";
 import {
   AttackState,
   DanceState,
@@ -6,7 +6,7 @@ import {
   IdleState,
   RunState,
   WalkState,
-} from "../state.js"
+} from "./state.js"
 
 export class CharacterFSM extends FiniteStateMachine {
   constructor(proxy) {
