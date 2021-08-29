@@ -28,6 +28,10 @@ export class Network {
       // remember the playerID that we care about
       this.playerID = data.id;
     })
+
+    this.websocket.onAny((e,d) => {
+      // console.log(e);
+    })
   }
 
   // TODO-DefinitelyMaybe: Placeholder until Login queue / Actual Account is tackled

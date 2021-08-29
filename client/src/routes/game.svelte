@@ -1,11 +1,12 @@
 <script>
-  import { World } from "../world.js";
+  import { World } from "../structures/world.js";
   import { onMount } from "svelte";
   import HUD from "../ui/game/hud.svelte";
   import Menu from "../ui/game/menu.svelte";
   import Chat from "../ui/game/chat.svelte";
 
   let world;
+  let chat;
 
   let focused = false
 
@@ -18,26 +19,32 @@
   }
 
   function test2() {
-    console.log("test2");
+    console.log("Test2");
   }
 
   onMount(() => {
     // new Game expects to be able to make DOM calls
     // i.e. three.js for the canvas element
     world = new World()
+    world.network.websocket.on("chat.message", (d) => {
+      chat.receive(d)
+    })
     showHUD = true
   })
 </script>
 
 <svelte:window on:blur="{() => {focused = false}}"
   on:focus="{() => {focused = true}}"
-  on:resize="{() => {world.resize();}}"></svelte:window>
+  on:resize="{() => {world.resize()}}"></svelte:window>
 <svelte:body on:keyup={world.input.handleKeyup}
   on:keydown={world.input.handleKeydown}></svelte:body>
 
 <canvas id="game" on:pointerdown on:pointerup></canvas>
 {#if showChat}
-<Chat></Chat>
+<Chat bind:this="{chat}" on:send="{(e)=> {
+  const {text} = e.detail
+  world.network.websocket.emit("chat.message", text)
+}}"></Chat>
 {/if}
 {#if showHUD}
 <HUD></HUD>

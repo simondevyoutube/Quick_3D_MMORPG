@@ -1,14 +1,15 @@
-import { Entities } from "./interfaces/entities.js";
-import { Network } from "./interfaces/network.js";
-import { Scenery } from "./interfaces/scenery.js";
-import { Assets } from "./interfaces/assets.js";
-import { Terrain } from "./interfaces/terrain.js";
+import { Entities } from "../interfaces/entities.js";
+import { Network } from "../interfaces/network.js";
+import { Scenery } from "../interfaces/scenery.js";
+import { Assets } from "../interfaces/assets.js";
+import { Terrain } from "../interfaces/terrain.js";
+import { Chat } from "../interfaces/chat.js";
 
-import { SpatialHashGrid } from "./structures/spatialhashgrid.js";
-import { ThreeInit } from "./interfaces/graphics.js";
+import { SpatialHashGrid } from "./spatialhashgrid.js"
+import { ThreeInit } from "../interfaces/graphics.js";
 
-import { Player } from "./entities/player.js";
-import { NPC } from "./entities/npc.js";
+import { Player } from "../entities/player.js";
+import { NPC } from "../entities/npc.js";
 
 export class World {
   state = undefined;
@@ -23,6 +24,7 @@ export class World {
   );
   network = new Network();
   assets = new Assets()
+  chat = new Chat()
   previousRAF_ = undefined;
   initialized = false;
 
@@ -44,11 +46,19 @@ export class World {
     this.network.websocket.on("world.load", (d) => {
       this.load(d)
     })
+    this.network.websocket.once("world.update", (d) => {
+      // The network is truth. generally speaking.
+      for (let i = 0; i < d.length; i++) {
+        // const {id, transform} = d[i];
+        // if (transform) {
+        //   // this.entities.getByID(id)
+        // }
+      }
+    })
 
     this.RAF_();
     this.resize();
     this.initialized = true;
-    console.log(this);
   }
 
   spawnPlayer(data) {
@@ -86,7 +96,7 @@ export class World {
         console.log(this.scene, this.camera);
         console.error(error);
       }
-      this.Step_(t - this.previousRAF_);
+      this.update(t - this.previousRAF_);
       this.previousRAF_ = t;
 
       setTimeout(() => {
@@ -95,7 +105,7 @@ export class World {
     });
   }
 
-  Step_(timeElapsed) {
+  update(timeElapsed) {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
 
     this.entities.update(timeElapsedS);

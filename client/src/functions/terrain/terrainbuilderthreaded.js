@@ -4,7 +4,7 @@ const numWorkers = 4;
 let _IDs = 0;
 
 export class WorkerThread {
-  _worker = new Worker("src/interfaces/terrainworker.js", { type: "module" });
+  _worker = new Worker("src/functions/terrain/terrainworker.js", { type: "module" });
   _resolve = undefined;
   _id = _IDs++;
   

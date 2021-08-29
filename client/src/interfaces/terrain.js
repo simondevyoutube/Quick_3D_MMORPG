@@ -1,16 +1,15 @@
 import { THREE } from "../deps.js";
 
+import { Noise } from "../functions/noise.js";
 import { CubeQuadTree } from "../structures/quadtree.js";
-import { PS1, PS2, VS1, VS2 } from "./shaders.js";
-import { TerrainChunkRebuilder_Threaded } from "./terrainbuilderthreaded.js";
-import { TextureSplatter } from "./texturesplatter.js";
-import { TextureAtlas } from "./textures.js";
 import { DictDifference, DictIntersection } from "../functions/utils/objects.js"
 
 import { terrain_constants } from "../data/constants.js";
-import { HeightGenerator } from "./terrainheight.js";
-
-import { Noise } from "../functions/noise.js";
+import { TextureSplatter } from "../functions/terrain/texturesplatter.js";
+import { TextureAtlas } from "../functions/terrain/textures.js";
+import { HeightGenerator } from "../functions/terrain/terrainheight.js";
+import { PS1, PS2, VS1, VS2 } from "../functions/terrain/shaders.js";
+import { TerrainChunkRebuilder_Threaded } from "../functions/terrain/terrainbuilderthreaded.js";
 
 export class Terrain {
   chunks = {};

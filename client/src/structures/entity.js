@@ -3,7 +3,8 @@ import { THREE } from "../deps.js";
 let ID = 0
 
 export class Entity {
-  name = `entity_${ID++}`;
+  id = ID++
+  name = "entity";
   position = new THREE.Vector3();
   quaternion = new THREE.Quaternion();
   handlers = {};

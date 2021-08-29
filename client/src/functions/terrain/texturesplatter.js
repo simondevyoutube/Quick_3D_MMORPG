@@ -1,8 +1,8 @@
-import { THREE } from "../deps.js";
+import { THREE } from "../../deps.js";
 
-import { sat } from "../functions/math.js";
-import { LinearSpline } from "../functions/spline.js";
-import { terrain_constants } from "../data/constants.js";
+import { sat } from "../math.js";
+import { LinearSpline } from "../spline.js";
+import { terrain_constants } from "../../data/constants.js";
 
 const _HEIGHT_NORMALIZATION = terrain_constants.NOISE_HEIGHT / 10.0;
 

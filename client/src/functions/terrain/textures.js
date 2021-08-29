@@ -1,4 +1,4 @@
-import { THREE } from "../deps.js";
+import { THREE } from "../../deps.js";
 
 // Taken from https://github.com/mrdoob/three.js/issues/758
 function _GetImageData(image) {
