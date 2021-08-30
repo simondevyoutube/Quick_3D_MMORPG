@@ -107,7 +107,7 @@ export class TerrainChunkRebuilder_Threaded {
       colourNoiseParams: params.colourNoiseParams,
       biomesParams: params.biomesParams,
       colourGeneratorParams: params.colourGeneratorParams,
-      heightGeneratorsParams: params.heightGeneratorsParams,
+      heightGeneratorParams: params.heightGeneratorParams,
       width: params.width,
       offset: [params.offset.x, params.offset.y, params.offset.z],
       // origin: params.origin,

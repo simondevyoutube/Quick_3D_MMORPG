@@ -4,7 +4,7 @@
   import HUD from "../ui/game/hud.svelte";
   import Menu from "../ui/game/menu.svelte";
   import Chat from "../ui/game/chat.svelte";
-
+  
   let world;
   let chat;
 
@@ -42,6 +42,7 @@
 <canvas id="game" on:pointerdown on:pointerup></canvas>
 {#if showChat}
 <Chat bind:this="{chat}" on:send="{(e)=> {
+  // TODO-DefinitelyMaybe: Send author info as well
   const {text} = e.detail
   world.network.websocket.emit("chat.message", text)
 }}"></Chat>

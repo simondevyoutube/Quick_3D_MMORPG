@@ -20,3 +20,14 @@ export const terrain_constants = {
     seed: 1,
   },
 };
+
+export const biome_constants = {
+  octaves: 2,
+  persistence: 0.5,
+  lacunarity: 2.0,
+  scale: 1024.0,
+  noiseType: "simplex",
+  seed: 2,
+  exponentiation: 2,
+  height: 1.0,
+};

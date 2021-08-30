@@ -1,15 +1,10 @@
 import { Entities } from "../interfaces/entities.js";
 import { Network } from "../interfaces/network.js";
-import { Scenery } from "../interfaces/scenery.js";
 import { Assets } from "../interfaces/assets.js";
 import { Terrain } from "../interfaces/terrain.js";
-import { Chat } from "../interfaces/chat.js";
 
 import { SpatialHashGrid } from "./spatialhashgrid.js"
 import { ThreeInit } from "../interfaces/graphics.js";
-
-import { Player } from "../entities/player.js";
-import { NPC } from "../entities/npc.js";
 
 export class World {
   state = undefined;
@@ -24,7 +19,6 @@ export class World {
   );
   network = new Network();
   assets = new Assets()
-  chat = new Chat()
   previousRAF_ = undefined;
   initialized = false;
 
@@ -35,44 +29,48 @@ export class World {
     this.camera = this.threejs.camera;
     this.renderer = this.threejs.renderer;
 
-    // terrain and scenery dont make sense unless three has already been initialized
+    // terrain doesnt make sense unless three has already been initialized
     this.terrain = new Terrain(this)
-    this.scenery = new Scenery(this)
 
     // Setup Network hooks
     this.network.websocket.on("world.player", (d) => {
-      this.spawnPlayer(d)
+      /*
+      desc:
+        account: {name: "Caffeinated Noodler"}
+        character: {class: "paladin", inventory: {…}}
+      id: 832
+      transform: (3) ["idle", Array(3), Array(4)]
+      */
+      const {id, transform} = d;
+      const entity = d.desc.character.class
+      const name = d.desc.account.name
+      // Can't currently guarantee them
+      if (transform && id && entity && name) {
+        this.entities.updateEntity({id, transform, entity, name})
+      }
     })
-    this.network.websocket.on("world.load", (d) => {
-      this.load(d)
-    })
-    this.network.websocket.once("world.update", (d) => {
+    this.network.websocket.on("world.update", (d) => {
       // The network is truth. generally speaking.
       for (let i = 0; i < d.length; i++) {
-        // const {id, transform} = d[i];
-        // if (transform) {
-        //   // this.entities.getByID(id)
-        // }
+        /*
+        desc: {account: {…}, character: {…}}
+        events: []
+        id: 305
+        stats: (2) [305, {…}]
+        transform: (3) ["idle", Array(3), Array(4)]
+        */
+        const {id, transform} = d[i];
+        const entity = d[i].desc ? d[i].desc.name : false
+        // Can't currently guarantee them
+        if (transform && id && entity) {
+          this.entities.createEntity({id, transform, entity})
+        }
       }
     })
 
     this.RAF_();
     this.resize();
     this.initialized = true;
-  }
-
-  spawnPlayer(data) {
-    const player = new Player(this)
-    this.entities.add(player)
-    player.network.onUpdate(data)
-  }
-
-  load(data) {
-    // create all of the npc's
-    console.log("World Load Data:");
-    console.log(data);
-    const npc = new NPC()
-    this.entities.add(npc)
   }
 
   resize() {
@@ -108,11 +106,10 @@ export class World {
   update(timeElapsed) {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
 
-    this.entities.update(timeElapsedS);
-    this.terrain.update(timeElapsed)
-    this.scenery.update(timeElapsed)
+    // this.entities.update(timeElapsedS);
+    this.terrain.update(timeElapsedS);
 
     // this moves the position of the sun (for shadows)
-    this.threejs.update(this.entities.get("player"))
+    this.threejs.update(this.entities.get("player"));
   }
 }

@@ -7,11 +7,10 @@
 <style>
   .health-bar {
     background: rgb(29, 168, 2);
-    width: 200px;
-    max-width: 200px;
-    height: 20px;
+    width: 20%;
+    height: 1em;
     position: absolute;
-    top: 10px;
-    left: 100px;
+    top: 5%;
+    left: 1%;
   }
 </style>

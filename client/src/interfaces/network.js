@@ -11,8 +11,9 @@ export class Network {
   constructor() {
     // TODO-DefinitelyMaybe: attempt to reconnect via `ws.connet()`
     this.websocket.on("connect", () => {
-      console.log(`ws id: ${this.websocket.id}`);
       const randomName = this.GenerateRandomName_();
+
+      // TODO-DefinitelyMaybe: I don't think login belongs here
       // Input validation is for losers
       this.websocket.emit(
         "login.commit",
@@ -29,9 +30,9 @@ export class Network {
       this.playerID = data.id;
     })
 
-    this.websocket.onAny((e,d) => {
-      // console.log(e);
-    })
+    // this.websocket.onAny((e,d) => {
+    //   // console.log(e);
+    // })
   }
 
   // TODO-DefinitelyMaybe: Placeholder until Login queue / Actual Account is tackled

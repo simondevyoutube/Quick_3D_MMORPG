@@ -1,35 +1,11 @@
 import { THREE } from "../deps.js";
 
-let ID = 0
-
 export class Entity {
-  id = ID++
-  name = "entity";
   position = new THREE.Vector3();
   quaternion = new THREE.Quaternion();
-  handlers = {};
-  dead = false;
 
-  destroy() {
-    this.handlers = undefined;
-  }
-
-  registerHandler(name, handler) {
-    if (!(name in this.handlers)) {
-      this.handlers[name] = [];
-    }
-    this.handlers[name].push(handler);
-  }
-
-  broadcast(msg) {
-    if (!(msg.topic in this.handlers)) {
-      // console.warn(`${msg.topic} was not handled`);
-      return;
-    }
-
-    for (const curHandler of this.handlers[msg.topic]) {
-      curHandler(msg);
-    }
+  constructor(params) {
+    this.id = params.id
   }
 
   setPosition(p) {

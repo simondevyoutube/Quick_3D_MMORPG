@@ -1,13 +1,13 @@
 import { THREE } from "../deps.js";
 
-import { Noise } from "../functions/noise.js";
 import { CubeQuadTree } from "../structures/quadtree.js";
+
 import { DictDifference, DictIntersection } from "../functions/utils/objects.js"
 
-import { terrain_constants } from "../data/constants.js";
+import { terrain_constants, biome_constants } from "../data/constants.js";
+import { Noise } from "../functions/noise.js";
 import { TextureSplatter } from "../functions/terrain/texturesplatter.js";
 import { TextureAtlas } from "../functions/terrain/textures.js";
-import { HeightGenerator } from "../functions/terrain/terrainheight.js";
 import { PS1, PS2, VS1, VS2 } from "../functions/terrain/shaders.js";
 import { TerrainChunkRebuilder_Threaded } from "../functions/terrain/terrainbuilderthreaded.js";
 
@@ -20,18 +20,8 @@ export class Terrain {
   });
 
   builder = new TerrainChunkRebuilder_Threaded();
-  heightGenerator_ = new HeightGenerator();
-  noiseVars = {
-    octaves: 2,
-    persistence: 0.5,
-    lacunarity: 2.0,
-    scale: 1024.0,
-    noiseType: "simplex",
-    seed: 2,
-    exponentiation: 2,
-    height: 1.0,
-  };
-  biomes = new Noise(this.noiseVars);
+  heightGenerator = new Noise(terrain_constants.NOISE_PARAMS);
+  biomes = new Noise(biome_constants);
   groups = [...new Array(6)].map((_) => new THREE.Group());
 
   colourVars = {
@@ -133,15 +123,15 @@ export class Terrain {
       colourGenerator: new TextureSplatter(
         { biomeGenerator: this.biomes, colourNoise: this.colourNoise },
       ),
-      heightGenerators: [this.heightGenerator_],
+      heightGenerator: this.heightGenerator,
       noiseParams: terrain_constants.NOISE_PARAMS,
       colourNoiseParams: this.colourVars,
-      biomesParams: this.noiseVars,
+      biomesParams: biome_constants,
       colourGeneratorParams: {
-        biomeGeneratorParams: this.noiseVars,
+        biomeGeneratorParams: biome_constants,
         colourNoiseParams: this.colourVars,
       },
-      heightGeneratorsParams: {
+      heightGeneratorParams: {
         min: 100000,
         max: 100000 + 1,
       },
@@ -151,7 +141,7 @@ export class Terrain {
   }
 
   getHeight(pos) {
-    return this.heightGenerator_.Get(pos.x, 0.0, pos.z);
+    return this.heightGenerator.Get(pos.x, 0.0, pos.z);
   }
 
   getBiomeAt(pos) {

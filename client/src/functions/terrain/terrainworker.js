@@ -4,34 +4,33 @@ import { TextureSplatter } from "./texturesplatter.js";
 
 import { sat } from "../math.js";
 import { Noise } from "../noise.js";
-import { HeightGenerator } from "./terrainheight.js";
+import { terrain_constants } from "../../data/constants.js"
 
 class _TerrainBuilderThreadedWorker {
-  constructor() {
-  }
 
   Init(params) {
-    this._params = params;
-    this._params.offset = new THREE.Vector3(
+    this.width = params.width
+    this.resolution = params.resolution
+    this.offset = new THREE.Vector3(
       params.offset[0],
       params.offset[1],
       params.offset[2],
     );
-    this._params.noise = new Noise(params.noiseParams);
-    this._params.heightGenerators = [new HeightGenerator()];
+    this.noise = new Noise(params.noiseParams);
+    this.heightGenerator = new Noise(terrain_constants.NOISE_PARAMS);
 
-    this._params.biomeGenerator = new Noise(params.biomesParams);
-    this._params.colourNoise = new Noise(params.colourNoiseParams);
-    this._params.colourGenerator = new TextureSplatter(
+    this.biomeGenerator = new Noise(params.biomesParams);
+    this.colourNoise = new Noise(params.colourNoiseParams);
+    this.colourGenerator = new TextureSplatter(
       {
-        biomeGenerator: this._params.biomeGenerator,
-        colourNoise: this._params.colourNoise,
+        biomeGenerator: this.biomeGenerator,
+        colourNoise: this.colourNoise,
       },
     );
   }
 
   _GenerateHeight(v) {
-    return this._params.heightGenerators[0].Get(v.x, v.y, v.z)[0];
+    return this.heightGenerator.Get(v.x, v.y, v.z);
   }
 
   rebuild() {
@@ -59,10 +58,9 @@ class _TerrainBuilderThreadedWorker {
     const indices = [];
     const wsPositions = [];
 
-    const resolution = this._params.resolution + 2;
-    const radius = this._params.radius;
-    const offset = this._params.offset;
-    const width = this._params.width;
+    const resolution = this.resolution + 2;
+    const offset = this.offset;
+    const width = this.width;
     const half = width / 2;
 
     const effectiveResolution = resolution - 2;
@@ -95,7 +93,7 @@ class _TerrainBuilderThreadedWorker {
 
         _S.set(_W.x, _W.y, height);
 
-        const color = this._params.colourGenerator.GetColour(_S);
+        const color = this.colourGenerator.GetColour(_S);
         colors.push(color.r, color.g, color.b);
         up.push(_D.x, _D.y, _D.z);
         wsPositions.push(_W.x, _W.z, height);
@@ -190,7 +188,7 @@ class _TerrainBuilderThreadedWorker {
         _P.fromArray(wsPositions, j1);
         _N.fromArray(normals, j1);
         _D.fromArray(up, j1);
-        const s = this._params.colourGenerator.GetSplat(_P, _N, _D);
+        const s = this.colourGenerator.GetSplat(_P, _N, _D);
         splats.push(s);
       }
 
@@ -337,11 +335,24 @@ class _TerrainBuilderThreadedWorker {
   }
 }
 
-// TODO-DefinitelyMaybe: web workers... is the code below used?
 const _CHUNK = new _TerrainBuilderThreadedWorker();
 
 self.onmessage = (msg) => {
   if (msg.data.subject == "build_chunk") {
+    /*
+    msg.data.params = {
+      biomesParams: {octaves: 2, persistence: 0.5, lacunarity: 2, scale: 1024, noiseType: "simplex", …}
+      colourGeneratorParams: {biomeGeneratorParams: {…}, colourNoiseParams: {…}}
+      colourNoiseParams: {octaves: 1, persistence: 0.5, lacunarity: 2, exponentiation: 1, scale: 256, …}
+      heightGeneratorParams: {min: 100000, max: 100001}
+      noiseParams: {octaves: 10, persistence: 0.5, lacunarity: 1.6, exponentiation: 7.5, height: 800, …}
+      offset: (3) [6000, 0, 6000]
+      radius: 8000
+      resolution: 16
+      width: 4000
+      worldMatrix: {elements: Array(16)}
+    }
+    */
     _CHUNK.Init(msg.data.params);
 
     const rebuiltData = _CHUNK.rebuild();

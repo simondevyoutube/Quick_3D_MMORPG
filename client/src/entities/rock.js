@@ -12,12 +12,11 @@ const rocksData = (arg) => {
       return rock1
   }
 }
-let ID =0
 
 export class Rock extends Entity {
-  name = `rock_${ID++}`
-  constructor(world, arg){
-    super()
-    this.model = new Model(world, rocksData(arg))
+  name = `rock`
+  constructor(args){
+    super(args)
+    this.model = new Model(args.world, rocksData(args.name))
   }
 }

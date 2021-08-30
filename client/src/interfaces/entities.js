@@ -1,5 +1,6 @@
+import { Rock, Tree, Cloud } from "../entities/mod.js";
+
 export class Entities {
-  nextID = 0;
   map = {};
   entities = [];
 
@@ -8,43 +9,39 @@ export class Entities {
     return this.map[n];
   }
 
-  filter(cb) {
-    return this.entities.filter(cb);
+  getNewEntityByName(name) {
+    switch (name) {
+      case "sorceror":
+        return Tree
+      case "tree":
+        return Tree
+      case "cloud":
+        return Cloud
+      case "rock":
+        return Rock
+      default:
+        return undefined
+    }
   }
 
   add(entity) {
-    this.map[entity.name] = entity;
+    this.map[entity.id] = entity;
     this.entities.push(entity);
   }
 
-  update(timeElapsed) {
-    // TODO-DefinitelyMaybe: Some entities wont die in the current setup i.e. network, terrain, loader
-    // so not looping through some objects everytime would be great.
-    const dead = [];
-    const alive = [];
-    for (let i = 0; i < this.entities.length; ++i) {
-      const e = this.entities[i];
-
-      if (e.update) {
-        e.update(timeElapsed);
-      }
-
-      if (e.dead) {
-        dead.push(e);
-      } else {
-        alive.push(e);
-      }
+  updateEntity(data) {
+    const {id, transform, entity} = data
+    if (id in this.map) {
+      // update the entity
+      const existingEntity = this.map[id]
+      existingEntity.setPosition(transform[1])
+      existingEntity.setQuaternion(transform[2])
+    } else {
+      // create the entity instead
+      const entityClass = this.getNewEntityByName(entity)
+      const newEntity = new entityClass({id})
+      newEntity.setPosition(transform[1])
+      newEntity.setPosition(transform[2])
     }
-
-    for (let i = 0; i < dead.length; ++i) {
-      const e = dead[i];
-      delete this.map[e.name];
-      if (e.destroy) {
-        e.destroy(); 
-      }
-    }
-
-    // TODO-DefinitelyMaybe: Might need a better way of removing entities in future
-    this.entities = alive;
   }
 }
