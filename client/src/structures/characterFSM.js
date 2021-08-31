@@ -1,4 +1,4 @@
-import { FiniteStateMachine } from "../structures/finitestatemachine.js";
+import { FiniteStateMachine } from "./finitestatemachine.js"
 import {
   AttackState,
   DanceState,

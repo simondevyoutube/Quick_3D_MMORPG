@@ -31,11 +31,12 @@ export class WorkerThread {
 }
 
 export class WorkerPool {
+  _busy = {};
+  _queue = [];
+  
   constructor(num) {
     this._workers = [...Array(num)].map((_) => new WorkerThread());
     this._free = [...this._workers];
-    this._busy = {};
-    this._queue = [];
   }
 
   get length() {
@@ -68,15 +69,10 @@ export class WorkerPool {
   }
 }
 
-export class TerrainChunkRebuilder_Threaded {
-  constructor(params) {
-    this._pool = {};
-    this._old = [];
-
-    this._workerPool = new WorkerPool(numWorkers);
-
-    this._params = params;
-  }
+export class TerrainChunkBuilder_Threaded {
+  _pool = {};
+  _old = [];
+  _workerPool = new WorkerPool(numWorkers);
 
   onResult(chunk, msg) {
     if (msg.subject == "build_chunk_result") {

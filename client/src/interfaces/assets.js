@@ -1,4 +1,4 @@
-import { GLTFLoader, FBXLoader, OBJLoader, TextureLoader } from "../functions/loaders/mod.js";
+import { getLoaderFor } from "../functions/loaders/mod.js";
 
 
 export class Assets {
@@ -15,7 +15,7 @@ export class Assets {
     } else {
       if (!(url in this.assets)) {
         const ext = this.getExtFor(url)
-        const loader = this.getLoaderFor(ext)
+        const loader = getLoaderFor(ext)
         try {
           this.pending[url] = true
           this.assets[url] = loader.load(url)
@@ -32,25 +32,5 @@ export class Assets {
   getExtFor(url) {
     const split = url.split(".")
     return split[split.length-1]
-  }
-
-  getLoaderFor(ext) {
-    switch (ext) {
-      case "png":
-        return new TextureLoader();
-      case "jpg":
-        return new TextureLoader();
-      case "obj":
-        return new OBJLoader();
-      case "fbx":
-        return new FBXLoader();
-      case "gltf":
-        return new GLTFLoader();
-      case "glb":
-        return new GLTFLoader();
-      default:
-        console.warn(`Unknown loader for ext: ${ext}`);
-        return undefined
-    }
   }
 }

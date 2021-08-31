@@ -30,9 +30,13 @@ export class Network {
       this.playerID = data.id;
     })
 
-    // this.websocket.onAny((e,d) => {
-    //   // console.log(e);
-    // })
+    this.websocket.onAny((e,d) => {
+      // world.player
+      // world.stats
+      // chat.message
+      // world.update x infinity
+      // these are the current events being received
+    })
   }
 
   // TODO-DefinitelyMaybe: Placeholder until Login queue / Actual Account is tackled

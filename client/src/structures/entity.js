@@ -1,26 +1,17 @@
 import { THREE } from "../deps.js";
 
 export class Entity {
-  position = new THREE.Vector3();
-  quaternion = new THREE.Quaternion();
-
-  constructor(params) {
-    this.id = params.id
+  constructor(args) {
+    this.id = args.id
+    this.position = new THREE.Vector3(args.transform[1][0], args.transform[1][1], args.transform[1][2]);
+    this.quaternion = new THREE.Quaternion(args.transform[2][0], args.transform[2][1], args.transform[2][2], args.transform[2][3]);
   }
 
-  setPosition(p) {
-    this.position.copy(p);
-    this.broadcast({
-      topic: "update.position",
-      value: this.position,
-    });
+  setPosition(pos) {
+    this.position.copy(pos);
   }
 
-  setQuaternion(q) {
-    this.quaternion.copy(q);
-    this.broadcast({
-      topic: "update.quaternion",
-      value: this.quaternion,
-    });
+  setQuaternion(quat) {
+    this.quaternion.copy(quat);
   }
 }

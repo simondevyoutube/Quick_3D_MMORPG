@@ -31,3 +31,14 @@ export const biome_constants = {
   exponentiation: 2,
   height: 1.0,
 };
+
+export const colour_constants = {
+  octaves: 1,
+  persistence: 0.5,
+  lacunarity: 2.0,
+  exponentiation: 1.0,
+  scale: 256.0,
+  noiseType: "simplex",
+  seed: 2,
+  height: 1.0,
+};

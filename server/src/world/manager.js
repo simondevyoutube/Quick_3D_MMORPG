@@ -5,22 +5,8 @@ import { WorldEntity } from "./entity.js";
 
 import { SpatialHashGrid } from "../../../client/src/structures/spatialhashgrid.js";
 import { HeightGenerator } from "../../../client/src/interfaces/terrainheight.js";
-import { paladin, sorceror, warrok, zombie } from "../../../client/data/models/characters/mod.js";
+import { newCharacterData } from "../../../client/src/data/models/characters/mod.js";
 
-const CHARACTER_MODELS = (arg) => {
-  switch (arg) {
-    case "paladin":
-      return paladin
-    case "sorceror":
-      return sorceror
-    case "warrok":
-      return warrok
-    case "zombie":
-      return zombie
-    default:
-      return undefined
-  } 
-}
 
 const _TICK_RATE = 0.1;
 
@@ -35,7 +21,7 @@ export class MonsterSpawner {
   }
 
   Spawn_() {
-    const modelData = CHARACTER_MODELS(this.params_.class)
+    const modelData = newCharacterData(this.params_.class)
     // Hack
     const e = new WorldEntity({
       id: this.parent.ids_++,
@@ -130,7 +116,7 @@ export class WorldManager {
       rotation: quat.fromValues(0, 0, 0, 1),
       grid: this.grid_,
       character: {
-        definition: CHARACTER_MODELS(randomClass),
+        definition: newCharacterData(randomClass),
         class: randomClass,
       },
       account: params,

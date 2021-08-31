@@ -1,22 +1,8 @@
 import { THREE } from "../../deps.js";
 import { Animate } from "../animate.js";
-import { CharacterFSM } from "../characterFSM.js";
-import { paladin, sorceror, warrok, zombie } from "../../data/models/characters/mod.js";
+import { CharacterFSM } from "../../structures/characterFSM.js";
+import { newCharacterData } from "../../data/models/characters/mod.js";
 
-const CHARACTER_MODELS = (arg) => {
-  switch (arg) {
-    case "paladin":
-      return paladin
-    case "sorceror":
-      return sorceror
-    case "warrok":
-      return warrok
-    case "zombie":
-      return zombie
-    default:
-      return undefined
-  } 
-}
 
 export class NPCMovement {
   animations_ = {};
@@ -102,7 +88,7 @@ export class NPCMovement {
   LoadModels_() {
     // TODO-DefinitelyMaybe: maybe don't worry about models within the move functionality
     const classType = this.desc.character.class;
-    const modelData = CHARACTER_MODELS(classType);
+    const modelData = newCharacterData(classType);
 
     const loader = this.world.assets
     /*

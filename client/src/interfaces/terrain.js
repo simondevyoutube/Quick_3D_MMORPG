@@ -4,12 +4,12 @@ import { CubeQuadTree } from "../structures/quadtree.js";
 
 import { DictDifference, DictIntersection } from "../functions/utils/objects.js"
 
-import { terrain_constants, biome_constants } from "../data/constants.js";
+import { terrain_constants, biome_constants, colour_constants } from "../data/constants.js";
 import { Noise } from "../functions/noise.js";
 import { TextureSplatter } from "../functions/terrain/texturesplatter.js";
 import { TextureAtlas } from "../functions/terrain/textures.js";
 import { PS1, PS2, VS1, VS2 } from "../functions/terrain/shaders.js";
-import { TerrainChunkRebuilder_Threaded } from "../functions/terrain/terrainbuilderthreaded.js";
+import { TerrainChunkBuilder_Threaded } from "../functions/terrain/terrainbuilderthreaded.js";
 
 export class Terrain {
   chunks = {};
@@ -19,22 +19,11 @@ export class Terrain {
     vertexColors: true,
   });
 
-  builder = new TerrainChunkRebuilder_Threaded();
+  builder = new TerrainChunkBuilder_Threaded();
   heightGenerator = new Noise(terrain_constants.NOISE_PARAMS);
   biomes = new Noise(biome_constants);
   groups = [...new Array(6)].map((_) => new THREE.Group());
-
-  colourVars = {
-    octaves: 1,
-    persistence: 0.5,
-    lacunarity: 2.0,
-    exponentiation: 1.0,
-    scale: 256.0,
-    noiseType: "simplex",
-    seed: 2,
-    height: 1.0,
-  };
-  colourNoise = new Noise(this.colourVars);
+  colourNoise = new Noise(colour_constants);
 
   constructor(world) {
     this.world = world
@@ -151,7 +140,7 @@ export class Terrain {
   update(_) {
     // TODO-DefinitelyMaybe: Maybe this doesn't need to be called so oftened
     // how about simply when close to chunk edges?
-    const target = this.world.entities.get("player");
+    const target = this.world.entities.player;
     if (!target) {
       return;
     }
@@ -159,13 +148,6 @@ export class Terrain {
     this.builder.update();
     if (!this.builder.Busy) {
       this.updateVisibleChunks_Quadtree(target);
-    }
-
-    for (let k in this.chunks) {
-      this.chunks[k].chunk.update(target.position);
-    }
-    for (let c of this.builder._old) {
-      c.chunk.update(target.position);
     }
   }
 

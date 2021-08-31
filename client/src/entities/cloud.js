@@ -2,16 +2,14 @@ import { THREE } from "../deps.js";
 import { Entity } from "../structures/entity.js";
 import { Model } from "../functions/model.js";
 import { rand_int } from "../functions/math.js";
-import { cloud } from "../data/models/mod.js";
-
-let ID = 0
+import { cloud } from "../data/models/cloud.js";
 
 export class Cloud extends Entity {
-  name = `cloud_${ID++}`
-  constructor (world) {
-    super()
+  constructor (args) {
+    super(args)
+    args = Object.assign(args, cloud)
 
-    // randomizes which glb is chosen
+    // randomizes which model is chosen
     let split = cloud.url.split("/")
     let name = split[split.length-1]
     const base = cloud.url.split(name)[0]
@@ -22,6 +20,6 @@ export class Cloud extends Entity {
     cloud.emissive = new THREE.Color(0x000000)
     cloud.color = new THREE.Color(0x202020)
 
-    this.model = new Model(world, cloud)
+    this.model = new Model(args)
   }
 }

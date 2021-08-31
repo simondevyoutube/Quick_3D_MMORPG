@@ -7,12 +7,11 @@ import { SpatialHashGrid } from "./spatialhashgrid.js"
 import { ThreeInit } from "../interfaces/graphics.js";
 
 export class World {
-  state = undefined;
   input = {
     handleKeyup: undefined,
     handleKeydown: undefined,
   };
-  entities = new Entities();
+  entities = new Entities(this);
   grid = new SpatialHashGrid(
     [[-1000, -1000], [1000, 1000]],
     [100, 100],
@@ -46,7 +45,7 @@ export class World {
       const name = d.desc.account.name
       // Can't currently guarantee them
       if (transform && id && entity && name) {
-        this.entities.updateEntity({id, transform, entity, name})
+        this.entities.receive({id, transform, entity, name})
       }
     })
     this.network.websocket.on("world.update", (d) => {
@@ -108,8 +107,11 @@ export class World {
 
     // this.entities.update(timeElapsedS);
     this.terrain.update(timeElapsedS);
-
-    // this moves the position of the sun (for shadows)
-    this.threejs.update(this.entities.get("player"));
+    if (this.entities.player) {
+      // update player camera
+      this.entities.player.update(timeElapsedS)
+      // this moves the position of the sun (for shadows)
+      this.threejs.update(this.entities.player)
+    }
   }
 }

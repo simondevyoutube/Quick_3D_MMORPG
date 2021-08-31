@@ -8,7 +8,6 @@ A recreation of simon's project where the following happened:
   - [x] organize folder structure
   - [x] rename files
   - [x] remove code
-    - [x] remain functionaly equivelent
     - [x] Components have been removed. Integrate a class or function instead.
     - [x] move terrain files to functions folder
     - [x] null -> undefined

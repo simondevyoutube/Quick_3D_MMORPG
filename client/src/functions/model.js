@@ -1,30 +1,28 @@
 import { THREE } from "../deps.js"
 
 export class Model {
-  group_ = new THREE.Group();
-  textures = {}
+  constructor(args) {
+    this.url = args.url
+    this.loader = args.world.assets
+    this.entity = args.entity
+    this.textures = {}
+    this.texturesArgs = args.textures
 
-  constructor(world, params) {
-    this.url = params.url
-    this.loader = world.assets
-    this.params = params
+    this.scale = args.scale ? args.scale : 1
+    this.hasTextures = args.textures ? true : false
+    this.onMaterial = args.onMaterial ? args.onMaterial : undefined
+    this.specular = args.specular ? args.specular : undefined
+    this.emissive = args.emissive ? args.emissive : undefined
+    this.receiveShadow = args.receiveShadow ? args.receiveShadow : undefined
+    this.castShadow = args.castShadow ? args.castShadow : undefined
+    this.visible = args.visible ? args.visible : undefined
 
-    this.scale = params.scale ? params.scale : 1
-    this.hasTextures = params.textures ? true : false
-    this.onMaterial = params.onMaterial ? params.onMaterial : undefined
-    this.specular = params.specular ? params.specular : undefined
-    this.emissive = params.emissive ? params.emissive : undefined
-    this.receiveShadow = params.receiveShadow ? params.receiveShadow : undefined
-    this.castShadow = params.castShadow ? params.castShadow : undefined
-    this.visible = params.visible ? params.visible : undefined
-
-    if (!params.url) {
-      console.log(params);
+    if (!args.url) {
+      console.log(args);
       debugger 
     }
 
-    this.world = world
-    this.world.scene.add(this.group_);
+    this.scene = args.world.scene
     
     this.model = undefined
 
@@ -40,33 +38,31 @@ export class Model {
 
   destroy() {
     // TODO-DefinitelyMaybe: this may not work if reasources share textures
-    this.group_.traverse((c) => {
-      if (c.material) {
-        c.material.dispose();
-      }
-      if (c.geometry) {
-        c.geometry.dispose();
-      }
-    });
-    this.world.scene.remove(this.group_);
+    this.scene.remove(this.model);
   }
 
   initModel(model) {
     this.model = model
-    this.group_.add(this.model);
+
+    this.model.position.copy(this.entity.position)
+    this.model.quaternion.copy(this.entity.quaternion)
 
     this.model.scale.setScalar(this.scale);
 
     if (this.hasTextures) {
-      for (let k in this.params.textures) {
-        const textureURL = this.params.textures[k]
-        this.textures[k] = this.loader.load(textureURL)
-        // TODO-DefinitelyMaybe: Maybe this information should live in the texture function
-        this.textures[k].encoding = THREE.sRGBEncoding;
-        if (this.params.textures.wrap) {
-          this.textures[k].wrapS = THREE.RepeatWrapping;
-          this.textures[k].wrapT = THREE.RepeatWrapping;
-        }
+      for (let k in this.texturesArgs) {
+        const textureURL = this.texturesArgs[k]
+        this.loader.load(textureURL)
+        .then(val => {
+          this.textures[k] = val
+          // TODO-DefinitelyMaybe: Maybe this information should live in the texture function
+          this.textures[k].encoding = THREE.sRGBEncoding;
+          if (this.textures.wrap) {
+            this.textures[k].wrapS = THREE.RepeatWrapping;
+            this.textures[k].wrapT = THREE.RepeatWrapping;
+          }
+        })
+        .catch(console.error)
       }
     }
 
@@ -86,7 +82,7 @@ export class Model {
     //     if (this.onMaterial) {
     //       this.onMaterial(m);
     //     }
-    //     for (let k in this.params.textures) {
+    //     for (let k in this.textures) {
     //       if (m.name.search(k) >= 0) {
     //         m.map = textures[k];
     //       }

@@ -51,7 +51,7 @@
     flex-direction: column;
     bottom: 0px;
     height: 20%;
-    width: 30%;
+    width: 40%;
   }
   ol {
     overflow: hidden;

@@ -1,18 +1,8 @@
 import { THREE } from "../../deps.js";
 import { Animate } from "../animate.js";
-import { CharacterFSM } from "../characterFSM.js";
-import { paladin, sorceror } from "../../data/models/characters/mod.js";
+import { CharacterFSM } from "../../structures/characterFSM.js";
+import { newCharacterData } from "../../data/models/characters/mod.js";
 
-const CHARACTER_MODELS = (arg) => {
-  switch (arg) {
-    case "paladin":
-      return paladin
-    case "sorceror":
-      return sorceror
-    default:
-      return undefined
-  } 
-}
 
 export class PlayerMovement {
   constructor(world, desc) {
@@ -70,7 +60,7 @@ export class PlayerMovement {
 
   LoadModels_() {
     const classType = this.desc.character.class;
-    const modelData = CHARACTER_MODELS(classType);
+    const modelData = newCharacterData(classType);
 
     const loader = this.world.assets
     loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
@@ -272,7 +262,7 @@ export class PlayerMovement {
       return;
     }
 
-    pos.y = this.terrain.getHeight(pos)[0];
+    pos.y = this.terrain.getHeight(pos);
 
     controlObject.position.copy(pos);
 

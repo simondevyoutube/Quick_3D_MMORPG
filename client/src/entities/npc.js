@@ -4,18 +4,21 @@ import { Equip } from "../functions/actions/equip.js";
 import { Grid } from "../interfaces/spatialgrid.js";
 import { Attack } from "../functions/actions/attack.js";
 import { NetworkEntity } from "../functions/network/entity.js";
+import { Model } from "../functions/model.js";
 
-let ID = 0
+import { newCharacterData } from "../data/models/characters/mod.js";
+
 
 export class NPC extends Entity {
-  name = `npc_${ID++}`
-  constructor (world) {
-    super()
-    this.movement = new NPCMovement(world);
+  constructor (args) {
+    super(args)
+    args = Object.assign(args, newCharacterData(args.model), {entity:this})
+    this.movement = new NPCMovement(args);
     this.equip = new Equip()
-    this.grid = new Grid(world, this)
+    this.grid = new Grid(args)
     // TODO-DefinitelyMaybe: maybe this.actions then add the attack action
     this.attack = new Attack()
-    this.network = new NetworkEntity(world.network)
+    this.network = new NetworkEntity(args)
+    this.model = new Model(args)
   }
 }

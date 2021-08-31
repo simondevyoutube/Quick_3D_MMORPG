@@ -1,15 +1,11 @@
 import { TerrainChunk } from "./terrainchunk.js";
 
-export class TerrainChunkRebuilder {
-  constructor(params) {
-    this._pool = {};
-    this._params = params;
-    
-    this._active = undefined;
-    this._queued = [];
-    this._old = [];
-    this._new = [];
-  }
+export class TerrainChunkBuilder {
+  _pool = {};
+  _active = undefined;
+  _queued = [];
+  _old = [];
+  _new = [];
 
   allocateChunk(params) {
     const w = params.width;

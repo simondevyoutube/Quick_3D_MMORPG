@@ -8,10 +8,14 @@ export class GLTFLoader extends loader {
   async load(url) {
     try {
       const res = await fetch(url)
-      const data = await res.text()
-      return super.parse(data)
+      const data = await res.arrayBuffer()
+      // TODO-DefinitelyMaybe: grr... need to parse the data the parser doesn't return the data. UGH
+      super.parse(data, undefined, (gltf)=> {
+        this.gltf = gltf
+      })
+      return undefined
     } catch (error) {
-      console.error(error);
+      throw `Loader error: ${err}`
     }
   }
 }

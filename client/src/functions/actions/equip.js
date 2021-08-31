@@ -1,13 +1,11 @@
 import { FBXLoader, THREE } from "../../deps.js";
-import { paladin } from "../../data/models/mod.js";
 
 export class Equip {
   target = undefined;
 
-  constructor() {
-    // TODO-DefinitelyMaybe: for now we'll pretend that everything is a palidin
-    const modelData = paladin
-    this.anchor = modelData.equip.rightHand;
+  constructor(args) {
+    this.model = args.model
+    this.anchor = undefined // args.model.modelData.equip.rightHand;
   }
 
   initComponent() {

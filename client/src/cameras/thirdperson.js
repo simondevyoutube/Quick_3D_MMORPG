@@ -4,20 +4,20 @@ export class ThirdPersonCamera {
   currentPosition = new THREE.Vector3();
   currentLookat = new THREE.Vector3();
 
-  constructor(world, player) {
-    this.camera = world.camera;
-    this.target = player
-    this.terrain = world.terrain
+  constructor(args) {
+    this.camera = args.world.camera;
+    this.entity = args.entity
+    this.terrain = args.world.terrain
   }
 
   _CalculateIdealOffset() {
     const idealOffset = new THREE.Vector3(-0, 10, -15);
-    idealOffset.applyQuaternion(this.target.quaternion);
-    idealOffset.add(this.target.position);
+    idealOffset.applyQuaternion(this.entity.quaternion);
+    idealOffset.add(this.entity.position);
 
     idealOffset.y = Math.max(
       idealOffset.y,
-      this.terrain.getHeight(idealOffset)[0] + 5.0,
+      this.terrain.getHeight(idealOffset) + 5.0,
     );
 
     return idealOffset;
@@ -25,8 +25,8 @@ export class ThirdPersonCamera {
 
   _CalculateIdealLookat() {
     const idealLookat = new THREE.Vector3(0, 5, 20);
-    idealLookat.applyQuaternion(this.target.quaternion);
-    idealLookat.add(this.target.position);
+    idealLookat.applyQuaternion(this.entity.quaternion);
+    idealLookat.add(this.entity.position);
     return idealLookat;
   }
 

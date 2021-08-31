@@ -1,20 +1,6 @@
 import { THREE } from "../deps.js";
-import { paladin, sorceror, warrok, zombie } from "../data/models/characters/mod.js";
+import { newCharacterData } from "../data/models/characters/mod.js";
 
-const modelData = (arg) => {
-  switch (arg) {
-    case "paladin":
-      return paladin
-    case "sorceror":
-      return sorceror
-    case "warrok":
-      return warrok
-    case "zombie":
-      return zombie
-    default:
-      return undefined
-  } 
-}
 
 export class FloatingName {
   visible_ = true;
@@ -72,7 +58,7 @@ export class FloatingName {
     if (!this.visible_) {
       return;
     }
-    const modelInfo = modelData(
+    const modelInfo = newCharacterData(
       this.params_.desc.character.class
     );
 

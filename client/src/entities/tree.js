@@ -1,24 +1,14 @@
 import { Entity } from "../structures/entity.js";
 import { Model } from "../functions/model.js";
-import { birch1, tree1 } from "../data/models/mod.js";
+import { newTreeData } from "../data/models/trees/mod.js";
 import { Grid } from "../interfaces/spatialgrid.js";
 
-const treesData = (arg) => {
-  switch (arg) {
-    case "tree":
-      return tree1
-    case "birch":
-      return birch1
-    default:
-      return tree1
-  }
-}
-
 export class Tree extends Entity {
-  name = `tree`
-  constructor(world, arg){
-    super()
-    const data = treesData(arg)
+  constructor(args){
+    super(args)
+    args = Object.assign(args, newTreeData(args.model), {entity: this})
+    this.model = new Model(args)
+    this.grid = new Grid(args)
     // data.textures = {
     //   resourcePath: "./resources/trees/Textures/",
     //   names: randomProp.names,
@@ -35,7 +25,5 @@ export class Tree extends Entity {
     //     m.alphaTest = 0.5;
     //   }
     // }
-    this.model = new Model(world, data)
-    this.grid = new Grid(world, this)
   }
 }
