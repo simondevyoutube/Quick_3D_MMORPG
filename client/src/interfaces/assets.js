@@ -1,4 +1,4 @@
-import { getLoaderFor } from "../functions/loaders/mod.js";
+import { getLoaderFor, getExtFor } from "../functions/loaders.js";
 
 
 export class Assets {
@@ -14,23 +14,18 @@ export class Assets {
       return await this.assets[url]
     } else {
       if (!(url in this.assets)) {
-        const ext = this.getExtFor(url)
+        const ext = getExtFor(url)
         const loader = getLoaderFor(ext)
         try {
           this.pending[url] = true
-          this.assets[url] = loader.load(url)
+          this.assets[url] = loader.loadAsync(url)
           await this.assets[url]
           delete this.pending[url]
-        } catch (error) {
-          console.error(error);
+        } catch (err) {
+          throw err;
         } 
       }
     }
     return this.assets[url]
-  }
-
-  getExtFor(url) {
-    const split = url.split(".")
-    return split[split.length-1]
   }
 }

@@ -40,7 +40,13 @@ A recreation of simon's project where the following happened:
 - Electron app (maybe)
   - distribution yo
 
-Structure will set you free
+Structure will set you free.
+
+1. Question the requirements
+2. Delete the part
+3. Simplify
+4. Accelerate cycle time
+5. Automate
 
 # Starting the frontend client
 

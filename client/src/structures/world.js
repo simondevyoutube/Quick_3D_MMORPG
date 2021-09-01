@@ -87,12 +87,7 @@ export class World {
         this.previousRAF_ = t;
       }
 
-      try {
-        this.renderer.render(this.scene, this.camera); 
-      } catch (error) {
-        console.log(this.scene, this.camera);
-        console.error(error);
-      }
+      this.renderer.render(this.scene, this.camera); 
       this.update(t - this.previousRAF_);
       this.previousRAF_ = t;
 

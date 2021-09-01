@@ -6,5 +6,5 @@ export const birch1 = {
     Bark: "./resources/trees/Textures/Birch_Bark.png",
     Leaves: "./resources/trees/Textures/Birch_Leaves_Green.png",
   },
-  url: "./resources/trees/OBJ/Birch_1.obj",
+  url: "./resources/trees/FBX/Birch_1.fbx",
 }

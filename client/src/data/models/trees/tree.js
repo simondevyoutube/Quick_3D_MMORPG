@@ -6,5 +6,5 @@ export const tree1 = {
     Bark: "./resources/trees/Textures/Tree_Bark.jpg",
     Leaves: "./resources/trees/Textures/Tree_Leaves.png",
   },
-  url: "./resources/trees/OBJ/Tree_1.obj",
+  url: "./resources/trees/FBX/Tree_1.fbx",
 }

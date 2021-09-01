@@ -46,8 +46,8 @@ export class Entities {
           this.player = newEntity
         }
         this.add(newEntity)
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        throw err;
       }
     }
   }
