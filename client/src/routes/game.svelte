@@ -20,8 +20,6 @@
 
   function test2() {
     console.log(world.entities.player);
-    console.log(world.entities.player.position);
-    console.log(world.camera.position);
   }
 
   onMount(() => {

@@ -1,5 +1,4 @@
 import { THREE } from "../../deps.js";
-import { Animate } from "../animate.js";
 import { CharacterFSM } from "../../structures/characterFSM.js";
 import { newCharacterData } from "../../data/models/characters/mod.js";
 

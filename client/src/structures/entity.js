@@ -3,8 +3,8 @@ import { THREE } from "../deps.js";
 export class Entity {
   constructor(args) {
     this.id = args.id
-    this.position = new THREE.Vector3(args.transform[1][0], args.transform[1][1], args.transform[1][2]);
-    this.quaternion = new THREE.Quaternion(args.transform[2][0], args.transform[2][1], args.transform[2][2], args.transform[2][3]);
+    this.position = new THREE.Vector3(...args.transform[1]);
+    this.quaternion = new THREE.Quaternion(...args.transform[2]);
   }
 
   setPosition(pos) {
@@ -13,5 +13,15 @@ export class Entity {
 
   setQuaternion(quat) {
     this.quaternion.copy(quat);
+  }
+
+  createNetworkData() {
+    return {
+      id: this.id,
+      transform: [
+        this.position.toArray(),
+        this.quaternion.toArray(),
+      ]
+    }
   }
 }

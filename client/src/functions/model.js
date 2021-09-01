@@ -2,6 +2,7 @@ import { THREE } from "../deps.js"
 
 export class Model {
   constructor(args) {
+    console.log(args);
     this.url = args.url
     this.assets = args.world.assets
     this.entity = args.entity
@@ -10,7 +11,13 @@ export class Model {
     this.model = undefined
     this.textures = {}
     this.texturesArgs = args.textures
+
+    // TODO-DefinitelyMaybe: Possibly cut out the animations into another class
     this.animations = {}
+    this.bones = {}
+    this.mixer = undefined
+    this.actions = {}
+    this.currentAction = args.transform[0] ? args.transform[0] : undefined
 
     this.scale = args.scale ? args.scale : 1
     this.hasTextures = args.textures ? true : false
@@ -23,7 +30,7 @@ export class Model {
 
     if (!args.url) {
       console.log(args);
-      debugger 
+      debugger
     }
 
     try {
@@ -37,12 +44,12 @@ export class Model {
   }
 
   destroy() {
-    // TODO-DefinitelyMaybe: this may not work if reasources share textures
+    // TODO-DefinitelyMaybe: hopefully this works as intended
     this.scene.remove(this.model);
   }
 
   initModel(parsedData) {
-    console.log(parsedData);
+    // console.log(parsedData);
     this.model = parsedData.scene
 
     this.model.position.copy(this.entity.position)
@@ -67,13 +74,17 @@ export class Model {
     }
 
     if (parsedData.animations) {
-      for (let i = 0; i < parsedData.length; i++) {
+      this.mixer = new THREE.AnimationMixer(this.model)
+      for (let i = 0; i < parsedData.animations.length; i++) {
         const animation = parsedData.animations[i];
         this.animations[animation.name] = animation
+        this.actions[animation.name] = this.mixer.clipAction(animation)
       }
+      // TODO-DefinitelyMaybe: Set this via an arg in future
+      // this.actions[this.currentAction].play()
+      this.actions["Idle"].play()
     }
 
-    // TODO-DefinitelyMaybe: Currently no go because we're only dealing with obj files
     this.model.traverse((c) => {
       let materials = c.material;
 
@@ -110,6 +121,12 @@ export class Model {
       }
       if (this.visible != undefined) {
         c.visible = this.visible;
+      }
+
+      if (c.skeleton) {
+        for (const bone of c.skeleton.bones) {
+          this.bones[bone.name] = bone
+        }
       }
     });
 

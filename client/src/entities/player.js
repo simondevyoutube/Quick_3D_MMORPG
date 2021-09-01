@@ -1,7 +1,6 @@
 import { Entity } from "../structures/entity.js";
 import { PlayerMovement } from "../functions/actions/playermove.js";
 import { Input } from "../functions/input.js";
-import { NetworkPlayer } from "../functions/network/player.js";
 import { ThirdPersonCamera } from "../cameras/thirdperson.js";
 import { Model } from "../functions/model.js";
 
@@ -14,11 +13,13 @@ export class Player extends Entity {
     this.input = new Input()
     this.movement = new PlayerMovement(args)
     this.camera = new ThirdPersonCamera(args)
-    this.network = new NetworkPlayer(args)
     this.model = new Model(args)
   }
 
   update(timeElapsed) {
     this.camera.update(timeElapsed)
+    if (this.model.mixer) {
+      this.model.mixer.update(timeElapsed)
+    }
   }
 }
