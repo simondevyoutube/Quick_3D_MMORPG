@@ -1,11 +1,8 @@
 // TODO-DefinitelyMaybe: Might combine some of these later
-import { Cloud } from "./cloud.js";
+import { Asthetic } from "./asthetic.js";
 import { NPC } from "./npc.js";
-import { Plant } from "./plant.js";
 import { Player } from "./player.js";
-import { Rock } from "./rock.js";
-import { Tree } from "./tree.js";
-import { Weapon } from "./weapon.js";
+import { Static } from "./static.js";
 
 export const newEntityClass = (name) => {
   switch (name) {
@@ -14,16 +11,16 @@ export const newEntityClass = (name) => {
     case "npc":
       return NPC
     case "cloud":
-      return Cloud
+      return Asthetic
     case "plant":
-      return Plant
+      return Asthetic
     case "rock":
-      return Rock
+      return Static
     case "tree":
-      return Tree
+      return Static
     case "weapon":
-      return Weapon
+      return Asthetic
     default:
-      return undefined
+      throw `Couldn't find Entity class for ${name}`
   }
 }

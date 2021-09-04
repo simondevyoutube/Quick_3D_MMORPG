@@ -22,9 +22,7 @@ export class Entities {
 
   receive(data) {
     const {id, transform} = data
-    // player, npc, scenery...
-    const entity = data.name ? "player" : "npc" // pretending its an npc for the moment
-    // one entity might have multiple possible models
+    const entity = data.name ? "player" : "npc"
     // TODO-DefinitelyMaybe: clear up naming
     const model = data.entity
     // TODO-DefinitelyMaybe: momentary workaround
@@ -34,9 +32,10 @@ export class Entities {
       console.log("Updating existing entity");
       // update the entity
       const existingEntity = this.map[id]
-      existingEntity.setPosition(new THREE.Vector3(transform[1][0], transform[1][1], transform[1][2]))
-      existingEntity.setQuaternion(new THREE.Quaternion(transform[2][0], transform[2][1], transform[2][2], transform[2][3]))
+      existingEntity.setPosition(new THREE.Vector3(...transform[1]))
+      existingEntity.setQuaternion(new THREE.Quaternion(...transform[2]))
     } else {
+      console.log("Creating a new entity");
       try {
         const entityClass = newEntityClass(entity)
         const newEntity = new entityClass({id, world:this.world, transform, model}) 
@@ -47,8 +46,16 @@ export class Entities {
         }
         this.add(newEntity)
       } catch (err) {
-        throw err;
+        throw `Tried to create a new entity but: ${err}`;
       }
+    }
+  }
+
+  update(delta){
+    const ents = this.entities.filter(e => e.update)
+    for (let i = 0; i < ents.length; i++) {
+      // should include both player and npc's
+      ents[i].update(delta);
     }
   }
 }

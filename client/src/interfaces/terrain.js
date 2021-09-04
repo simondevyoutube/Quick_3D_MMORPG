@@ -1,19 +1,16 @@
+import { biome_constants, colour_constants, terrain_constants } from "../data/constants.js";
 import { THREE } from "../deps.js";
-
-import { CubeQuadTree } from "../structures/quadtree.js";
-
-import { DictDifference, DictIntersection } from "../functions/utils/objects.js"
-
-import { terrain_constants, biome_constants, colour_constants } from "../data/constants.js";
 import { Noise } from "../functions/noise.js";
-import { TextureSplatter } from "../functions/terrain/texturesplatter.js";
-import { TextureAtlas } from "../functions/terrain/textures.js";
 import { PS1, PS2, VS1, VS2 } from "../functions/terrain/shaders.js";
 import { TerrainChunkBuilder_Threaded } from "../functions/terrain/terrainbuilderthreaded.js";
+import { TextureSplatter } from "../functions/terrain/texturesplatter.js";
+import { DictDifference, DictIntersection } from "../functions/utils/objects.js";
+import { CubeQuadTree } from "../structures/quadtree.js";
+import { TextureAtlas } from "../structures/textureAtlas.js";
+
 
 export class Terrain {
   chunks = {};
-  loader = new THREE.TextureLoader();
   material = new THREE.MeshStandardMaterial({
     side: THREE.BackSide,
     vertexColors: true,
@@ -27,17 +24,16 @@ export class Terrain {
 
   constructor(world) {
     this.world = world
+    this.assets = world.assets
 
-    const noiseTexture = this.loader.load(
+    const noiseTexture = this.assets.loadSync(
       "./resources/terrain/simplex-noise.png",
     );
     noiseTexture.wrapS = THREE.RepeatWrapping;
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
-    const cap = this.world.renderer.capabilities
-
-    const diffuse = new TextureAtlas(cap);
-    diffuse.Load("diffuse", [
+    const atlas = new TextureAtlas();
+    atlas.load("diffuse", [
       "./resources/terrain/dirt_01_diffuse-1024.png",
       "./resources/terrain/grass1-albedo3-1024.png",
       "./resources/terrain/sandyground-albedo-1024.png",
@@ -49,8 +45,7 @@ export class Terrain {
       "./resources/terrain/bark1-albedo.jpg",
     ]);
 
-    const normal = new TextureAtlas(cap);
-    normal.Load("normal", [
+    atlas.load("normal", [
       "./resources/terrain/dirt_01_normal-1024.jpg",
       "./resources/terrain/grass1-normal-1024.jpg",
       "./resources/terrain/sandyground-normal-1024.jpg",
@@ -80,18 +75,11 @@ export class Terrain {
         s.fragmentShader.slice(fi1),
       ].join("");
 
-      s.uniforms.TRIPLANAR_normalMap = { value: normal.Info["normal"].atlas };
+      s.uniforms.TRIPLANAR_normalMap = { value: atlas.map["normal"].atlas };
       s.uniforms.TRIPLANAR_diffuseMap = {
-        value: diffuse.Info["diffuse"].atlas,
+        value: atlas.map["diffuse"].atlas,
       };
       s.uniforms.TRIPLANAR_noiseMap = { value: noiseTexture };
-
-      diffuse.onLoad = () => {
-        s.uniforms.TRIPLANAR_diffuseMap.value = diffuse.Info["diffuse"].atlas;
-      };
-      normal.onLoad = () => {
-        s.uniforms.TRIPLANAR_normalMap.value = normal.Info["normal"].atlas;
-      };
 
       // s.fragmentShader += 'poop';
     };
@@ -152,6 +140,7 @@ export class Terrain {
   }
 
   updateVisibleChunks_Quadtree(target) {
+    // TODO-DefinitelyMaybe: Play around with variables
     function _Key(c) {
       return c.position[0] + "/" + c.position[2] + " [" + c.size + "]";
     }

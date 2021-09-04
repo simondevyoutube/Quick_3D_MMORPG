@@ -1,25 +1,20 @@
-import { Entities } from "../interfaces/entities.js";
-import { Network } from "../interfaces/network.js";
 import { Assets } from "../interfaces/assets.js";
+import { Entities } from "../interfaces/entities.js";
+import { ThreeInit } from "../interfaces/graphics.js";
+import { Input } from "../interfaces/input.js";
+import { Network } from "../interfaces/network.js";
+import { Physics } from "../interfaces/physics.js";
 import { Terrain } from "../interfaces/terrain.js";
 
-import { SpatialHashGrid } from "./spatialhashgrid.js"
-import { ThreeInit } from "../interfaces/graphics.js";
-
 export class World {
-  input = {
-    handleKeyup: undefined,
-    handleKeydown: undefined,
-  };
-  entities = new Entities(this);
-  grid = new SpatialHashGrid(
-    [[-1000, -1000], [1000, 1000]],
-    [100, 100],
-  );
-  network = new Network();
-  assets = new Assets()
   previousRAF_ = undefined;
   initialized = false;
+
+  network = new Network();
+  assets = new Assets()
+  physics = new Physics()
+  input = new Input(this)
+  entities = new Entities(this);
 
   constructor() {
     // TODO-DefinitelyMaybe: do better eventually
@@ -29,17 +24,11 @@ export class World {
     this.renderer = this.threejs.renderer;
 
     // terrain doesnt make sense unless three has already been initialized
+    // unless we're computing height...
     this.terrain = new Terrain(this)
 
     // Setup Network hooks
     this.network.websocket.on("world.player", (d) => {
-      /*
-      desc:
-        account: {name: "Caffeinated Noodler"}
-        character: {class: "paladin", inventory: {…}}
-      id: 832
-      transform: (3) ["idle", Array(3), Array(4)]
-      */
       const {id, transform} = d;
       const entity = d.desc.character.class
       const name = d.desc.account.name
@@ -51,18 +40,11 @@ export class World {
     this.network.websocket.on("world.update", (d) => {
       // The network is truth. generally speaking.
       for (let i = 0; i < d.length; i++) {
-        /*
-        desc: {account: {…}, character: {…}}
-        events: []
-        id: 305
-        stats: (2) [305, {…}]
-        transform: (3) ["idle", Array(3), Array(4)]
-        */
         const {id, transform} = d[i];
-        const entity = d[i].desc ? d[i].desc.name : false
-        // Can't currently guarantee them
+        const entity = d[i].desc ? d[i].desc.character.class : false
+        // Can't currently guarantee them all
         if (transform && id && entity) {
-          this.entities.createEntity({id, transform, entity})
+          this.entities.receive({id, transform, entity})
         }
       }
     })
@@ -101,10 +83,10 @@ export class World {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
 
     // this.entities.update(timeElapsedS);
+    this.physics.update(timeElapsedS)
     this.terrain.update(timeElapsedS);
+    this.entities.update(timeElapsedS)
     if (this.entities.player) {
-      // update player camera
-      this.entities.player.update(timeElapsedS)
       // this moves the position of the sun (for shadows)
       this.threejs.update(this.entities.player)
     }

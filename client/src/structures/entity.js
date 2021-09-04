@@ -14,14 +14,4 @@ export class Entity {
   setQuaternion(quat) {
     this.quaternion.copy(quat);
   }
-
-  createNetworkData() {
-    return {
-      id: this.id,
-      transform: [
-        this.position.toArray(),
-        this.quaternion.toArray(),
-      ]
-    }
-  }
 }

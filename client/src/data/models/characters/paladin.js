@@ -6,4 +6,5 @@ export const paladin = {
   },
   nameOffset: 11,
   scale: 6.0,
+  physics: {}
 }

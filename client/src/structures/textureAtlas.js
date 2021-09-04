@@ -1,4 +1,4 @@
-import { THREE } from "../../deps.js";
+import { THREE } from "../deps.js";
 
 // Taken from https://github.com/mrdoob/three.js/issues/758
 function _GetImageData(image) {
@@ -13,40 +13,34 @@ function _GetImageData(image) {
 }
 
 export class TextureAtlas {
-  constructor(params) {
-    // threejs capabilities
-    this.capabilities = params
-    this._Create();
-    this.onLoad = () => {};
-  }
+  constructor() {
+    // TODO-DefinitelyMaybe: When the THREE.Texture loader returns a Texture object, the image property is not present
+    // must wait for onload to fire from manager
+    this.manager = new THREE.LoadingManager();
+    this.loader = new THREE.TextureLoader(this.manager);
+    this.map = {};
 
-  Load(atlas, names) {
-    this._LoadAtlas(atlas, names);
-  }
-
-  _Create() {
-    this._manager = new THREE.LoadingManager();
-    this._loader = new THREE.TextureLoader(this._manager);
-    this._textures = {};
-
-    this._manager.onLoad = () => {
-      this._OnLoad();
+    this.manager.onLoad = () => {
+      this.onLoad();
     };
   }
 
-  get Info() {
-    return this._textures;
+  load(atlas, names) {
+    this.map[atlas] = {
+      textures: names.map((n) => this.loadTexture(n)),
+      atlas: undefined,
+    };
   }
 
-  _LoadTexture(n) {
-    const t = this._loader.load(n);
+  loadTexture(n) {
+    const t = this.loader.load(n);
     t.encoding = THREE.sRGBEncoding;
     return t;
   }
 
-  _OnLoad() {
-    for (let k in this._textures) {
-      const atlas = this._textures[k];
+  onLoad() {
+    for (let k in this.map) {
+      const atlas = this.map[k];
       const data = new Uint8Array(atlas.textures.length * 4 * 1024 * 1024);
 
       for (let t = 0; t < atlas.textures.length; t++) {
@@ -70,22 +64,9 @@ export class TextureAtlas {
       diffuse.wrapS = THREE.RepeatWrapping;
       diffuse.wrapT = THREE.RepeatWrapping;
       diffuse.generateMipmaps = true;
-
-      const caps = this.capabilities;
-      const aniso = caps.getMaxAnisotropy();
-
       diffuse.anisotropy = 4;
 
       atlas.atlas = diffuse;
     }
-
-    this.onLoad();
-  }
-
-  _LoadAtlas(atlas, names) {
-    this._textures[atlas] = {
-      textures: names.map((n) => this._LoadTexture(n)),
-      atlas: undefined,
-    };
   }
 }

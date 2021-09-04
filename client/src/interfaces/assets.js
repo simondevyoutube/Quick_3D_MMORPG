@@ -1,4 +1,4 @@
-import { getLoaderFor, getExtFor } from "../functions/loaders.js";
+import { getExtFor, getLoaderFor } from "../functions/loaders.js";
 
 
 export class Assets {
@@ -24,6 +24,19 @@ export class Assets {
         } catch (err) {
           throw err;
         } 
+      }
+    }
+    return this.assets[url]
+  }
+
+  loadSync(url){
+    if (!(url in this.assets)) {
+      try {
+        const ext = getExtFor(url)
+        const loader = getLoaderFor(ext)
+        this.assets[url] = loader.load(url)
+      } catch (err) {
+        throw `Couldn't load ${url} because: ${err}`; 
       }
     }
     return this.assets[url]

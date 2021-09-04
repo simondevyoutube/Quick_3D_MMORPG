@@ -1,8 +1,8 @@
-import { THREE } from "../deps.js"
+import { cannon, THREE } from "../deps.js"
 
 export class Model {
   constructor(args) {
-    console.log(args);
+    // console.log(args);
     this.url = args.url
     this.assets = args.world.assets
     this.entity = args.entity
@@ -19,19 +19,16 @@ export class Model {
     this.actions = {}
     this.currentAction = args.transform[0] ? args.transform[0] : undefined
 
+    this.physics = args.world.physics
+    this.physicsArgs = args.physics
+
     this.scale = args.scale ? args.scale : 1
-    this.hasTextures = args.textures ? true : false
     this.onMaterial = args.onMaterial ? args.onMaterial : undefined
     this.specular = args.specular ? args.specular : undefined
     this.emissive = args.emissive ? args.emissive : undefined
     this.receiveShadow = args.receiveShadow ? args.receiveShadow : undefined
     this.castShadow = args.castShadow ? args.castShadow : undefined
     this.visible = args.visible ? args.visible : undefined
-
-    if (!args.url) {
-      console.log(args);
-      debugger
-    }
 
     try {
       this.assets.load(this.url)
@@ -56,7 +53,7 @@ export class Model {
     this.model.quaternion.copy(this.entity.quaternion)
     this.model.scale.setScalar(this.scale);
 
-    if (this.hasTextures) {
+    if (this.texturesArgs) {
       for (let k in this.texturesArgs) {
         const textureURL = this.texturesArgs[k]
         this.assets.load(textureURL)
@@ -77,12 +74,29 @@ export class Model {
       this.mixer = new THREE.AnimationMixer(this.model)
       for (let i = 0; i < parsedData.animations.length; i++) {
         const animation = parsedData.animations[i];
-        this.animations[animation.name] = animation
-        this.actions[animation.name] = this.mixer.clipAction(animation)
+        this.animations[animation.name.toLowerCase()] = animation
+        this.actions[animation.name.toLowerCase()] = this.mixer.clipAction(animation)
       }
       // TODO-DefinitelyMaybe: Set this via an arg in future
-      // this.actions[this.currentAction].play()
-      this.actions["Idle"].play()
+      if (this.currentAction) {
+        this.actions[this.currentAction].play()
+      }
+    }
+
+    if (this.physicsArgs) {
+      console.log("Load some physics");
+      const size = 4
+      const boxShape = new cannon.Box(new cannon.Vec3(size, size, size))
+      const pos = this.entity.position
+      const quat = this.entity.quaternion
+      const boxBody = new cannon.Body({
+        mass: 0,
+        type: cannon.Body.KINEMATIC,
+        position: new cannon.Vec3(pos.x, pos.y, pos.z),
+        quaternion: new cannon.Quaternion(quat.x, quat.y, quat.z, quat.w),
+      })
+      boxBody.addShape(boxShape)
+      this.physics.world.addBody(boxBody)
     }
 
     this.model.traverse((c) => {

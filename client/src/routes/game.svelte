@@ -27,19 +27,24 @@
     // i.e. three.js for the canvas element
     world = new World()
     world.network.websocket.on("chat.message", (d) => {
-      chat.receive(d)
+      if (chat) {
+        chat.receive(d) 
+      }
     })
     showHUD = true
+    world.resize()
   })
 </script>
 
 <svelte:window on:blur="{() => {focused = false}}"
   on:focus="{() => {focused = true}}"
   on:resize="{() => {world.resize()}}"></svelte:window>
-<svelte:body on:keyup={world.input.handleKeyup}
-  on:keydown={world.input.handleKeydown}></svelte:body>
+<svelte:body on:keyup="{(event) => {world.input.handleKeyup(event)}}"
+  on:keydown="{(event) => {world.input.handleKeydown(event)}}"
+  on:pointerdown="{(event)=>{world.input.handlePointerdown(event)}}"
+  on:pointerup="{(event)=>{world.input.handlePointerup(event)}}"></svelte:body>
 
-<canvas id="game" on:pointerdown on:pointerup></canvas>
+<canvas id="game"></canvas>
 {#if showChat}
 <Chat bind:this="{chat}" on:send="{(e)=> {
   // TODO-DefinitelyMaybe: Send author info as well

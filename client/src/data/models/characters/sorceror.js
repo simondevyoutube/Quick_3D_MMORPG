@@ -6,4 +6,5 @@ export const sorceror = {
   },
   nameOffset: 10,
   scale: 4.0,
+  physics: {}
 }

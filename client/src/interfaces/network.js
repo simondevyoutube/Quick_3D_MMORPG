@@ -22,7 +22,7 @@ export class Network {
     });
 
     this.websocket.on("disconnect", () => {
-      console.log("DISCONNECTED: " + this.websocket.id);
+      console.log("DISCONNECTED");
     });
 
     this.websocket.on("world.player", (data) => {
