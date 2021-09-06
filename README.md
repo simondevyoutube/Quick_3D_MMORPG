@@ -34,7 +34,9 @@ Structure will set you free.
   - 2D options: [matter.js](https://brm.io/matter-js/demo/#collisionFiltering)...
 - how to readmes
  - Getting a model into the game
+   - [Checking your model](https://gltf-viewer.donmccurdy.com/)
  - Animating a model in game
+   - [Used THREE.Clock() for dynamic animation frames](https://discoverthreejs.com/book/first-steps/animation-loop/)
 - Webstream websockets
 - ui themes
 - Server to deno

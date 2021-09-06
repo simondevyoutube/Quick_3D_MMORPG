@@ -9,7 +9,9 @@ export class Input {
 
   handlePointerup(event){
     if (this.playerFocused) {
-      this.world.entities.player.input.handlePointerup(event)
+      if (this.world.entities) {
+        this.world.entities.player.input.handlePointerup(event)
+      }
     }
     this.playerFocused = false
   }
@@ -23,7 +25,9 @@ export class Input {
       this.worldFocused = false
     }
     if (this.playerFocused) {
-      this.world.entities.player.input.handlePointerdown(event)
+      if (this.world.entities) {
+        this.world.entities.player.input.handlePointerdown(event)
+      }
     }
   }
 

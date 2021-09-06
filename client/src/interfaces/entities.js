@@ -8,6 +8,30 @@ export class Entities {
 
   constructor(arg){
     this.world = arg
+    this.network = arg.network
+
+    // Setup Network hooks
+    this.network.websocket.on("world.player", (d) => {
+      const {id, transform} = d;
+      const entity = d.desc.character.class
+      const name = d.desc.account.name
+      // Can't currently guarantee them
+      if (transform && id && entity && name) {
+        this.receive({id, transform, entity, name})
+      }
+    })
+
+    this.network.websocket.on("world.update", (d) => {
+      // The network is truth. generally speaking.
+      for (let i = 0; i < d.length; i++) {
+        const {id, transform} = d[i];
+        const entity = d[i].desc ? d[i].desc.character.class : false
+        // Can't currently guarantee them all
+        if (transform && id && entity) {
+          this.receive({id, transform, entity})
+        }
+      }
+    })
   }
 
   // TODO-DefinitelyMaybe: What about removing entities?? where is that done
@@ -35,7 +59,7 @@ export class Entities {
       existingEntity.setPosition(new THREE.Vector3(...transform[1]))
       existingEntity.setQuaternion(new THREE.Quaternion(...transform[2]))
     } else {
-      console.log("Creating a new entity");
+      // console.log("Creating a new entity");
       try {
         const entityClass = newEntityClass(entity)
         const newEntity = new entityClass({id, world:this.world, transform, model}) 

@@ -42,7 +42,7 @@ export class ThreeInit {
   // TODO-DefinitelyMaybe: User variable for them to set at some point
   fov = 60;
   aspect = 1920 / 1080;
-  near = 1.0;
+  near = 0.01;
   far = 10000.0;
   camera = new THREE.PerspectiveCamera(this.fov, this.aspect, this.near, this.far);
 
@@ -93,7 +93,8 @@ export class ThreeInit {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    this.camera.position.set(25, 10, 25);
+    this.camera.position.set(1, 1, 1);
+    this.camera.lookAt(0,0,0)
 
     this.scene.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
 

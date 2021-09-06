@@ -1,13 +1,15 @@
 <script>
-  import { World } from "../structures/world.js";
   import { onMount } from "svelte";
+  import { World } from "../structures/worlds/simonsWorld.js";
+  import Chat from "../ui/game/chat.svelte";
   import HUD from "../ui/game/hud.svelte";
   import Menu from "../ui/game/menu.svelte";
-  import Chat from "../ui/game/chat.svelte";
-  
+
+
   let world;
   let chat;
 
+  // TODO-DefinitelyMaybe: focus lost could be a good, stop/start the clock/loop signal
   let focused = false
 
   let showHUD = true
@@ -23,8 +25,6 @@
   }
 
   onMount(() => {
-    // new Game expects to be able to make DOM calls
-    // i.e. three.js for the canvas element
     world = new World()
     world.network.websocket.on("chat.message", (d) => {
       if (chat) {
@@ -36,8 +36,12 @@
   })
 </script>
 
-<svelte:window on:blur="{() => {focused = false}}"
-  on:focus="{() => {focused = true}}"
+<svelte:window on:blur="{() => {
+    focused = false
+    world.stop()}}"
+  on:focus="{() => {
+    focused = true
+    world.start()}}"
   on:resize="{() => {world.resize()}}"></svelte:window>
 <svelte:body on:keyup="{(event) => {world.input.handleKeyup(event)}}"
   on:keydown="{(event) => {world.input.handleKeydown(event)}}"

@@ -5,8 +5,11 @@ export * as cannon from "https://cdn.skypack.dev/cannon-es";
 export { io } from "https://cdn.skypack.dev/socket.io-client@4.1.3";
 export * as THREE from "https://cdn.skypack.dev/three";
 export { OrbitControls } from "https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js";
+export { LineMaterial } from "https://cdn.skypack.dev/three/examples/jsm/lines/LineMaterial.js";
+export { Wireframe } from "https://cdn.skypack.dev/three/examples/jsm/lines/Wireframe.js";
+export { WireframeGeometry2 } from "https://cdn.skypack.dev/three/examples/jsm/lines/WireframeGeometry2.js";
 export { FBXLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/FBXLoader.js";
 export { GLTFLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js";
 export { OBJLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js";
-export { clone as SkeletonClone } from "https://cdn.skypack.dev/three/examples/jsm/utils/SkeletonUtils.js";
+export { clone as deepClone } from "https://cdn.skypack.dev/three/examples/jsm/utils/SkeletonUtils.js";
 

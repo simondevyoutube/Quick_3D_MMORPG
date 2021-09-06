@@ -1,4 +1,4 @@
-import { cannon, THREE } from "../deps.js"
+import { LineMaterial, THREE, Wireframe, WireframeGeometry2, deepClone } from "../deps.js"
 
 export class Model {
   constructor(args) {
@@ -9,6 +9,7 @@ export class Model {
     this.scene = args.world.scene
 
     this.model = undefined
+    this.geometry = undefined
     this.textures = {}
     this.texturesArgs = args.textures
 
@@ -46,11 +47,13 @@ export class Model {
   }
 
   initModel(parsedData) {
-    // console.log(parsedData);
-    this.model = parsedData.scene
+    this.model = deepClone(parsedData.scene)
 
-    this.model.position.copy(this.entity.position)
-    this.model.quaternion.copy(this.entity.quaternion)
+    const entityPos = this.entity.position
+    const entityQuat = this.entity.quaternion
+
+    this.model.position.copy(entityPos)
+    this.model.quaternion.copy(entityQuat)
     this.model.scale.setScalar(this.scale);
 
     if (this.texturesArgs) {
@@ -83,48 +86,31 @@ export class Model {
       }
     }
 
-    if (this.physicsArgs) {
-      console.log("Load some physics");
-      const size = 4
-      const boxShape = new cannon.Box(new cannon.Vec3(size, size, size))
-      const pos = this.entity.position
-      const quat = this.entity.quaternion
-      const boxBody = new cannon.Body({
-        mass: 0,
-        type: cannon.Body.KINEMATIC,
-        position: new cannon.Vec3(pos.x, pos.y, pos.z),
-        quaternion: new cannon.Quaternion(quat.x, quat.y, quat.z, quat.w),
-      })
-      boxBody.addShape(boxShape)
-      this.physics.world.addBody(boxBody)
-    }
-
     this.model.traverse((c) => {
-      let materials = c.material;
+      if (c.material) {
+        let materials = c.material instanceof Array ? c.material : [c.material];
 
-      if (!(c.material instanceof Array)) {
-        materials = [c.material];
+        for (let m of materials) {
+          if (this.onMaterial) {
+            this.onMaterial(m);
+          }
+          for (let k in this.textures) {
+            if (m.name.search(k) >= 0) {
+              m.map = textures[k];
+            }
+          }
+          if (this.specular) {
+            m.specular = this.specular;
+          }
+          if (this.emissive) {
+            m.emissive = this.emissive;
+          }
+        }
       }
 
       if (c.geometry) {
+        this.geometry = c.geometry
         c.geometry.computeBoundingBox();
-      }
-
-      for (let m of materials) {
-        if (this.onMaterial) {
-          this.onMaterial(m);
-        }
-        for (let k in this.textures) {
-          if (m.name.search(k) >= 0) {
-            m.map = textures[k];
-          }
-        }
-        if (this.specular) {
-          m.specular = this.specular;
-        }
-        if (this.emissive) {
-          m.emissive = this.emissive;
-        }
       }
 
       if (this.receiveShadow != undefined) {
@@ -143,6 +129,17 @@ export class Model {
         }
       }
     });
+
+    if (this.physicsArgs) {
+      const lineMat = new LineMaterial( {
+        color: 0x4080ff, // light-ish bluey
+        linewidth: 0.002,
+      });
+      const geo = new WireframeGeometry2(new THREE.BoxGeometry(1, 1, 1))
+      const wireframeBox = new Wireframe(geo, lineMat)
+      wireframeBox.position.y += 1
+      this.model.add(wireframeBox)
+    }
 
     this.scene.add(this.model)
   }

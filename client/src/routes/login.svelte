@@ -23,7 +23,8 @@
           type="text"
         />
         <button class="login-button" id="login-button">Login</button>
-        <a href="game">Game</a>
+        <a href="/simonsWorld">Simons World</a>
+        <a href="/entityViewer">Entity Viewer</a>
         <a href="/">Return</a>
       </div>
     </div>

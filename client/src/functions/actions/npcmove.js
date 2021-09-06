@@ -1,6 +1,5 @@
-import { THREE } from "../../deps.js";
-import { CharacterFSM } from "../../structures/characterFSM.js";
 import { newCharacterData } from "../../data/models/characters/mod.js";
+import { THREE } from "../../deps.js";
 
 
 export class NPCMovement {
@@ -90,20 +89,6 @@ export class NPCMovement {
     const modelData = newCharacterData(classType);
 
     const loader = this.world.assets
-    /*
-    import {SkeletonClone} from "../deps.js"
-            // TODO-DefinitelyMaybe: Sort out the skeleton
-        // glb.scene.traverse((c) => {
-        //   c.frustumCulled = false;
-        // });
-
-        // const clone = { ...glb };
-        // clone.scene = SkeletonClone(clone.scene);
-
-        onload(clone);
-        ^^^
-        onload = anon function below
-    */
     loader.LoadSkinnedGLB(modelData.path, modelData.base, (glb) => {
       this.target_ = glb.scene;
       this.target_.scale.setScalar(modelData.scale);

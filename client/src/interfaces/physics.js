@@ -4,6 +4,7 @@ export class Physics {
   world = new cannon.World()
 
   constructor(){
+    console.log(cannon);
     this.world.gravity.set(0,-40,0)
     // TODO-DefinitelyMaybe: get height data and make plane with it
     // https://github.com/pmndrs/cannon-es/blob/master/examples/heightfield.html
