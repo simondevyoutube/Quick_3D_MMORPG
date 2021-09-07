@@ -19,7 +19,7 @@ export class Planet {
   biomes = new Noise(biome_constants);
   colourNoise = new Noise(colour_constants);
 
-  // 6 groups for the 6 sides of a cube
+  // 6 groups for the 6 sides of a cube, right?
   groups = [...new Array(6)].map((_) => new THREE.Group());
 
   constructor(world) {
@@ -128,10 +128,6 @@ export class Planet {
 
   updateChunks(target) {
     // TODO-DefinitelyMaybe: Play around with variables
-    function _Key(c) {
-      return `${c.position[0]} / ${c.position[2]} [${c.size}]`;
-    }
-
     const q = new CubeQuadTree({
       radius: terrain_constants.PLANET_RADIUS,
       min_node_size: terrain_constants.QT_MIN_CELL_SIZE,
@@ -157,8 +153,7 @@ export class Planet {
           size: dimensions.x,
         };
 
-        const k = _Key(child);
-        // console.log(k);
+        const k = `${center.x} / ${center.z} [${child.size}]`;
         newTerrainChunks[k] = child;
       }
     }

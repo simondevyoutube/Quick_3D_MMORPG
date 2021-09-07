@@ -34,7 +34,6 @@ export class Entities {
     })
   }
 
-  // TODO-DefinitelyMaybe: What about removing entities?? where is that done
   get(n) {
     return this.map[n];
   }

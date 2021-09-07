@@ -9,45 +9,51 @@ Structure will set you free.
 4. Accelerate cycle time
 5. Automate
 
-- [x] ESmodules only
-- [x] svelte-kit web ui framework
-- [x] organize folder structure
-- [x] rename files
-- [x] remove code
- - [x] Components have been removed. Integrate a class or function instead.
- - [x] move terrain files to functions folder
- - [x] null -> undefined
- - [x] rotation -> quaternion
- - [x] many getters and setters / boilerplate has been removed
- - [x] networking
-   - Logic about a entity has moved closer to that entity
- - [x] Removed Scenery
-   1. The terrain/scenery is semi-deterministic and the server sends us the key. Use of noise functions or...
-   2. There is no terrain, instead, a predefined map.
-- [x] three.js glsl
- - [x] highlighted in vscode extensions
- - [x] variables changed
-- [x] organize file contents
- - The interfaces folder should only have files responsible for book-keeping.
+- Organization
+  - folder structure
+    - data -> when keeping information within the scripts is labourious
+    - entities -> Things that could be placed in a world
+    - functions -> Code that does something for something else
+    - interfaces -> Code that organizes/does-the-bookkeeping-for entities and other systems
+    - routes -> used by svelte-kit for routing
+    - ui -> svelte components used within the pages, includes world ui
+  - remove/renamed folders/files/code
+    - Components have been removed. Integrate a class or function instead.
+    - rotation -> quaternion
+    - many getters and setters / boilerplate has been removed
+- Terrain
+  - Predefined map (Manual work but very simple)
+  - Infinite 2D side scrolling or birds-eye ( Simplist procedural  )
+  - Infinite 3D height map ( Easy enough procedural )
+  - Space ( Hard and requires a good setup)
+    - Generating spheres
+      - Using triangles -> - Icosahedron
+      - Using Points -> Fibonacci sphere
+      - Using squares -> Cube sphere
 - physics
   - 3D options: [cannon-es](https://github.com/pmndrs/cannon-es), ammo.js...
   - 2D options: [matter.js](https://brm.io/matter-js/demo/#collisionFiltering)...
-- how to readmes
+- UI
+  - [x] svelte-kit web ui framework
+  - themes
+- Networking
+  - Logic regarding an entity has moved closer to that entity
+  - [ ] Webstream websockets
+  - Server to deno
+   - [x] mockup ws test
+- Game Dev
+  - typescript (not yet)
+  - three.js glsl highlighting by vscode extensions
+  - [ ] scene transitions (fade out and in + loading wheel)?
+  - [ ] objects inventory / place
+  - [ ] save / load (scenes / data)
+- Distribution
+  - [ ] Electron app
+- HOW-TO/readmes
  - Getting a model into the game
    - [Checking your model](https://gltf-viewer.donmccurdy.com/)
  - Animating a model in game
    - [Used THREE.Clock() for dynamic animation frames](https://discoverthreejs.com/book/first-steps/animation-loop/)
-- Webstream websockets
-- ui themes
-- Server to deno
- - [x] mockup ws test
-- game dev
- - scene transitions (fade out and in + loading wheel)?
- - objects inventory / place
- - save / load (scenes / data)
-- typescript (maybe)
-- Electron app (maybe)
-  - distribution yo
 
 # Starting the frontend client
 

@@ -1,6 +1,6 @@
 import { Chunk } from "./chunk.js"
 
-const numWorkers = 1;
+const numWorkers = 2;
 let _IDs = 0;
 
 export class ChunkBuilder {

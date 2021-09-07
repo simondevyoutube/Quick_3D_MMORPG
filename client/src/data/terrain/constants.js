@@ -2,7 +2,7 @@ const NOISE_HEIGHT = 800.0;
 const NOISE_SCALE = 1800.0;
 
 export const terrain_constants = {
-  QT_MIN_CELL_SIZE: 128,
+  QT_MIN_CELL_SIZE: 256,
   QT_MIN_CELL_RESOLUTION: 16,
 
   PLANET_RADIUS: 1000,

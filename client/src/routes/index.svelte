@@ -1,9 +1,5 @@
-<script>
-  // import "../main.js";
-</script>
-
 <svelte:head>
-  <title>SimonDev Crappy MMO</title>
+  <title>Hello Dev</title>
 </svelte:head>
 
 <h1>Lets make this a developer landing page</h1>

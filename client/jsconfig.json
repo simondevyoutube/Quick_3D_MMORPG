@@ -6,8 +6,5 @@
 			"$lib/*": ["src/lib/*"]
 		}
 	},
-	"typeAcquisition": {
-    "include": ["@types/matter-js"]
-  },
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
 }
