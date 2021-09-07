@@ -1,4 +1,4 @@
-import { LineMaterial, THREE, Wireframe, WireframeGeometry2, deepClone } from "../deps.js"
+import { LineMaterial, THREE, Wireframe, WireframeGeometry2, deepClone, cannon } from "../deps.js"
 
 export class Model {
   constructor(args) {
@@ -8,7 +8,7 @@ export class Model {
     this.entity = args.entity
     this.scene = args.world.scene
 
-    this.model = undefined
+    this.group = undefined
     this.geometry = undefined
     this.textures = {}
     this.texturesArgs = args.textures
@@ -22,6 +22,7 @@ export class Model {
 
     this.physics = args.world.physics
     this.physicsArgs = args.physics
+    this.collisionBody = undefined
 
     this.scale = args.scale ? args.scale : 1
     this.onMaterial = args.onMaterial ? args.onMaterial : undefined
@@ -43,18 +44,18 @@ export class Model {
 
   destroy() {
     // TODO-DefinitelyMaybe: hopefully this works as intended
-    this.scene.remove(this.model);
+    this.scene.remove(this.group);
   }
 
   initModel(parsedData) {
-    this.model = deepClone(parsedData.scene)
+    this.group = deepClone(parsedData.scene)
 
     const entityPos = this.entity.position
     const entityQuat = this.entity.quaternion
 
-    this.model.position.copy(entityPos)
-    this.model.quaternion.copy(entityQuat)
-    this.model.scale.setScalar(this.scale);
+    this.group.position.copy(entityPos)
+    this.group.quaternion.copy(entityQuat)
+    this.group.scale.setScalar(this.scale);
 
     if (this.texturesArgs) {
       for (let k in this.texturesArgs) {
@@ -74,7 +75,7 @@ export class Model {
     }
 
     if (parsedData.animations) {
-      this.mixer = new THREE.AnimationMixer(this.model)
+      this.mixer = new THREE.AnimationMixer(this.group)
       for (let i = 0; i < parsedData.animations.length; i++) {
         const animation = parsedData.animations[i];
         this.animations[animation.name.toLowerCase()] = animation
@@ -86,7 +87,7 @@ export class Model {
       }
     }
 
-    this.model.traverse((c) => {
+    this.group.traverse((c) => {
       if (c.material) {
         let materials = c.material instanceof Array ? c.material : [c.material];
 
@@ -137,10 +138,19 @@ export class Model {
       });
       const geo = new WireframeGeometry2(new THREE.BoxGeometry(1, 1, 1))
       const wireframeBox = new Wireframe(geo, lineMat)
-      wireframeBox.position.y += 1
-      this.model.add(wireframeBox)
+      this.group.add(wireframeBox)
+
+      const shape = new cannon.Box(new cannon.Vec3(1,1,1))
+      const body = new cannon.Body({
+        mass:1,
+        shape
+      })
+      this.collisionBody = body
+      this.collisionBody.entity = this.entity
+      this.collisionBody.position = new cannon.Vec3(entityPos.x, entityPos.y, entityPos.z)
+      this.physics.world.addBody(body)
     }
 
-    this.scene.add(this.model)
+    this.scene.add(this.group)
   }
 }

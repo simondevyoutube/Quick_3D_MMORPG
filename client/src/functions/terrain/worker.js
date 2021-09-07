@@ -4,23 +4,24 @@ import { TextureSplatter } from "./texturesplatter.js";
 
 import { sat } from "../math.js";
 import { Noise } from "../noise.js";
-import { terrain_constants, biome_constants, colour_constants } from "../../data/constants.js"
+import { terrain_constants, biome_constants, colour_constants } from "../../data/terrain/constants.js"
 
 let widthArg;
 let resolutionArg;
 let offsetArg;
+
 const heightGenerator = new Noise(terrain_constants.NOISE_PARAMS);
 const biomeGenerator = new Noise(biome_constants);
 const colourNoise = new Noise(colour_constants);
 const colourGenerator = new TextureSplatter({ biomeGenerator, colourNoise });
 
-function init(params) {
-  widthArg = params.width
-  resolutionArg = params.resolution
+function init(args) {
+  widthArg = args.width
+  resolutionArg = args.resolution
   offsetArg = new THREE.Vector3(
-    params.offset[0],
-    params.offset[1],
-    params.offset[2],
+    args.offset[0],
+    args.offset[1],
+    args.offset[2],
   );
 }
 
@@ -86,6 +87,7 @@ function rebuild() {
 
       const color = colourGenerator.GetColour(_S);
       colors.push(color.r, color.g, color.b);
+      
       up.push(_D.x, _D.y, _D.z);
       wsPositions.push(_W.x, _W.z, height);
       uvs.push(_P.x / 200.0, _P.y / 200.0);
@@ -327,20 +329,6 @@ function rebuild() {
 
 self.onmessage = (msg) => {
   if (msg.data.subject == "build_chunk") {
-    /*
-    msg.data.params = {
-      biomesParams: {octaves: 2, persistence: 0.5, lacunarity: 2, scale: 1024, noiseType: "simplex", …}
-      colourGeneratorParams: {biomeGeneratorParams: {…}, colourNoiseParams: {…}}
-      colourNoiseParams: {octaves: 1, persistence: 0.5, lacunarity: 2, exponentiation: 1, scale: 256, …}
-      heightGeneratorParams: {min: 100000, max: 100001}
-      noiseParams: {octaves: 10, persistence: 0.5, lacunarity: 1.6, exponentiation: 7.5, height: 800, …}
-      offset: (3) [6000, 0, 6000]
-      radius: 8000
-      resolution: 16
-      width: 4000
-      worldMatrix: {elements: Array(16)}
-    }
-    */
     init(msg.data.params);
 
     const rebuiltData = rebuild();

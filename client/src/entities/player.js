@@ -17,6 +17,8 @@ export class Player extends Entity {
 
     this.model = new Model(args)
     this.movement = new Movement(args)
+
+    this.position.y = 10
   }
 
   update(deltaTime) {
@@ -24,6 +26,10 @@ export class Player extends Entity {
     this.movement.update(deltaTime)
     if (this.model.mixer) {
       this.model.mixer.update(deltaTime)
+    }
+    if (this.model.collisionBody) {
+      const pos = this.model.collisionBody.position
+      this.model.group.position.set(pos.x, pos.y, pos.z)
     }
   }
 }

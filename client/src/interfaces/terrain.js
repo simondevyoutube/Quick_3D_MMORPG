@@ -1,26 +1,26 @@
-import { biome_constants, colour_constants, terrain_constants } from "../data/constants.js";
+import { biome_constants, colour_constants, terrain_constants } from "../data/terrain/constants.js";
 import { THREE } from "../deps.js";
 import { Noise } from "../functions/noise.js";
 import { PS1, PS2, VS1, VS2 } from "../functions/terrain/shaders.js";
-import { TerrainChunkBuilder_Threaded } from "../functions/terrain/terrainbuilderthreaded.js";
-import { TextureSplatter } from "../functions/terrain/texturesplatter.js";
+import { ChunkBuilder } from "../functions/terrain/builder.js"
 import { DictDifference, DictIntersection } from "../functions/utils/objects.js";
-import { CubeQuadTree } from "../structures/quadtree.js";
+import { CubeQuadTree } from "../structures/trees.js"
 import { TextureAtlas } from "../structures/textureAtlas.js";
 
 
-export class Terrain {
+export class Planet {
+  // TODO-DefinitelyMaybe: Terrain generates scenery via a given key.
+  // This dictates height and scenery objects.
+  key = "123456789"
   chunks = {};
-  material = new THREE.MeshStandardMaterial({
-    side: THREE.BackSide,
-    vertexColors: true,
-  });
-
-  builder = new TerrainChunkBuilder_Threaded();
+  builder = new ChunkBuilder();
+  
   heightGenerator = new Noise(terrain_constants.NOISE_PARAMS);
   biomes = new Noise(biome_constants);
-  groups = [...new Array(6)].map((_) => new THREE.Group());
   colourNoise = new Noise(colour_constants);
+
+  // 6 groups for the 6 sides of a cube
+  groups = [...new Array(6)].map((_) => new THREE.Group());
 
   constructor(world) {
     this.world = world
@@ -57,6 +57,10 @@ export class Terrain {
       "./resources/terrain/bark1-normal3.jpg",
     ]);
 
+    this.material = new THREE.MeshStandardMaterial({
+      side: THREE.BackSide,
+      vertexColors: true,
+    });
     this.material.onBeforeCompile = (s) => {
       let vsh = s.vertexShader;
       vsh = VS1 + s.vertexShader;
@@ -90,28 +94,11 @@ export class Terrain {
   createTerrainChunk(group, groupTransform, offset, width, resolution) {
     const params = {
       group: group,
-      transform: groupTransform,
       material: this.material,
       width: width,
       offset: offset,
-      radius: terrain_constants.PLANET_RADIUS,
       resolution: resolution,
-      biomeGenerator: this.biomes,
-      colourGenerator: new TextureSplatter(
-        { biomeGenerator: this.biomes, colourNoise: this.colourNoise },
-      ),
-      heightGenerator: this.heightGenerator,
-      noiseParams: terrain_constants.NOISE_PARAMS,
-      colourNoiseParams: this.colourVars,
-      biomesParams: biome_constants,
-      colourGeneratorParams: {
-        biomeGeneratorParams: biome_constants,
-        colourNoiseParams: this.colourVars,
-      },
-      heightGeneratorParams: {
-        min: 100000,
-        max: 100000 + 1,
-      },
+      transform: groupTransform,
     };
 
     return this.builder.allocateChunk(params);
@@ -125,7 +112,7 @@ export class Terrain {
     return this.biomes.Get(pos.x, 0.0, pos.z);
   }
 
-  update(_) {
+  update() {
     // TODO-DefinitelyMaybe: Maybe this doesn't need to be called so oftened
     // how about simply when close to chunk edges?
     const target = this.world.entities.player;
@@ -135,14 +122,14 @@ export class Terrain {
 
     this.builder.update();
     if (!this.builder.Busy) {
-      this.updateVisibleChunks_Quadtree(target);
+      this.updateChunks(target);
     }
   }
 
-  updateVisibleChunks_Quadtree(target) {
+  updateChunks(target) {
     // TODO-DefinitelyMaybe: Play around with variables
     function _Key(c) {
-      return c.position[0] + "/" + c.position[2] + " [" + c.size + "]";
+      return `${c.position[0]} / ${c.position[2]} [${c.size}]`;
     }
 
     const q = new CubeQuadTree({
@@ -171,10 +158,12 @@ export class Terrain {
         };
 
         const k = _Key(child);
+        // console.log(k);
         newTerrainChunks[k] = child;
       }
     }
 
+    // TODO-DefinitelyMaybe: Remove code below once cubequadtree updates appropriately
     const intersection = DictIntersection(
       this.chunks,
       newTerrainChunks,
@@ -184,7 +173,9 @@ export class Terrain {
       DictDifference(this.chunks, newTerrainChunks),
     );
 
-    this.builder.retireChunks(recycle);
+    if (recycle.length > 0) {
+      this.builder.retireChunks(recycle); 
+    }
 
     newTerrainChunks = intersection;
 

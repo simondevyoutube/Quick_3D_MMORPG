@@ -37,6 +37,7 @@ export class ThreeInit {
   renderer = new THREE.WebGLRenderer({
     antialias: false,
     canvas: document.querySelector("canvas#game"),
+    logarithmicDepthBuffer: true
   });
   scene = new THREE.Scene();
   // TODO-DefinitelyMaybe: User variable for them to set at some point
@@ -96,7 +97,7 @@ export class ThreeInit {
     this.camera.position.set(1, 1, 1);
     this.camera.lookAt(0,0,0)
 
-    this.scene.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
+    this.scene.fog = new THREE.FogExp2(0x89b2eb, 0.0000025);
 
     let light = new THREE.DirectionalLight(0x8088b3, 0.7);
     light.position.set(-10, 500, 10);
@@ -120,10 +121,9 @@ export class ThreeInit {
 
   loadSky() {
     const hemiLight = new THREE.HemisphereLight(0x424a75, 0x6a88b5, 0.7);
-    // hemiLight.color.setHSL(0.6, 1, 0.4);
-    // hemiLight.groundColor.setHSL(0.095, 1, 0.5);
     this.scene.add(hemiLight);
 
+    // TODO-DefinitelyMaybe: doesn't use the world.assets just yet
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
       "./resources/terrain/space-posx.jpg",
@@ -142,7 +142,7 @@ export class ThreeInit {
       "exponent": { value: 0.3 },
       "background": { value: texture },
     };
-    // uniforms["topColor"].value.copy(hemiLight.color);
+    uniforms["topColor"].value.copy(hemiLight.color);
 
     this.scene.fog.color.copy(uniforms["bottomColor"].value);
 

@@ -1,11 +1,11 @@
-import { THREE } from "../../deps.js";
+import { THREE, cannon } from "../../deps.js";
 import { Assets } from "../../interfaces/assets.js";
 import { Entities } from "../../interfaces/entities.js";
 import { ThreeInit } from "../../interfaces/graphics.js";
 import { Input } from "../../interfaces/input.js";
 import { Network } from "../../interfaces/network.js";
 import { Physics } from "../../interfaces/physics.js";
-import { Terrain } from "../../interfaces/terrain.js";
+import { Planet } from "../../interfaces/terrain.js";
 
 export class World {
   initialized = false;
@@ -28,11 +28,8 @@ export class World {
 
     // terrain doesnt make sense unless three has already been initialized
     // unless we're computing height...
-    this.terrain = new Terrain(this)
+    this.terrain = new Planet(this)
 
-    // TODO-DefinitelyMaybe: Create a physics plane and render it
-
-    this.animate.bind(this)
     this.renderer.setAnimationLoop(()=>this.animate());
     this.resize();
     this.initialized = true;
@@ -66,7 +63,7 @@ export class World {
 
   update(dt) {
     this.physics.update(dt)
-    this.terrain.update(dt);
+    this.terrain.update();
     this.entities.update(dt)
     if (this.entities.player) {
       // this moves the position of the sun (for shadows)

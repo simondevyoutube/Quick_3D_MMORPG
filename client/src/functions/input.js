@@ -1,3 +1,5 @@
+import { cannon } from "../deps";
+
 export class Input {
   constructor(args) {
     // not needed yet but we'll see
@@ -13,7 +15,14 @@ export class Input {
   }
 
   handleKeyup(event) {
-    // console.log(event.key);
+    console.log(event.key);
+    switch (event.key) {
+      case " ":
+        this.entity.model.collisionBody.applyImpulse(new cannon.Vec3(0, 10, 0))
+        break;
+      default:
+        break;
+    }
   }
 
   handleKeydown(event) {

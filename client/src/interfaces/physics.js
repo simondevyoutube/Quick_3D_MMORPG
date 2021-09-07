@@ -4,10 +4,10 @@ export class Physics {
   world = new cannon.World()
 
   constructor(){
-    console.log(cannon);
     this.world.gravity.set(0,-40,0)
     // TODO-DefinitelyMaybe: get height data and make plane with it
     // https://github.com/pmndrs/cannon-es/blob/master/examples/heightfield.html
+    // https://github.com/pmndrs/cannon-es/blob/master/examples/bunny.html
     const groundShape = new cannon.Plane()
     const groundBody = new cannon.Body({ mass: 0 })
     groundBody.addShape(groundShape)
@@ -15,9 +15,13 @@ export class Physics {
     this.world.addBody(groundBody)
   }
 
-  add(){}
-
   update(deltaTime){
     this.world.step(deltaTime)
+    const entities = this.world.bodies.filter(body => body.entity)
+    for (let i = 0; i < entities.length; i++) {
+      const body = entities[i];
+      const pos = body.position
+      body.entity.position.set(pos.x, pos.y, pos.z)
+    }
   }
 }

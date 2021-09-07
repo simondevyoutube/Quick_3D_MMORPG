@@ -1,57 +1,59 @@
 import { THREE } from "../deps.js";
 
+/** For generating a 3D cube that looks like a sphere */
 export class CubeQuadTree {
-  constructor(params) {
-    this._params = params;
-    this._sides = [];
-
-    const r = params.radius;
-    let m;
+  constructor(args) {
+    this.radius = args.radius;
+    this.minSize = args.min_node_size
+    this.faces = [];
 
     const transforms = [];
 
+    // TODO-DefinitelyMaybe: Keeping it simple to begin with. Only one of the cube faces is active
+    // ref: https://www.youtube.com/watch?v=HIYs7Hoq2yQ
+    
     // +Y
-    m = new THREE.Matrix4();
-    m =
-      // m.makeRotationX(-Math.PI / 2);
-      // m.premultiply(new THREE.Matrix4().makeTranslation(0, r, 0));
-      transforms.push(m);
+    let m = new THREE.Matrix4();
+    m = transforms.push(m);
+    // m.makeRotationX(-Math.PI / 2);
+    // m.premultiply(new THREE.Matrix4().makeTranslation(0, this.radius, 0));
+    // transforms.push(m);  
 
     // // -Y
     // m = new THREE.Matrix4();
     // m.makeRotationX(Math.PI / 2);
-    // m.premultiply(new THREE.Matrix4().makeTranslation(0, -r, 0));
+    // m.premultiply(new THREE.Matrix4().makeTranslation(0, -this.radius, 0));
     // transforms.push(m);
 
     // // +X
     // m = new THREE.Matrix4();
     // m.makeRotationY(Math.PI / 2);
-    // m.premultiply(new THREE.Matrix4().makeTranslation(r, 0, 0));
+    // m.premultiply(new THREE.Matrix4().makeTranslation(this.radius, 0, 0));
     // transforms.push(m);
 
     // // -X
     // m = new THREE.Matrix4();
     // m.makeRotationY(-Math.PI / 2);
-    // m.premultiply(new THREE.Matrix4().makeTranslation(-r, 0, 0));
+    // m.premultiply(new THREE.Matrix4().makeTranslation(-this.radius, 0, 0));
     // transforms.push(m);
 
     // // +Z
     // m = new THREE.Matrix4();
-    // m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, r));
+    // m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, this.radius));
     // transforms.push(m);
 
     // // -Z
     // m = new THREE.Matrix4();
     // m.makeRotationY(Math.PI);
-    // m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, -r));
+    // m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, -this.radius));
     // transforms.push(m);
 
     for (let t of transforms) {
-      this._sides.push({
+      this.faces.push({
         transform: t.clone(),
         quadtree: new QuadTree({
-          size: r,
-          min_node_size: params.min_node_size,
+          size: this.radius,
+          min_node_size: this.minSize,
         }),
       });
     }
@@ -60,24 +62,26 @@ export class CubeQuadTree {
   GetChildren() {
     const children = [];
 
-    for (let s of this._sides) {
-      const side = {
-        transform: s.transform,
-        children: s.quadtree.GetChildren(),
-      };
-      children.push(side);
+    for (const face of this.faces) {
+      children.push({
+        transform: face.transform,
+        children: face.quadtree.GetChildren(),
+      });
     }
     return children;
   }
 
   Insert(pos) {
-    for (let s of this._sides) {
-      s.quadtree.Insert(pos);
+    // TODO-DefinitelyMaybe: wouldn't we only insert a position into a single face?
+    for (const face of this.faces) {
+      face.quadtree.Insert(pos);
     }
   }
 }
 
+/** For generating a 2D landscape */
 export class QuadTree {
+  // TODO-DefinitelyMaybe: Create a method of update so that we don't need to keep recreating the structure
   constructor(params) {
     const s = params.size;
     const b = new THREE.Box3(
