@@ -24,6 +24,7 @@ Structure will set you free.
 - Terrain
   - Predefined map (Manual work but very simple)
   - Infinite 2D side scrolling or birds-eye ( Simplist procedural  )
+    - https://www.youtube.com/watch?v=jV-DZqdKlnE
   - Infinite 3D height map ( Easy enough procedural )
   - Space ( Hard and requires a good setup)
     - Generating spheres
@@ -58,3 +59,15 @@ Structure will set you free.
 # Starting the frontend client
 
 `cd ./client` then `npm i` then `npm dev`
+
+```javascript
+// https://www.youtube.com/watch?v=mr5xkf6zSzk
+// Cubic (3rd) Bezier through A,B,C,D where A(start) and D (end) are assumed to be 0 and 1
+function NormalizedBezier3(B, C, t) {
+  const s = 1 - t
+  const t2 = t*t
+  const s2 = s*s
+  const t3 = t2*t
+  return (3*B*s2*t) + (3*C*s*t2) + t3
+}
+```
