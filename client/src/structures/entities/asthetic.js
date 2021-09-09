@@ -1,8 +1,8 @@
-import { Entity } from "../structures/entity.js";
-import { Model } from "../functions/model.js";
-import { rand_int } from "../functions/math.js";
+import { Entity } from "../entity.js";
+import { Model } from "../../functions/model.js";
+import { rand_int } from "../../functions/math.js";
 
-import { newRockData } from "../data/models/rocks/mod.js";
+import { newRockData } from "../../data/models/rocks/mod.js";
 
 export class Asthetic extends Entity {
   constructor(args){

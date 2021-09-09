@@ -1,9 +1,9 @@
-import { newCharacterData } from "../data/models/characters/mod.js";
-import { OrbitControls } from "../deps.js";
-import { Movement } from "../functions/actions/playermove.js";
-import { Input } from "../functions/input.js";
-import { Model } from "../functions/model.js";
-import { Entity } from "../structures/entity.js";
+import { newCharacterData } from "../../data/models/characters/mod.js";
+import { OrbitControls } from "../../deps.js";
+import { Movement } from "../../functions/actions/playermove.js";
+import { Input } from "../../functions/input.js";
+import { Model } from "../../functions/model.js";
+import { Entity } from "../entity.js";
 
 
 export class Player extends Entity {

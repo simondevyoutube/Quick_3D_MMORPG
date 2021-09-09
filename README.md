@@ -39,6 +39,7 @@ Structure will set you free.
   - themes
 - Networking
   - Logic regarding an entity has moved closer to that entity
+  - Move routes from client-side src to server-side?
   - [ ] Webstream websockets
   - Server to deno
    - [x] mockup ws test

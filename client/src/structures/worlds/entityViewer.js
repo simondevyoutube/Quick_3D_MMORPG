@@ -1,7 +1,7 @@
 import { THREE } from "../../deps.js";
 import { Assets } from "../../interfaces/assets.js";
 import { ThreeInit } from "../../interfaces/graphics.js";
-import { newEntityClass } from "../../entities/mod.js";
+import { newEntityClass } from "../entities/mod.js";
 
 export class World {
   previousTime = 0;

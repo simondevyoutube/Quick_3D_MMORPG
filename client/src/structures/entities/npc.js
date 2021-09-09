@@ -1,7 +1,7 @@
-import { Entity } from "../structures/entity.js";
-import { Model } from "../functions/model.js";
+import { Entity } from "../entity.js";
+import { Model } from "../../functions/model.js";
 
-import { newCharacterData } from "../data/models/characters/mod.js";
+import { newCharacterData } from "../../data/models/characters/mod.js";
 
 
 export class NPC extends Entity {

@@ -1,5 +1,5 @@
 import { THREE } from "../deps.js";
-import { newEntityClass } from "../structures/entities/mod.js";
+import { newEntityClass } from "../entities/mod.js";
 
 export class Entities {
   map = {};

@@ -1,5 +1,5 @@
-import { THREE } from "../deps.js";
-import { LinearSpline } from "../functions/spline.js";
+import { THREE } from "../../deps.js";
+import { LinearSpline } from "../../functions/spline.js";
 
 const _VS = /* glsl */`
   uniform float pointMultiplier;
