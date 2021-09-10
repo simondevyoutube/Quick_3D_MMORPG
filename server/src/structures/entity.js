@@ -1,19 +1,19 @@
-import { cannon } from "../deps.js";
+import { Vec3, Quaternion } from "../deps.js";
 
 let ID = 0
 
 export class Entity {
   constructor() {
     this.id = ID++;
-    this.position = new cannon.Vec3();
-    this.quaternion = new cannon.Quat();
+    this.position = new Vec3();
+    this.quaternion = new Quaternion();
   }
 
   toJSON() {
     return {
       id: this.id,
-      position: this.position,
-      quaternion: this.quaternion,
+      position: this.position.toArray(),
+      quaternion: this.quaternion.toArray(),
     }
   }
 }

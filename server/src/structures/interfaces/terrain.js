@@ -1,4 +1,5 @@
-import { biome_constants, colour_constants, terrain_constants } from "../data/terrain/constants.js";
+import { biome_constants, colour_constants, terrain_constants } from "../../../client/src/data/terrain/constants.js";
+
 import { THREE } from "../deps.js";
 import { Noise } from "../functions/noise.js";
 import { PS1, PS2, VS1, VS2 } from "../functions/terrain/shaders.js";

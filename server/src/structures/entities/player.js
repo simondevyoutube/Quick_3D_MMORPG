@@ -1,15 +1,22 @@
-import { newCharacterData } from "../data/models/characters/mod.js";
-import { Movement } from "../../functions/actions/playermove.js";
+import { newCharacterData } from "../../deps.js";
+// import { Movement } from "../../functions/actions/playermove.js";
 import { Entity } from "../entity.js";
 
 
 export class Player extends Entity {
   constructor (args) {
     super()
-    args = Object.assign(args, newCharacterData(args.model), {entity:this})
-    this.movement = new Movement(args)
-    this.network = args.network
+    this.name = args.name ? args.name : "test";
+    this.characterData = newCharacterData(args.model)
+    this.model = this.characterData.name
+    // this.movement = new Movement(args)
+    // this.network = args.network
   }
 
-  update() {}
+  toJSON(){
+    const data = super.toJSON()
+    data.name = this.name
+    data.model = this.model
+    return data
+  }
 }

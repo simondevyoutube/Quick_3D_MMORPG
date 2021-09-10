@@ -18,7 +18,7 @@ export class Model {
     this.bones = {}
     this.mixer = undefined
     this.actions = {}
-    this.currentAction = args.transform[0] ? args.transform[0] : undefined
+    this.currentAction = args.state ? args.state : undefined
 
     this.physics = args.world.physics
     this.physicsArgs = args.physics

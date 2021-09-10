@@ -10,7 +10,7 @@ import { Planet } from "../../interfaces/terrain.js";
 export class World {
   initialized = false;
 
-  network = new Network();
+  network = new Network(this);
   assets = new Assets()
   physics = new Physics()
   input = new Input(this)

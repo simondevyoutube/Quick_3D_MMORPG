@@ -1,42 +1,73 @@
-import { io } from "../deps.js";
-
 export class Network {
-  websocket = io(`ws://localhost:3000`, {
-    reconnection: false,
-    transports: ["websocket"],
-    timeout: 10000,
-  });
+  // TODO-DefinitelyMaybe: Making it a secure connection will help.
+  ws = new WebSocket(`ws://localhost:3000`);
   playerID;
 
-  constructor() {
-    // TODO-DefinitelyMaybe: attempt to reconnect via `ws.connet()`
-    this.websocket.on("connect", () => {
-      const randomName = this.GenerateRandomName_();
+  constructor(world) {
+    console.log(world);
+    this.world = world
+    this.ws.onopen = () => {
+      console.log("connected");
+    }
+    this.ws.onmessage = (event) => {      
+      this.handleMessage(JSON.parse(event.data))
+    };
+    this.ws.onerror = (event) => {
+      console.error(event);
+    }
+    this.ws.onclose = () => {
+      console.log("connection lost");
+    };
+  }
 
-      // TODO-DefinitelyMaybe: I don't think login belongs here
-      // Input validation is for losers
-      this.websocket.emit(
-        "login.commit",
-        randomName,
-      );
-    });
+  handleMessage(message){
+    console.log(message);
+    const {event} = message
+    switch (event) {
+      case 'login':
+        this.login()
+        break;
+      case 'world.player':
+        this.worldPlayer(message)
+        break;
+      default:
+        console.warn(`Didn't know what to do with ${event}`);
+        break;
+    }
+  }
 
-    this.websocket.on("disconnect", () => {
-      console.log("DISCONNECTED");
-    });
+  update(d){
+    // The network is truth. generally speaking.
+    for (let i = 0; i < d.length; i++) {
+      const {id, transform} = d[i];
+      const entity = d[i].desc ? d[i].desc.character.class : false
+      // Can't currently guarantee them all
+      if (transform && id && entity) {
+        this.receive({id, transform, entity})
+      }
+    }
+  }
 
-    this.websocket.on("world.player", (data) => {
-      // remember the playerID that we care about
-      this.playerID = data.id;
-    })
+  chatMessage(d){
+    if (this.chat) {
+      this.chat.receive(d) 
+    }
+  }
 
-    this.websocket.onAny((e,d) => {
-      // world.player
-      // world.stats
-      // chat.message
-      // world.update x infinity
-      // these are the current events being received
-    })
+  worldPlayer(data) {
+    const { id, position, quaternion, name, model } = data.player;
+    const entity = "player"
+    const state = "idle"
+    console.log(this);
+    this.world.entities.receive({id, position, quaternion, entity, name, model, state})
+  }
+
+  login(){
+    // TODO-DefinitelyMaybe: Normally there'd be gathering up credentials
+    // and sending those to the server to be verified
+    // but for now we're going to assume everythings ok
+    // console.log("Attempting to login");
+    this.ws.send(JSON.stringify({event:"login.commit", login:"test", password:"password"}))
   }
 
   // TODO-DefinitelyMaybe: Placeholder until Login queue / Actual Account is tackled

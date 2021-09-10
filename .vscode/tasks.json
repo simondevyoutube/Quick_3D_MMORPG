@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "deno: Start World Server",
+			"type": "deno",
+			"command": "run",
+			"args": [
+				"-A",
+				"--unstable",
+				"--no-check",
+				"./server/src/structures/interfaces/http.js"
+			],
+			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "Client Dev",
+			"path": "client/",
+			"problemMatcher": [],
+			"label": "node: Client Dev Server",
+			"detail": "svelte-kit dev --port=8080"
+		}
+	]
+}

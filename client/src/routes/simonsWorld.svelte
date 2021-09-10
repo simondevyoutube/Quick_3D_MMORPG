@@ -26,11 +26,6 @@
 
   onMount(() => {
     world = new World()
-    world.network.websocket.on("chat.message", (d) => {
-      if (chat) {
-        chat.receive(d) 
-      }
-    })
     showHUD = true
     world.resize()
   })

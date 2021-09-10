@@ -1,8 +1,10 @@
 {
-  "deno.enable": false,
+  "deno.enable": true,
+  // "deno.codeLens.implementations": true,
+  // "deno.codeLens.references": true,
+  // "deno.codeLens.referencesAllFunctions": true,
   "deno.suggest.autoImports": true,
   "deno.suggest.imports.autoDiscover": true,
-  "deno.unstable": true,
   "deno.suggest.imports.hosts": {
     "https://esm.": false,
     "https://deno.land": false,
@@ -13,4 +15,6 @@
     "https://cdn.skypack.esm.sh": false,
     "https://cdn.skypack.dev": false
   },
+  "deno.lint": true,
+  "deno.unstable": true,
 }

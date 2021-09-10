@@ -10,6 +10,8 @@ export class Player extends Entity {
   constructor (args) {
     super(args)
     args = Object.assign(args, newCharacterData(args.model), {entity:this})
+    console.log("Player Entity constructor");
+    console.log(args);
     this.input = new Input(args)
     this.camera = new OrbitControls(args.world.camera, args.world.renderer.domElement)
     this.camera.target.set(-50, 0, -5)
