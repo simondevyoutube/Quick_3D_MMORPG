@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { World } from "../structures/worlds/entityViewer.js";
+  import { World } from "../worlds/entityViewer.js";
   import Menu from "../ui/game/menu.svelte";
 
   let world;

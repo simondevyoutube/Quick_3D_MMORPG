@@ -13,10 +13,10 @@ Structure will set you free.
   - folder structure
     - data -> when keeping information within the scripts is labourious
     - entities -> Things that could be placed in a world
-    - functions -> Code that does something for something else
     - interfaces -> Code that organizes/does-the-bookkeeping-for entities and other systems
-    - routes -> used by svelte-kit for routing
     - ui -> svelte components used within the pages, includes world ui
+    - worlds -> games that've combined various interfaces, entities, ui etc...
+    - routes -> used by svelte-kit for routing
   - remove/renamed folders/files/code
     - Components have been removed. Integrate a class or function instead.
     - rotation -> quaternion
@@ -39,10 +39,9 @@ Structure will set you free.
   - themes
 - Networking
   - Logic regarding an entity has moved closer to that entity
+  - [x] Server changed to deno
   - Move routes from client-side src to server-side?
-  - [ ] Webstream websockets
-  - Server to deno
-   - [x] mockup ws test
+  - Webstream websockets?
 - Game Dev
   - typescript (not yet)
   - three.js glsl highlighting by vscode extensions
@@ -50,7 +49,8 @@ Structure will set you free.
   - [ ] objects inventory / place
   - [ ] save / load (scenes / data)
 - Distribution
-  - [ ] Electron app
+  - Electron app
+  - Website
 - HOW-TO/readmes
  - Getting a model into the game
    - [Checking your model](https://gltf-viewer.donmccurdy.com/)

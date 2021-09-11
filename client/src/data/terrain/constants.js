@@ -1,11 +1,11 @@
 const NOISE_HEIGHT = 800.0;
 const NOISE_SCALE = 1800.0;
 
-export const terrain_constants = {
+export const terrainConstants = {
   QT_MIN_CELL_SIZE: 256,
   QT_MIN_CELL_RESOLUTION: 16,
 
-  PLANET_RADIUS: 1000,
+  PLANET_RADIUS: 4000,
 
   NOISE_HEIGHT,
   NOISE_SCALE,
@@ -17,11 +17,11 @@ export const terrain_constants = {
     exponentiation: 7.5,
     height: NOISE_HEIGHT,
     scale: NOISE_SCALE,
-    seed: 1,
+    seed: 2,
   },
 };
 
-export const biome_constants = {
+export const biomeConstants = {
   octaves: 2,
   persistence: 0.5,
   lacunarity: 2.0,
@@ -32,7 +32,7 @@ export const biome_constants = {
   height: 1.0,
 };
 
-export const colour_constants = {
+export const colourConstants = {
   octaves: 1,
   persistence: 0.5,
   lacunarity: 2.0,

@@ -97,9 +97,9 @@ export class ThreeInit {
     this.camera.position.set(1, 1, 1);
     this.camera.lookAt(0,0,0)
 
-    // this.scene.fog = new THREE.FogExp2(0x89b2eb, 0.0000025);
+    this.scene.fog = new THREE.FogExp2(0x89b2eb, 0.0000025);
 
-    let light = new THREE.DirectionalLight(0x8088b3, 0.7);
+    const light = new THREE.DirectionalLight(0x8088b3, 0.7);
     light.position.set(-10, 500, 10);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
@@ -116,7 +116,7 @@ export class ThreeInit {
 
     this.sun = light;
 
-    // this.loadSky();
+    this.loadSky();
   }
 
   loadSky() {

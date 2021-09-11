@@ -4,7 +4,6 @@ export class Network {
   playerID;
 
   constructor(world) {
-    console.log(world);
     this.world = world
     this.ws.onopen = () => {
       console.log("connected");
@@ -21,8 +20,8 @@ export class Network {
   }
 
   handleMessage(message){
-    console.log(message);
     const {event} = message
+    console.log(`${event} event`);
     switch (event) {
       case 'login':
         this.login()
@@ -39,12 +38,8 @@ export class Network {
   update(d){
     // The network is truth. generally speaking.
     for (let i = 0; i < d.length; i++) {
-      const {id, transform} = d[i];
-      const entity = d[i].desc ? d[i].desc.character.class : false
-      // Can't currently guarantee them all
-      if (transform && id && entity) {
-        this.receive({id, transform, entity})
-      }
+      const { id, position, quaternion, name, model } = d[i];
+      this.world.entities.receive({ id, position, quaternion, name, model })
     }
   }
 
@@ -58,7 +53,6 @@ export class Network {
     const { id, position, quaternion, name, model } = data.player;
     const entity = "player"
     const state = "idle"
-    console.log(this);
     this.world.entities.receive({id, position, quaternion, entity, name, model, state})
   }
 

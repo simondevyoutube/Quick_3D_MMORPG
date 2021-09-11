@@ -1,5 +1,5 @@
 import { THREE } from "../deps.js";
-import { newEntityClass } from "../structures/entities/mod.js";
+import { newEntityClass } from "../entities/mod.js";
 
 export class Entities {
   map = {};
@@ -32,9 +32,7 @@ export class Entities {
       // console.log("Creating a new entity");
       try {
         const entityClass = newEntityClass(entity)
-        console.log(entityClass);
         const newEntity = new entityClass({id, position, quaternion, state, model, world:this.world})
-        console.log("Entity Created");
         if (name) {
           // TODO-DefinitelyMaybe: set chat author name
           newEntity.name = name
@@ -42,7 +40,6 @@ export class Entities {
         }
         this.add(newEntity)
       } catch (err) {
-        console.error(data);
         throw `Tried to create a new entity but: ${err}`;
       }
     }

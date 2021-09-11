@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { World } from "../structures/worlds/simonsWorld.js";
+  import { World } from "../worlds/simonsWorld.js";
   import Chat from "../ui/game/chat.svelte";
   import HUD from "../ui/game/hud.svelte";
   import Menu from "../ui/game/menu.svelte";

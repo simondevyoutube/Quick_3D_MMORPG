@@ -8,8 +8,7 @@
 			"args": [
 				"-A",
 				"--unstable",
-				"--no-check",
-				"./server/src/structures/interfaces/http.js"
+				"./server/src/interfaces/http.js"
 			],
 			"problemMatcher": []
 		},
