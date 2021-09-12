@@ -325,11 +325,11 @@ function sat(x) {
 }
 
 self.onmessage = (msg) => {
-  if (msg.data.subject == "build_chunk") {
+  if (msg.data.event == "build") {
     init(msg.data.params);
 
     const rebuiltData = rebuild();
 
-    self.postMessage({ subject: "build_chunk_result", data: rebuiltData });
+    self.postMessage({ event: "result", data: rebuiltData });
   }
 };

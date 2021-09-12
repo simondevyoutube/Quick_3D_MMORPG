@@ -48,7 +48,7 @@ export class CubeQuadTree {
     // m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, -this.radius));
     // transforms.push(m);
 
-    for (let t of transforms) {
+    for (const t of transforms) {
       this.faces.push({
         transform: t.clone(),
         quadtree: new QuadTree({

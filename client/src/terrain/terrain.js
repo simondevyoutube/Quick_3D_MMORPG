@@ -1,32 +1,28 @@
-import { biomeConstants, colourConstants, terrainConstants } from "../data/terrain/constants.js";
+import { terrainConstants } from "../data/terrain/constants.js";
 import { THREE } from "../deps.js";
-import { Noise } from "./noise.js";
 import { PS1, PS2, VS1, VS2 } from "./shaders.js";
 import { ChunkBuilder } from "./builder.js"
+// TODO-DefinitelyMaybe: use the quad tree, not the cubequadtree
 import { CubeQuadTree } from "./trees.js"
 import { TextureAtlas } from "./textureAtlas.js";
 
 
 export class InfiniteTerrain {
   // TODO-DefinitelyMaybe: Sort out the colour. Sometimes it'll load as black.
-  // TODO-DefinitelyMaybe: Terrain generates scenery via a given key.
-  // This dictates height and scenery objects.
-  key = "123456789"
+  // TODO-DefinitelyMaybe: Terrain generates scenery too
+  key = 123456789
   chunks = {};
   builder = new ChunkBuilder();
-  
-  heightGenerator = new Noise(terrainConstants.NOISE_PARAMS);
-  biomes = new Noise(biomeConstants);
-  colourNoise = new Noise(colourConstants);
 
   // 6 groups for the 6 sides of a cube, right?
-  groups = [...new Array(6)].map((_) => new THREE.Group());
+  // groups = [...new Array(6)].map((_) => new THREE.Group());
+  // Lets just keep things simple for the moment
+  groups = [new THREE.Group()]
 
   constructor(world) {
     this.world = world
-    this.assets = world.assets
 
-    const noiseTexture = this.assets.loadSync(
+    const noiseTexture = this.world.assets.loadSync(
       "./resources/terrain/simplex-noise.png",
     );
     noiseTexture.wrapS = THREE.RepeatWrapping;
@@ -91,27 +87,6 @@ export class InfiniteTerrain {
     this.world.scene.add(...this.groups);
   }
 
-  createTerrainChunk(group, groupTransform, offset, width, resolution) {
-    const params = {
-      group: group,
-      material: this.material,
-      width: width,
-      offset: offset,
-      resolution: resolution,
-      transform: groupTransform,
-    };
-
-    return this.builder.allocateChunk(params);
-  }
-
-  getHeight(pos) {
-    return this.heightGenerator.Get(pos.x, 0.0, pos.z);
-  }
-
-  getBiomeAt(pos) {
-    return this.biomes.Get(pos.x, 0.0, pos.z);
-  }
-
   update() {
     // TODO-DefinitelyMaybe: Maybe this doesn't need to be called so oftened
     // how about simply when close to chunk edges?
@@ -121,76 +96,73 @@ export class InfiniteTerrain {
     }
 
     this.builder.update();
-    if (!this.builder.Busy) {
-      this.updateChunks(target);
-    }
-  }
-
-  updateChunks(target) {
-    // TODO-DefinitelyMaybe: Play around with variables
-    const q = new CubeQuadTree({
-      radius: terrainConstants.PLANET_RADIUS,
-      min_node_size: terrainConstants.QT_MIN_CELL_SIZE,
-    });
-    q.Insert(target.position);
-
-    const sides = q.GetChildren();
-
-    let newTerrainChunks = {};
-    const center = new THREE.Vector3();
-    const dimensions = new THREE.Vector3();
-    for (let i = 0; i < sides.length; i++) {
-      for (const c of sides[i].children) {
-        c.bounds.getCenter(center);
-        c.bounds.getSize(dimensions);
-
-        const child = {
-          index: i,
-          group: this.groups[i],
-          transform: sides[i].transform,
-          position: [center.x, center.y, center.z],
-          bounds: c.bounds,
-          size: dimensions.x,
-        };
-
-        const k = `${center.x} / ${center.z} [${child.size}]`;
-        newTerrainChunks[k] = child;
+    if (!this.builder.busy) {
+      const q = new CubeQuadTree({
+        radius: terrainConstants.PLANET_RADIUS,
+        min_node_size: terrainConstants.QT_MIN_CELL_SIZE,
+      });
+      q.Insert(target.position);
+  
+      const sides = q.GetChildren();
+  
+      let newTerrainChunks = {};
+      const center = new THREE.Vector3();
+      const dimensions = new THREE.Vector3();
+      for (let i = 0; i < sides.length; i++) {
+        for (const c of sides[i].children) {
+          c.bounds.getCenter(center);
+          c.bounds.getSize(dimensions);
+  
+          const child = {
+            index: i,
+            group: this.groups[i],
+            transform: sides[i].transform,
+            position: [center.x, center.y, center.z],
+            bounds: c.bounds,
+            size: dimensions.x,
+          };
+  
+          const k = `${center.x} / ${center.z} [${child.size}]`;
+          newTerrainChunks[k] = child;
+        }
       }
+  
+      // TODO-DefinitelyMaybe: WHAT-IF the tree could update itself?
+      const intersection = DictIntersection(
+        this.chunks,
+        newTerrainChunks,
+      );
+      const difference = DictDifference(newTerrainChunks, this.chunks);
+  
+      newTerrainChunks = intersection;
+  
+      for (const k in difference) {
+        const [xp, yp, zp] = difference[k].position;
+  
+        const offset = new THREE.Vector3(xp, yp, zp);
+        newTerrainChunks[k] = {
+          position: [xp, zp],
+          chunk: this.builder.build({
+            group: difference[k].group,
+            material: this.material,
+            width: difference[k].size,
+            offset: offset,
+            resolution: terrainConstants.QT_MIN_CELL_RESOLUTION,
+            transform: difference[k].transform,
+          }),
+        };
+      }
+
+      const recycle = Object.values(
+        DictDifference(this.chunks, newTerrainChunks),
+      );
+
+      if (recycle.length > 0) {
+        // TODO-DefinitelyMaybe: When the quadtree can update itself this will no be needed
+        this.builder.old.push(...recycle);
+      }
+      this.chunks = newTerrainChunks;
     }
-
-    // TODO-DefinitelyMaybe: Remove code below once cubequadtree updates appropriately
-    const intersection = DictIntersection(
-      this.chunks,
-      newTerrainChunks,
-    );
-    const difference = DictDifference(newTerrainChunks, this.chunks);
-    const recycle = Object.values(
-      DictDifference(this.chunks, newTerrainChunks),
-    );
-
-    if (recycle.length > 0) {
-      this.builder.retireChunks(recycle); 
-    }
-
-    newTerrainChunks = intersection;
-
-    for (let k in difference) {
-      const [xp, yp, zp] = difference[k].position;
-
-      const offset = new THREE.Vector3(xp, yp, zp);
-      newTerrainChunks[k] = {
-        position: [xp, zp],
-        chunk: this.createTerrainChunk(
-          difference[k].group,
-          difference[k].transform,
-          offset,
-          difference[k].size,
-          terrainConstants.QT_MIN_CELL_RESOLUTION,
-        ),
-      };
-    }
-
-    this.chunks = newTerrainChunks;
   }
 }
 

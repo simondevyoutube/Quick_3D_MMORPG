@@ -9,7 +9,6 @@ export class Model {
     this.scene = args.world.scene
 
     this.group = undefined
-    this.geometry = undefined
     this.textures = {}
     this.texturesArgs = args.textures
 
@@ -107,11 +106,6 @@ export class Model {
             m.emissive = this.emissive;
           }
         }
-      }
-
-      if (c.geometry) {
-        this.geometry = c.geometry
-        c.geometry.computeBoundingBox();
       }
 
       if (this.receiveShadow != undefined) {

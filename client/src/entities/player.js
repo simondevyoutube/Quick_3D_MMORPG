@@ -12,16 +12,16 @@ export class Player extends Entity {
     args = Object.assign(args, newCharacterData(args.model), {entity:this})
     this.input = new Input(args)
     this.camera = new OrbitControls(args.world.camera, args.world.renderer.domElement)
-    this.camera.target.set(-50, 0, -5)
+    this.camera.target.set(0, 0, 0)
     this.camera.update()
     this.model = new Model(args)
     this.movement = new Movement(args)
 
-    this.position.y = 10
+    this.position.y = 5
   }
 
   update(deltaTime) {
-    // this.camera.update(deltaTime)
+    // this.camera.target.set(this.position)
     this.movement.update(deltaTime)
     if (this.model.mixer) {
       this.model.mixer.update(deltaTime)
