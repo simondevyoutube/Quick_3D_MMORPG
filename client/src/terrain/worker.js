@@ -23,6 +23,7 @@ function init(args) {
 }
 
 function rebuild() {
+  // TODO-DefinitelyMaybe: rename these appropriately
   const _D = new THREE.Vector3();
   const _D1 = new THREE.Vector3();
   const _D2 = new THREE.Vector3();
@@ -32,6 +33,7 @@ function rebuild() {
   const _S = new THREE.Vector3();
   const _C = new THREE.Vector3();
 
+  // normals right? ... right?
   const _N = new THREE.Vector3();
   const _N1 = new THREE.Vector3();
   const _N2 = new THREE.Vector3();
@@ -248,6 +250,11 @@ function rebuild() {
     weights2.push(splats[2][typeValues[1].key].strength);
     weights2.push(splats[2][typeValues[0].key].strength);
   }
+
+  // TODO-DefinitelyMaybe: Sort out scenery within the worker?
+  // const roll = this.noise_.Get(spawnPos.x, 3.0, spawnPos.z);
+  // const randomProp = _SCENERY[
+  //     matchingScenery[Math.round(roll * (matchingScenery.length - 1))]];
 
   function _Unindex(src, stride) {
     const dst = [];

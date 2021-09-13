@@ -1,28 +1,30 @@
-import { simplex } from "./simplex.js";
+import { SimplexNoise } from "./simplex.js";
 
 export class Noise {
-  constructor(params) {
-    this._params = params;
-    this._Init();
-  }
+  constructor(args) {
+    this.exponentiation = args.exponentiation
+    this.height = args.height
+    this.lacunarity = args.lacunarity
+    this.octaves = args.octaves
+    this.persistence = args.persistence
+    this.scale = args.scale
+    this.seed = args.seed
 
-  _Init() {
-    this._noise = new simplex.SimplexNoise(this._params.seed);
+    this.noise = new SimplexNoise(this.seed);
   }
 
   Get(x, y, z) {
-    const G = 2.0 ** (-this._params.persistence);
-    const xs = x / this._params.scale;
-    const ys = y / this._params.scale;
-    const zs = z / this._params.scale;
-    const noiseFunc = this._noise;
+    const G = 2.0 ** (-this.persistence);
+    const xs = x / this.scale;
+    const ys = y / this.scale;
+    const zs = z / this.scale;
 
     let amplitude = 1.0;
     let frequency = 1.0;
     let normalization = 0;
     let total = 0;
-    for (let o = 0; o < this._params.octaves; o++) {
-      const noiseValue = noiseFunc.noise3D(
+    for (let o = 0; o < this.octaves; o++) {
+      const noiseValue = this.noise.noise3D(
             xs * frequency,
             ys * frequency,
             zs * frequency,
@@ -31,12 +33,12 @@ export class Noise {
       total += noiseValue * amplitude;
       normalization += amplitude;
       amplitude *= G;
-      frequency *= this._params.lacunarity;
+      frequency *= this.lacunarity;
     }
     total /= normalization;
     return Math.pow(
       total,
-      this._params.exponentiation,
-    ) * this._params.height;
+      this.exponentiation,
+    ) * this.height;
   }
 }

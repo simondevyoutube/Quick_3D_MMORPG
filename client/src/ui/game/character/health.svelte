@@ -10,7 +10,7 @@
     width: 20%;
     height: 1em;
     position: absolute;
-    top: 5%;
-    left: 1%;
+    bottom: 10%;
+    left: 50%;
   }
 </style>
