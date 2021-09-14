@@ -2,7 +2,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "deno: Start World Server",
+			"label": "World Server",
 			"type": "deno",
 			"command": "run",
 			"args": [
@@ -17,8 +17,8 @@
 			"script": "Client Dev",
 			"path": "client/",
 			"problemMatcher": [],
-			"label": "node: Client Dev Server",
-			"detail": "svelte-kit dev --port=8080"
+			"label": "Client Dev",
+			"detail": "svelte-kit dev"
 		}
 	]
 }

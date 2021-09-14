@@ -4,7 +4,8 @@
   import Chat from "../ui/game/chat.svelte";
   import HUD from "../ui/game/hud.svelte";
   import Menu from "../ui/game/menu.svelte";
-  import SimplexViewer from "../ui/dev/simplex.svelte";
+  import Simplex from "../ui/dev/simplex.svelte";
+  import Points from "../ui/dev/points.svelte";
 
 
   let world;
@@ -51,9 +52,9 @@
   world.network.websocket.emit("chat.message", text)
 }}"></Chat>
 <HUD></HUD>
-<Menu on:test="{test}"
-  on:test2="{test2}"></Menu>
-<SimplexViewer></SimplexViewer>
+<Menu on:test="{test}" on:test2="{test2}"></Menu>
+<Simplex></Simplex>
+<Points></Points>
 
 <style>
   :global(body) {

@@ -16,20 +16,13 @@
   let persistence = .4
   let lacunarity = 2
 
-  $: if (imageData != undefined){
+  $: if (canvas != undefined) {
     seed
     scale
     octaves
     persistence
     lacunarity
     computeNewImage()
-  }
-
-  let numPoints = 10
-  let drawPoints = true;
-
-  $: {
-    console.log({numPoints,drawPoints});
   }
 
   function computeNewImage() {
@@ -47,6 +40,7 @@
     imageData = context.createImageData(canvas.width, canvas.height)
     worker = new Worker('./src/ui/dev/simplexWorker.js', {type:"module"})
     worker.onmessage = (message)=> {
+      imageData = message.data.imageData
       context.putImageData(message.data.imageData, 0, 0)
     }
     computeNewImage()
@@ -62,8 +56,6 @@
     <div>Octaves: {octaves}<input type="range" bind:value="{octaves}" min="1" max="10" step="1"></div>
     <div>Persistence {persistence}<input type="range" bind:value="{persistence}" min="0" max="1" step="0.1"></div>
     <div>Lacunarity {lacunarity}<input type="range" bind:value="{lacunarity}" min="1" max="10" step="1"></div>
-    <div>Sample Points?<input type="checkbox" bind:checked="{drawPoints}"></div>
-    <div>N: <input type="number" bind:value="{numPoints}"></div>
     <canvas bind:this="{canvas}"></canvas>
   </div>
 </details>
@@ -71,7 +63,7 @@
 <style>
   #container {
     position: absolute;
-    width: 30%;
+    width: 25%;
   }
   input {
     width:40%;
