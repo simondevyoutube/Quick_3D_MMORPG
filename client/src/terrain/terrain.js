@@ -8,7 +8,10 @@ import { TextureAtlas } from "./textureAtlas.js";
 
 
 export class InfiniteTerrain {
-  // TODO-DefinitelyMaybe: Sort out the colour. Sometimes it'll load as black.
+  // TODO-DefinitelyMaybe: Sort out the black colour.
+  // seems like textures aren't loaded properly.
+  // TODO-DefinitelyMaybe: After being idle/away for some time it'll revert the quad tree to the root sqaure
+  // character garbage collected? -> quadtree update -> single root quad
   // TODO-DefinitelyMaybe: Terrain generates scenery too
   key = 123456789
   chunks = {};

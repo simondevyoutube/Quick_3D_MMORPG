@@ -5,7 +5,7 @@
   import HUD from "../ui/game/hud.svelte";
   import Menu from "../ui/game/menu.svelte";
   import Simplex from "../ui/dev/simplex.svelte";
-  import Points from "../ui/dev/points.svelte";
+  import Points from "../ui/dev/poisson.svelte";
 
 
   let world;
@@ -64,6 +64,7 @@
     color: white;
     margin: 0;
     overflow: hidden;
+    font-size: x-large;
   }
   canvas {
     position: absolute;

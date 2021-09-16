@@ -6,46 +6,39 @@
   let imageData;
   let worker;
 
-  let numPoints = 50
+  let radius = 2
   let width = 100
   let height = 100
 
   $: if (canvas != undefined) {
-    numPoints
+    radius
     width
     height
     computeNewImage()
   }
 
   function computeNewImage() {
-    canvas.width = width
-    canvas.height = height
-    imageData = context.getImageData(0,0, width, height)
-    worker.postMessage({imageData, args:{
-      numPoints,
-      width,
-      height,
-    }})
+    imageData = context.getImageData(0,0, canvas.width, canvas.height)
+    worker.postMessage({imageData, radius})
   }
 
   onMount(() => {
     context = canvas.getContext("2d")
     imageData = context.createImageData(canvas.width, canvas.height)
-    worker = new Worker('./src/ui/dev/pointsWorker.js', {type:"module"})
+    worker = new Worker('./src/terrain/poissonWorker.js', {type:"module"})
     worker.onmessage = (message)=> {
       imageData = message.data.imageData
       context.putImageData(message.data.imageData, 0, 0)
     }
-    computeNewImage()
   })
 </script>
 
-<details>
+<details open>
   <summary>Points Tool</summary>
   <div id="container">
-    <div>Number of Points: {numPoints}<input type="range" bind:value="{numPoints}" min="10" max="1000" step="20"></div>
-    <div>width: {width}<input type="range" bind:value="{width}" min="10" max="200" step="10"></div>
-    <div>height: {height}<input type="range" bind:value="{height}" min="10" max="200" step="10"></div>
+    <div>radius: <input type="number" bind:value="{radius}">{radius}</div>
+    <div>width: <input type="range" bind:value="{width}" min="10" max="200" step="10">{width}</div>
+    <div>height: <input type="range" bind:value="{height}" min="10" max="200" step="10">{height}</div>
     <canvas bind:this="{canvas}" width="{width}" height="{height}"></canvas>
   </div>
 </details>
@@ -53,6 +46,7 @@
 <style>
   #container {
     position: absolute;
+    background-color: black;
     width: 25%;
   }
   input {

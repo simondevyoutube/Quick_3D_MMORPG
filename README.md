@@ -26,6 +26,9 @@ Structure will set you free.
   - Infinite 2D side scrolling or birds-eye ( Simplist procedural  )
     - https://www.youtube.com/watch?v=jV-DZqdKlnE
   - Infinite 3D height map ( Easy enough procedural )
+    - Generating screnery
+      - possion disc sampling (will work).
+      - transforming the noise's normal distribution is ... very easy to muck up but hey, if you'd like to, you can play around with `client/src/terrain/probit.js`. It's a [probit function](https://en.wikipedia.org/wiki/Probit#Computation) but it still doesn't work out very well. Good luck.
   - Space ( Hard and requires a good setup)
     - Generating spheres
       - Using triangles -> - Icosahedron

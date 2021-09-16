@@ -16,5 +16,5 @@
     "https://cdn.skypack.dev": false
   },
   "deno.lint": true,
-  "deno.unstable": true,
+  "deno.unstable": true
 }
