@@ -16,12 +16,17 @@
   let persistence = 0
   let lacunarity = 2
 
+  let drawPoints = false
+  let deterministic = false
+
   $: if (canvas != undefined) {
     seed
     scale
     octaves
     persistence
     lacunarity
+    drawPoints
+    deterministic
     computeNewImage()
   }
 
@@ -32,6 +37,8 @@
       octaves,
       persistence,
       lacunarity,
+      drawPoints,
+      deterministic
     }})
   }
 
@@ -46,7 +53,7 @@
   })
 </script>
 
-<details open>
+<details>
   <summary>Simplex Tool</summary>
   <div id="container">
     <div>Seed: <input type="number" bind:value="{seed}"></div>
@@ -54,6 +61,11 @@
     <div>Octaves: <input type="range" bind:value="{octaves}" min="1" max="10" step="1">{octaves}</div>
     <div>Persistence: <input type="range" bind:value="{persistence}" min="0" max="1" step="0.1">{persistence}</div>
     <div>Lacunarity: <input type="range" bind:value="{lacunarity}" min="1" max="10" step="1">{lacunarity}</div>
+    <details>
+      <summary>Points</summary>
+      <div>Draw points? <input type="checkbox" bind:checked="{drawPoints}"></div>
+      <div>Deterministically? <input type="checkbox" bind:checked="{deterministic}"></div>
+    </details>
     <canvas bind:this="{canvas}"></canvas>
   </div>
 </details>
@@ -62,9 +74,9 @@
   #container {
     position: absolute;
     background-color: black;
-    width: 25%;
+    width: 30%;
   }
-  input {
+  input[type="range"]{
     width:40%;
   }
   canvas {

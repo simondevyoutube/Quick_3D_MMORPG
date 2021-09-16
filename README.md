@@ -22,18 +22,13 @@ Structure will set you free.
     - rotation -> quaternion
     - many getters and setters / boilerplate has been removed
 - Terrain
-  - Predefined map (Manual work but very simple)
-  - Infinite 2D side scrolling or birds-eye ( Simplist procedural  )
-    - https://www.youtube.com/watch?v=jV-DZqdKlnE
-  - Infinite 3D height map ( Easy enough procedural )
-    - Generating screnery
-      - possion disc sampling (will work).
-      - transforming the noise's normal distribution is ... very easy to muck up but hey, if you'd like to, you can play around with `client/src/terrain/probit.js`. It's a [probit function](https://en.wikipedia.org/wiki/Probit#Computation) but it still doesn't work out very well. Good luck.
-  - Space ( Hard and requires a good setup)
-    - Generating spheres
-      - Using triangles -> - Icosahedron
-      - Using Points -> Fibonacci sphere
-      - Using squares -> Cube sphere
+  - The landscape
+    - Predefined map (Manual work but very simple)
+    - Infinite 2D side scrolling or birds-eye ( Simplist procedural, [GDC video](https://www.youtube.com/watch?v=jV-DZqdKlnE) )
+    - Infinite 3D height map ( Easy enough procedural )
+    - Space ( Hard and requires a good setup)
+  - The scenery
+    - Generating scenery randomly is easy, making it deterministic is a completely different story. To do so I did the following two things. Firstly, I used the poisson disc sampling algorithm. Not using this algorithm (or something like it) would mean that some objects could end up stacked-up-ontop of each other. And Secondly, I made a pusedo-random number generator by transforming a sample of some simplex noise through a [probit function](https://en.wikipedia.org/wiki/Probit) and normalizing it. Using the noise by itself gives a normally distributed number which could've caused issues for the algorithm. Carely selecting the noise parameters and using the probit function was neccessary to push the distribution towards being uniform. There is still a bias within the sample but the parameters I did use gave a half-decent final distribution.
 - physics
   - 3D options: [cannon-es](https://github.com/pmndrs/cannon-es), ammo.js...
   - 2D options: [matter.js](https://brm.io/matter-js/demo/#collisionFiltering)...

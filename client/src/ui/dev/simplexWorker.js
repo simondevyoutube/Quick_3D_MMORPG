@@ -1,6 +1,6 @@
 import { SimplexNoise } from "../../terrain/simplex.js";
 import { PusedoRandom } from "../../terrain/pusedoRandom.js";
-import { AdaptedPoissonDiscSample, PoissonDiscSample } from "../../terrain/poissonDisc.js";
+import { AdaptedPoissonDiscSample } from "../../terrain/poissonDisc.js";
 
 /** @type {SimplexNoise} */
 let noise;
@@ -10,6 +10,9 @@ let octaves;
 let persistence;
 let lacunarity;
 
+let drawPoints;
+let deterministic;
+
 function init(args) {
   noise = new SimplexNoise(args.seed)
 
@@ -17,6 +20,9 @@ function init(args) {
   octaves = args.octaves
   persistence = args.persistence
   lacunarity = args.lacunarity
+
+  drawPoints = args.drawPoints
+  deterministic = args.deterministic
 }
 
 function computeImageData(imageData) {
@@ -57,38 +63,43 @@ function computeImageData(imageData) {
 
     }
 	}
-  // create points
-  PusedoRandom(true)
-  let disc = new AdaptedPoissonDiscSample(10, [imageData.width, imageData.height], 30, PusedoRandom)
-  let points = disc.GeneratePoints()
 
-  // create red pixels
-  for (let i = 0; i < points.length; i++) {
-    const x = Math.floor(points[i][0])
-    const y = Math.floor(points[i][1])
+  if (drawPoints) {
+    const rand = deterministic? PusedoRandom : Math.random
+    // create points
+    PusedoRandom(true)
+    let disc = new AdaptedPoissonDiscSample(10, [imageData.width, imageData.height], 30, rand)
+    // let disc = new AdaptedPoissonDiscSample(10, [imageData.width, imageData.height], 30, Math.random)
+    let points = disc.GeneratePoints()
 
-    const dataIndex = (y * imageData.width * 4) + x * 4;
-    // set colour to red for the moment
-    imageData.data[dataIndex] = 255 // R
-    imageData.data[dataIndex+1] = 0 // G
-    imageData.data[dataIndex+2] = 0 // B
-  }
+    // create red pixels
+    for (let i = 0; i < points.length; i++) {
+      const x = Math.floor(points[i][0])
+      const y = Math.floor(points[i][1])
 
-  // create points
-  // PusedoRandom(true)
-  disc = new AdaptedPoissonDiscSample(10, [imageData.width, imageData.height], 30, PusedoRandom)
-  points = disc.GeneratePoints()
+      const dataIndex = (y * imageData.width * 4) + x * 4;
+      // set colour to red for the moment
+      imageData.data[dataIndex] = 255 // R
+      imageData.data[dataIndex+1] = 0 // G
+      imageData.data[dataIndex+2] = 0 // B
+    }
 
-  // create green pixels
-  for (let i = 0; i < points.length; i++) {
-    const x = Math.floor(points[i][0])
-    const y = Math.floor(points[i][1])
+    // create points
+    PusedoRandom(true)
+    disc = new AdaptedPoissonDiscSample(10, [imageData.width, imageData.height], 30, rand)
+    points = disc.GeneratePoints()
 
-    const dataIndex = (y * imageData.width * 4) + x * 4;
-    // set colour to red for the moment
-    imageData.data[dataIndex] = 0     // R
-    imageData.data[dataIndex+1] = 255 // G
-    imageData.data[dataIndex+2] = 0   // B
+    // create green pixels
+    for (let i = 0; i < points.length; i++) {
+      const x = Math.floor(points[i][0])
+      const y = Math.floor(points[i][1])
+
+      const dataIndex = (y * imageData.width * 4) + x * 4;
+      // set colour to red for the moment
+      imageData.data[dataIndex] = 0     // R
+      imageData.data[dataIndex+1] = 255 // G
+      imageData.data[dataIndex+2] = 0   // B
+    }
   }
 
   self.postMessage({imageData})
