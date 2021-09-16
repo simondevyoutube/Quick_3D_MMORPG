@@ -104,14 +104,14 @@ export class AdaptedPoissonDiscSample extends PoissonDiscSample {
 	 * @param {number} radius
    * @param {number[]} region even numbered width/height vector
    * @param {number} maxCandidates default 30
-	 * @param {Math.random} random a random (or pusedo-random) number generator (0, 1)
+	 * @param {()=>number} random a random (or pusedo-random) number generator (0, 1)
 	 */
 	constructor (radius, region, maxCandidates = 30, random) {
 		super(radius, region, maxCandidates)
 		this.random = random
 		this.spawnPoints = [];
 		const x = Math.floor(this.random() * this.width)
-		const y = Math.floor(this.random() * this.heigh)
+		const y = Math.floor(this.random() * this.height)
 		this.spawnPoints.push([x, y]);
 	}
 }

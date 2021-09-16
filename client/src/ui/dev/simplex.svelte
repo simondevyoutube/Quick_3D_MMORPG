@@ -38,7 +38,7 @@
   onMount(() => {
     context = canvas.getContext("2d")
     imageData = context.createImageData(canvas.width, canvas.height)
-    worker = new Worker('./src/terrain/simplexWorker.js', {type:"module"})
+    worker = new Worker('./src/ui/dev/simplexWorker.js', {type:"module"})
     worker.onmessage = (message)=> {
       imageData = message.data.imageData
       context.putImageData(message.data.imageData, 0, 0)
@@ -46,7 +46,7 @@
   })
 </script>
 
-<details>
+<details open>
   <summary>Simplex Tool</summary>
   <div id="container">
     <div>Seed: <input type="number" bind:value="{seed}"></div>

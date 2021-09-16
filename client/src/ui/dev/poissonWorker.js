@@ -1,4 +1,4 @@
-import { PoissonDiscSample } from "./poissonDisc.js"
+import { PoissonDiscSample } from "../../terrain/poissonDisc.js"
 
 let radius;
 

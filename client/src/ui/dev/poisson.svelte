@@ -25,7 +25,7 @@
   onMount(() => {
     context = canvas.getContext("2d")
     imageData = context.createImageData(canvas.width, canvas.height)
-    worker = new Worker('./src/terrain/poissonWorker.js', {type:"module"})
+    worker = new Worker('./src/ui/dev/poissonWorker.js', {type:"module"})
     worker.onmessage = (message)=> {
       imageData = message.data.imageData
       context.putImageData(message.data.imageData, 0, 0)
@@ -33,7 +33,7 @@
   })
 </script>
 
-<details open>
+<details>
   <summary>Points Tool</summary>
   <div id="container">
     <div>radius: <input type="number" bind:value="{radius}">{radius}</div>
