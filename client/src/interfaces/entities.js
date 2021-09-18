@@ -20,7 +20,7 @@ export class Entities {
   }
 
   receive(data) {
-    const {id, position, quaternion, entity, name, model, state} = data
+    const { id, position, quaternion } = data
 
     if (id in this.map) {
       console.log("Updating existing entity");
@@ -29,20 +29,28 @@ export class Entities {
       existingEntity.setPosition(new THREE.Vector3(...position))
       existingEntity.setQuaternion(new THREE.Quaternion(...quaternion))
     } else {
-      // console.log("Creating a new entity");
       try {
-        const entityClass = newEntityClass(entity)
-        const newEntity = new entityClass({id, position, quaternion, state, model, world:this.world})
-        if (name) {
-          // TODO-DefinitelyMaybe: set chat author name
-          newEntity.name = name
-          this.player = newEntity
-        }
+        const newEntity = this.create(data)
         this.add(newEntity)
       } catch (err) {
         throw `Tried to create a new entity but: ${err}`;
       }
     }
+  }
+
+  /** 
+   * @param {{id:number, position:number[], quaternion:number[], entity:string, name:string, model:string, state:string}} args
+   */
+  create(args) {
+    const {id, position, quaternion, entity, name, model, state} = args
+    const entityClass = newEntityClass(entity)
+    const newEntity = new entityClass({id, position, quaternion, state, model, world:this.world})
+    if (name) {
+      // TODO-DefinitelyMaybe: set chat author name
+      newEntity.name = name
+      this.player = newEntity
+    }
+    return newEntity
   }
 
   update(delta){

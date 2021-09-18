@@ -137,6 +137,9 @@ export class TextureSplatter {
   }
 }
 
+/** 
+ * @returns {number} The original number if it was between (0, 1) otherwise returns the closer of the two [0 or 1]
+ */
 function sat(x) {
   return Math.min(Math.max(x, 0.0), 1.0);
 }

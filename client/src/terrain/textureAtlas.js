@@ -2,11 +2,11 @@ import { THREE } from "../deps.js";
 
 // Taken from https://github.com/mrdoob/three.js/issues/758
 function _GetImageData(image) {
-  var canvas = document.createElement("canvas");
+  const canvas = document.createElement("canvas");
   canvas.width = image.width;
   canvas.height = image.height;
 
-  var context = canvas.getContext("2d");
+  const context = canvas.getContext("2d");
   context.drawImage(image, 0, 0);
 
   return context.getImageData(0, 0, image.width, image.height);
@@ -39,7 +39,7 @@ export class TextureAtlas {
   }
 
   onLoad() {
-    for (let k in this.map) {
+    for (const k in this.map) {
       const atlas = this.map[k];
       const data = new Uint8Array(atlas.textures.length * 4 * 1024 * 1024);
 

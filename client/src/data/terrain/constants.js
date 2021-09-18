@@ -5,7 +5,7 @@ export const terrainConstants = {
   QT_MIN_CELL_SIZE: 256,
   QT_MIN_CELL_RESOLUTION: 16,
 
-  PLANET_RADIUS: 4000,
+  PLANET_RADIUS: 2048,
 
   NOISE_HEIGHT,
   NOISE_SCALE,
