@@ -1,5 +1,4 @@
 import { THREE } from "../deps.js";
-import { Assets } from "../interfaces/assets.js";
 import { Entities } from "../interfaces/entities.js";
 import { ThreeInit } from "../interfaces/graphics.js";
 import { Input } from "../interfaces/input.js";
@@ -7,11 +6,11 @@ import { Network } from "../interfaces/network.js";
 import { Physics } from "../interfaces/physics.js";
 import { InfiniteTerrain } from "../terrain/terrain.js";
 
+
 export class World {
   initialized = false;
 
   network = new Network(this);
-  assets = new Assets()
   physics = new Physics()
   input = new Input(this)
   entities = new Entities(this);
@@ -52,6 +51,7 @@ export class World {
 
   start(){
     this.time.start()
+    this.time.getDelta()
     this.time.getDelta()
     this.renderer.setAnimationLoop(()=>this.animate())
   }

@@ -2,6 +2,19 @@ import { THREE } from "../deps.js";
 import { TextureSplatter } from "./texturesplatter.js";
 import { Noise } from "./noise.js";
 import { terrainConstants, biomeConstants, colourConstants } from "../data/terrain/constants.js"
+import { AdaptedPoissonDiscSample } from "./poissonDisc.js";
+import { PusedoRandom } from "./pusedoRandom.js";
+
+// lets go min and build up?
+const size = terrainConstants.QT_MIN_CELL_SIZE * Math.pow(2, 2)
+PusedoRandom(true)
+const disc = new AdaptedPoissonDiscSample(200, [size, size], 20, PusedoRandom)
+const sample = disc.GeneratePoints()
+// make the points tile nicer
+const points = sample.map((val) => {
+  return [(val[0] + size/2) % size, (val[1] + size/2) % size]
+})
+// console.log(points.length);
 
 let widthArg;
 let resolutionArg;
@@ -251,10 +264,10 @@ function rebuild() {
     weights2.push(splats[2][typeValues[0].key].strength);
   }
 
-  // TODO-DefinitelyMaybe: Sort out scenery within the worker?
-  // const roll = this.noise_.Get(spawnPos.x, 3.0, spawnPos.z);
-  // const randomProp = _SCENERY[
-  //     matchingScenery[Math.round(roll * (matchingScenery.length - 1))]];
+  const scenery = getPoints(offset, width)
+  if (width == 1024) {
+    // console.log({offset, width, size, numPoints:scenery.length}); 
+  }
 
   function _Unindex(src, stride) {
     const dst = [];
@@ -324,9 +337,74 @@ function rebuild() {
     coords: coordsArray,
     weights1: weights1Array,
     weights2: weights2Array,
+    scenery
   };
 }
 
+/** 
+ * @param {THREE.Vector3} offset
+ * @param {number} width
+ * @returns {number[][]} some points
+ */
+function getPoints(offset, width) {
+  // TODO-DefinitelyMaybe: Sort out scenery within the worker
+  const chunkOffset = new THREE.Vector3().copy(offset)
+  chunkOffset.setX(chunkOffset.x % size)
+  chunkOffset.setZ(chunkOffset.z % size)
+  // console.log({chunkOffset, offset, width, size});
+
+  // easy check and return
+  if (chunkOffset.x % 512 == 0 && chunkOffset.z % 512 == 0 && width == size) {
+    // console.log("Easy clap");
+    return points.map((val) => {
+      return [val[0]+offset.x, val[1] + offset.z]
+    })
+  }
+
+  // otherwise
+  const corner = new THREE.Vector3().copy(chunkOffset)
+  corner.addScalar(width)
+
+  // are we dealing with a smaller subsection
+  if (corner.x <= size && corner.z <= size) {
+    // console.log("tiny clap");
+    // filter the points
+    return points.filter((val) => {
+      // TODO-DefinitelyMaybe: check that the (x, z) shouldn't be switched around
+      if (chunkOffset.x <= val[0] && chunkOffset.z <= val[1] && val[0] <= corner.x && val[1] <= corner.z) {
+        return true
+      }
+      return false
+    }).map((val) => {
+      return [val[0]+offset.x, val[1] + offset.z]
+    })
+    
+  }
+
+  // or do we need to need to multiply
+  const multipler = width / size
+  const newPoints = []
+  for (let i = 0; i < multipler; i++) {
+    for (let j = 0; j < multipler; j++) {
+      if (i == 0 && j == 0) {
+        newPoints.push(points)
+      } else {
+        const offsetX = j * size
+        const offsetY = i * size
+        newPoints.push(points.map((val) => {
+          return [val[0]+offsetX, val[1]+offsetY]
+        }))
+      }
+    }
+  }
+  // console.log("multiple claps");
+  return newPoints
+}
+
+
+/** 
+ * @returns {number} The original number if it was between (0, 1) otherwise returns the closer of the two [0 or 1]
+ */
 function sat(x) {
   return Math.min(Math.max(x, 0.0), 1.0);
 }

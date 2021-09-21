@@ -58,9 +58,9 @@ function handleLoginAttempt(ws, data) {
   const player = world.entities.create({
     entity:"player",
     model:"sorceror",
+    name: "This guy...",
   })
-  player.name = "What?"
-
+  
   ws.send(JSON.stringify({
     event:'world.player',
     player: player.toJSON(),

@@ -14,10 +14,13 @@ export class Entities {
     this.entities.push(entity);
   }
 
+  /** 
+   * @param {{entity:string, data?:any}} args
+   */
   create(args){
-    const {entity, model} = args
+    const {entity} = args
     const entClass = newEntityClass(entity)
-    const newEnt = new entClass({model})
+    const newEnt = new entClass(args)
     this.add(newEnt)
     return newEnt
   }

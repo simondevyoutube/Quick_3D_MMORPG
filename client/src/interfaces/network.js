@@ -27,7 +27,9 @@ export class Network {
         this.login()
         break;
       case 'world.player':
-        this.worldPlayer(message)
+        this.playerID = message.player.id
+        this.world.entities.create(message.player)
+        this.world.entities.player = this.world.entities.get(this.playerID)
         break;
       default:
         console.warn(`Didn't know what to do with ${event}`);
@@ -49,54 +51,11 @@ export class Network {
     }
   }
 
-  worldPlayer(data) {
-    const { id, position, quaternion, name, model } = data.player;
-    const entity = "player"
-    const state = "idle"
-    this.world.entities.receive({id, position, quaternion, entity, name, model, state})
-  }
-
   login(){
     // TODO-DefinitelyMaybe: Normally there'd be gathering up credentials
     // and sending those to the server to be verified
     // but for now we're going to assume everythings ok
     // console.log("Attempting to login");
     this.ws.send(JSON.stringify({event:"login.commit", login:"test", password:"password"}))
-  }
-
-  // TODO-DefinitelyMaybe: Placeholder until Login queue / Actual Account is tackled
-  GenerateRandomName_() {
-    const names1 = [
-      "Aspiring",
-      "Nameless",
-      "Cautionary",
-      "Excited",
-      "Modest",
-      "Maniacal",
-      "Caffeinated",
-      "Sleepy",
-      "Passionate",
-      "Medical",
-    ];
-    const names2 = [
-      "Painter",
-      "Cheese Guy",
-      "Giraffe",
-      "Snowman",
-      "Doberwolf",
-      "Cocktail",
-      "Fondler",
-      "Typist",
-      "Noodler",
-      "Arborist",
-      "Peeper",
-    ];
-    const n1 = names1[
-      Math.floor(Math.random() * names1.length)
-    ];
-    const n2 = names2[
-      Math.floor(Math.random() * names2.length)
-    ];
-    return `${n1} ${n2}`;
   }
 }

@@ -1,45 +1,26 @@
 import { GLTFLoader, FBXLoader, THREE, OBJLoader } from "../deps.js";
 
-export class Assets {
-  assets = {}
-  pending = {}
+const assets = {}
+const pending = {}
 
-  // constructor() {
-  //   // TODO-DefinitelyMaybe: initialize from localstorage
-  // }
-
-  async load(url){
-    if (url in this.pending) {
-      return await this.assets[url]
-    } else {
-      if (!(url in this.assets)) {
-        const ext = getExtFor(url)
-        const loader = getLoaderFor(ext)
-        try {
-          this.pending[url] = true
-          this.assets[url] = loader.loadAsync(url)
-          await this.assets[url]
-          delete this.pending[url]
-        } catch (err) {
-          throw err;
-        } 
-      }
-    }
-    return this.assets[url]
-  }
-
-  loadSync(url){
-    if (!(url in this.assets)) {
+export async function load(url){
+  if (url in pending) {
+    return await assets[url]
+  } else {
+    if (!(url in assets)) {
+      const ext = getExtFor(url)
+      const loader = getLoaderFor(ext)
       try {
-        const ext = getExtFor(url)
-        const loader = getLoaderFor(ext)
-        this.assets[url] = loader.load(url)
+        pending[url] = true
+        assets[url] = loader.loadAsync(url)
+        await assets[url]
+        delete pending[url]
       } catch (err) {
-        throw `Couldn't load ${url} because: ${err}`; 
-      }
+        throw err;
+      } 
     }
-    return this.assets[url]
   }
+  return assets[url]
 }
 
 function getExtFor(url) {

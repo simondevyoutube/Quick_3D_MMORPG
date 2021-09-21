@@ -2,6 +2,7 @@ import { THREE } from "../deps.js";
 
 export class Chunk {
   constructor(args) {
+    // console.log(args);
     this.width = args.width
     this.material = args.material
     this.group = args.group;
@@ -16,7 +17,12 @@ export class Chunk {
     this.mesh.castShadow = false;
     this.mesh.receiveShadow = true;
     this.mesh.frustumCulled = false;
+
+    this.scenery = new THREE.Group()
+    this.entities = args.entities
+
     this.group.add(this.mesh);
+    this.group.add(this.scenery)
   }
 
   destroy() {
@@ -61,5 +67,29 @@ export class Chunk {
     // TODO-DefinitelyMaybe: What about vvv?
     // .geometry.computeFaceNormals();
     // .geometry.computeVertexNormals();
+
+    
+    if (this.mesh.children.length > 0) {
+      console.log("Removed previous scenery");
+      this.mesh.remove(this.scenery)
+    }
+    this.scenery = new THREE.Group()
+    // console.log(data.scenery.length, this.width);
+    for (let i = 0; i < data.scenery.length; i++) {
+      const pos = data.scenery[i];
+      const ent = this.entities.create({
+        entity: "npc",
+        id: 0,
+        model: "tree",
+        position: [pos[0], 0, pos[1]],
+        quaternion: [0, 0, 0, 1],
+      })
+      if (ent.model instanceof Promise) {
+        ent.model.then(_ => {
+          this.scenery.add(ent.model)
+        })
+      }
+    }
+    this.mesh.add(this.scenery)
   }
 }

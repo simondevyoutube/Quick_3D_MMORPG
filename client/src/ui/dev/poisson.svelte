@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
 
   let canvas;
   let context;
@@ -31,6 +31,13 @@
       context.putImageData(message.data.imageData, 0, 0)
     }
   })
+  
+  onDestroy(() => {
+    if (worker) {
+      worker.terminate()
+    }
+  })
+
 </script>
 
 <details>

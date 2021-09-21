@@ -1,7 +1,7 @@
 <script>
   // using this persons work as reference
   // https://github.com/lencinhaus/canvas-noise/tree/gh-pages
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
 
   /** @type {HTMLCanvasElement} */
   let canvas;
@@ -49,6 +49,12 @@
     worker.onmessage = (message)=> {
       imageData = message.data.imageData
       context.putImageData(message.data.imageData, 0, 0)
+    }
+  })
+
+  onDestroy(() => {
+    if (worker) {
+      worker.terminate()
     }
   })
 </script>

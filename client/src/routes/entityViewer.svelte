@@ -2,12 +2,12 @@
   import { onMount } from "svelte";
   import { World } from "../worlds/entityViewer.js";
   import Menu from "../ui/game/menu.svelte";
+  import ModelPicker from "../ui/dev/models.svelte";
 
   let world;
+  let model = "paladin";
 
   let focused = false
-
-  let showMenu = true;
 
   function test() {
     console.log(world);
@@ -29,10 +29,9 @@
 
 <canvas id="game"></canvas>
 
-{#if showMenu}
 <Menu on:test="{test}"
   on:test2="{test2}"></Menu>
-{/if}
+<ModelPicker bind:selected="{model}" on:change="{() => {world.changeModel(model)}}"></ModelPicker>
 
 <style>
   :global(body) {

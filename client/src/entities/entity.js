@@ -14,4 +14,10 @@ export class Entity {
   setQuaternion(quat) {
     this.quaternion.copy(quat);
   }
+
+  destroy() {
+    this.id = null
+    this.position = null
+    this.quaternion = null
+  }
 }

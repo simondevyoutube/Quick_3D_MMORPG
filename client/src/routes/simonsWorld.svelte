@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { World } from "../worlds/simonsWorld.js";
   import Chat from "../ui/game/chat.svelte";
   import HUD from "../ui/game/hud.svelte";
@@ -30,6 +30,15 @@
     world = new World()
     // showHUD = true
     world.resize()
+  })
+  
+  onDestroy(() => {
+    if (world) {
+      const workers = world.terrain.builder.workers
+      workers.forEach(worker => {
+        worker.terminate()
+      }); 
+    }
   })
 </script>
 

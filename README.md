@@ -41,6 +41,7 @@ Structure will set you free.
   - Move routes from client-side src to server-side?
   - Webstream websockets?
 - Game Dev
+  - Hot looping i.e. saved changes to a game script don't require a full refresh
   - typescript (not yet)
   - three.js glsl highlighting by vscode extensions
   - [ ] scene transitions (fade out and in + loading wheel)?

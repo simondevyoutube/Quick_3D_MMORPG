@@ -38,7 +38,7 @@ export class ChunkBuilder {
     const c = new Chunk(args);
     c.hide();
 
-    const threadedParams = {
+    const workerArgs = {
       width: args.width,
       offset: [args.offset.x, args.offset.y, args.offset.z],
       resolution: args.resolution,
@@ -46,7 +46,7 @@ export class ChunkBuilder {
 
     const msg = {
       event: "build",
-      params: threadedParams,
+      params: workerArgs,
     };
 
     this.queue.push([msg, (res) => {

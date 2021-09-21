@@ -1,4 +1,3 @@
-import { THREE } from "../deps.js";
 import { newEntityClass } from "../entities/mod.js";
 
 export class Entities {
@@ -19,37 +18,15 @@ export class Entities {
     this.entities.push(entity);
   }
 
-  receive(data) {
-    const { id, position, quaternion } = data
-
-    if (id in this.map) {
-      console.log("Updating existing entity");
-      // update the entity
-      const existingEntity = this.map[id]
-      existingEntity.setPosition(new THREE.Vector3(...position))
-      existingEntity.setQuaternion(new THREE.Quaternion(...quaternion))
-    } else {
-      try {
-        const newEntity = this.create(data)
-        this.add(newEntity)
-      } catch (err) {
-        throw `Tried to create a new entity but: ${err}`;
-      }
-    }
-  }
-
   /** 
-   * @param {{id:number, position:number[], quaternion:number[], entity:string, name:string, model:string, state:string}} args
+   * @param {{id:number, position:number[], quaternion:number[], entity:string, data?:{}}} args
    */
   create(args) {
-    const {id, position, quaternion, entity, name, model, state} = args
-    const entityClass = newEntityClass(entity)
-    const newEntity = new entityClass({id, position, quaternion, state, model, world:this.world})
-    if (name) {
-      // TODO-DefinitelyMaybe: set chat author name
-      newEntity.name = name
-      this.player = newEntity
-    }
+    const { entity } = args
+    const entityClass = newEntityClass[entity]
+    args = Object.assign(args, {world:this.world})
+    const newEntity = new entityClass(args)
+    this.add(newEntity)
     return newEntity
   }
 
