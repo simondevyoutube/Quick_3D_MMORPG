@@ -7,15 +7,14 @@ export class Entities {
 
   constructor(arg){
     this.world = arg
+    this.scene = arg.scene
   }
 
-  get(n) {
-    return this.map[n];
-  }
-
-  add(entity) {
-    this.map[entity.id] = entity;
-    this.entities.push(entity);
+  /** 
+   * @param {number} id
+   */
+  get(id) {
+    return this.map[id];
   }
 
   /** 
@@ -26,15 +25,29 @@ export class Entities {
     const entityClass = newEntityClass[entity]
     args = Object.assign(args, {world:this.world})
     const newEntity = new entityClass(args)
-    this.add(newEntity)
+    this.map[newEntity.id] = newEntity;
+    this.entities.push(newEntity);
     return newEntity
   }
 
   update(delta){
-    const ents = this.entities.filter(e => e.update)
-    for (let i = 0; i < ents.length; i++) {
-      // should include both player and npc's
-      ents[i].update(delta);
+    // Sort out entities being destroyed
+    const old = this.entities.filter(e => e.id == undefined)
+    for (let i = 0; i < old.length; i++) {
+      const ent = old[i];
+      this.scene.remove(ent.model)
     }
+
+    // update
+    const updates = this.entities.filter(e => e.update)
+    for (let i = 0; i < updates.length; i++) {
+      // should include both player and npc's
+      updates[i].update(delta);
+    }
+
+    // Only keep the entities that we can keep track of
+    const ents = this.entities.filter(e => e.id != undefined)
+    this.entities = ents
+    // TODO-DefinitelyMaybe: Does the map need updating?
   }
 }

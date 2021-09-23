@@ -1,10 +1,11 @@
 import { OrbitControls, cannon } from "../deps.js";
 import { Input } from "./input.js";
-import { create } from "./model.js";
+import { create } from "../interfaces/assets.js";
 import { Entity } from "./entity.js";
 
 
 export class Player extends Entity {
+  model;
   constructor (args) {
     super(args)
     args = Object.assign(args, {entity:this})
@@ -12,7 +13,7 @@ export class Player extends Entity {
     this.camera = new OrbitControls(args.world.camera, args.world.renderer.domElement)
     this.camera.target.set(0, 0, 0)
     this.camera.update()
-    this.model = create(args).then(val => {
+    create(args).then(val => {
       this.model = val.model;
       this.animator = val.animator
       this.body = val.physicsBody
@@ -39,29 +40,13 @@ export class Player extends Entity {
   }
 
   destroy(){
+    // if the player can destroy it, let it
     super.destroy()
-    this.input = null
+    this.input = undefined
+    this.update = undefined
     this.camera.dispose()
-    if (this.model instanceof Promise) {
-      this.model.then(_ => {
-        console.log(this.model);
-        if (this.model.dispose) {
-          this.model.dispose()
-        }
-      })
-    } else {
-      console.log("It wasn't a promise");
-      // console.log(this.model);
-      if (this.model.dispose) {
-        this.model.dispose()
-      } else {
-        console.log(this.model);
-        // this.model.traverse(child => {
-        //   if (child.dispose) {
-        //     child.dispose()
-        //   }
-        // })
-      }
-    }
+    this.animator = undefined;
+    // otherwise leave it for the entities update loop
+    // i.e. the model and the physics object
   }
 }

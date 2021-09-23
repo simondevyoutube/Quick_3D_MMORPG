@@ -1,6 +1,6 @@
 import { THREE } from "../deps.js";
 import { ThreeInit } from "../interfaces/graphics.js";
-import { newEntityClass } from "../entities/mod.js";
+import { Entities } from "../interfaces/entities.js";
 
 export class World {
   previousTime = 0;
@@ -11,20 +11,25 @@ export class World {
   constructor() {
     // TODO-DefinitelyMaybe: do better eventually
     this.threejs = new ThreeInit()
+    /** @type {THREE.Scene} */
     this.scene = this.threejs.scene;
     this.camera = this.threejs.camera;
     this.renderer = this.threejs.renderer;
 
+    this.entities = new Entities(this)
+    
     this.camera.position.set(-7.5, 8, 9);
 
     const gridHelper = new THREE.GridHelper( 400, 40, 0x0000ff, 0x808080 );
     this.scene.add(gridHelper)
 
-    const entityClass = newEntityClass["player"]
-    this.entity = new entityClass({id:0, world:this, state:"idle", position:[0,0,0], quaternion:[0,0,0,1], model:"paladin"})
+    // Create the first object
+    this.entities.create({id:0, entity:"player", world:this, state:"idle", position:[0,0,0], quaternion:[0,0,0,1], model:"paladin"})
     
-    this.entity.camera.target.set(0, 5.4, 0)
-    this.entity.camera.update()
+    // then set that objects camera
+    const player = this.entities.get(0)
+    player.camera.target.set(0, 5.4, 0)
+    player.camera.update()
 
 
     this.animate();
@@ -34,23 +39,20 @@ export class World {
   }
 
   changeModel(model) {
-    this.entity.destroy()
-    const entityClass = newEntityClass["player"]
-    this.entity = new entityClass({id:0, world:this, state:"idle", position:[0,0,0], quaternion:[0,0,0,1], model})
-    this.entity.camera.target.set(0, 5.4, 0)
-    this.entity.camera.update()
-  }
-
-  update(deltaTime) {
-    if (this.entity.update) {
-      this.entity.update(deltaTime) 
-    }
+    const currentEnt = this.entities.get(0)
+    currentEnt.destroy()
+    const newEnt = this.entities.create({id:0, entity:"player", world:this, state:"idle", position:[0,0,0], quaternion:[0,0,0,1], model})
+    newEnt.camera.target.set(0, 5.4, 0)
+    newEnt.camera.update()
   }
 
   animate() {
     requestAnimationFrame(() => this.animate());
     const dt = this.time.getDelta()
-    this.update(dt);
+    
+    // update anything that needs to be updated
+    this.entities.update(dt)
+
     this.renderer.render(this.scene, this.camera); 
   }
   

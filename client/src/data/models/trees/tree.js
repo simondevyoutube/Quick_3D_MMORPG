@@ -10,15 +10,16 @@ export const tree1 = {
   },
   textureData: {
     Tree_Leaves: {
-      emissive: new THREE.Color(0x000000),
-      specular: new THREE.Color(0x000000),
-      castShadow: true,
-      receiveShadow: true,
-      onMaterial: (m) => {
-        if (m.name.search('Tree_Leaves') >= 0) {
-          m.alphaTest = 0.5;
-        }
-      }
+      // TODO-DefinitelyMaybe: Frustrum culling?
+      // emissive: new THREE.Color(0x000000),
+      // specular: new THREE.Color(0x000000),
+      // castShadow: true,
+      // receiveShadow: true,
+      // encoding: THREE.sRGBEncoding,
+      // wrapS: THREE.RepeatWrapping,
+      // wrapT: THREE.RepeatWrapping,
+      alphaTest: 0.5,
+      side: THREE.DoubleSide,
     }
   },
   url: "./resources/trees/FBX/Tree_1.fbx",

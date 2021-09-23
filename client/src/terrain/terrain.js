@@ -4,25 +4,20 @@ import { PS1, PS2, VS1, VS2 } from "./shaders.js";
 import { ChunkBuilder } from "./builder.js"
 // TODO-DefinitelyMaybe: use the quad tree, not the cubequadtree
 import { CubeQuadTree } from "./trees.js"
-import { TextureAtlas } from "./textureAtlas.js";
+import { MostlyOldTextureAtlas } from "./textureAtlas.js";
 import { load } from "../interfaces/assets.js";
 
 
 export class InfiniteTerrain {
-  // TODO-DefinitelyMaybe: update the terrain to simon's more recent procedural terrain
-  // https://github.com/simondevyoutube/ProceduralTerrain_Part10
-  // TODO-DefinitelyMaybe: Sort out the black colour.
-  // seems like textures aren't loaded properly.
+  // TODO-DefinitelyMaybe: Sort out the black colour. Can't, it's three.js's fault.
   // TODO-DefinitelyMaybe: After being idle/away for some time it'll revert the quad tree to the root square
   // character garbage collected? -> quadtree update -> single root quad
-  // TODO-DefinitelyMaybe: Terrain generates scenery too
+
   key = 123456789
   chunks = {};
   builder = new ChunkBuilder();
 
-  // 6 groups for the 6 sides of a cube, right?
-  // groups = [...new Array(6)].map((_) => new THREE.Group());
-  // Lets just keep things simple for the moment
+  // Lets just keep things simple
   groups = [new THREE.Group()]
 
   constructor(world) {
@@ -33,7 +28,7 @@ export class InfiniteTerrain {
     noiseTexture.wrapS = THREE.RepeatWrapping;
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
-    const atlas = new TextureAtlas();
+    const atlas = new MostlyOldTextureAtlas();
     atlas.load("diffuse", [
       "./resources/terrain/dirt_01_diffuse-1024.png",
       "./resources/terrain/grass1-albedo3-1024.png",
@@ -44,51 +39,51 @@ export class InfiniteTerrain {
       "./resources/terrain/rough-wet-cobble-albedo-1024.png",
       // './resources/terrain/sandy-rocks1-albedo-1024.png',
       "./resources/terrain/bark1-albedo.jpg",
-    ]).then(_ => {
-      atlas.load("normal", [
-        "./resources/terrain/dirt_01_normal-1024.jpg",
-        "./resources/terrain/grass1-normal-1024.jpg",
-        "./resources/terrain/sandyground-normal-1024.jpg",
-        "./resources/terrain/worn-bumpy-rock-normal-1024.jpg",
-        "./resources/terrain/rock-snow-ice-normal-1024.jpg",
-        "./resources/terrain/snow-packed-normal-1024.jpg",
-        "./resources/terrain/rough-wet-cobble-normal-1024.jpg",
-        // './resources/terrain/sandy-rocks1-normal-1024.jpg',
-        "./resources/terrain/bark1-normal3.jpg",
-      ]).then(_ => {
-        this.material.onBeforeCompile = (s) => {
-          let vsh = s.vertexShader;
-          vsh = VS1 + s.vertexShader;
-          const vi1 = vsh.search("#include <fog_vertex>");
-          vsh = [vsh.slice(0, vi1) + VS2 + vsh.slice(vi1)].join(
-            "",
-          );
-          s.vertexShader = vsh;
+    ])
     
-          s.fragmentShader = PS1 + s.fragmentShader;
-          const fi1 = s.fragmentShader.search(
-            "#include <lights_physical_fragment>",
-          );
-          s.fragmentShader = [
-            s.fragmentShader.slice(0, fi1) + PS2 +
-            s.fragmentShader.slice(fi1),
-          ].join("");
-    
-          s.uniforms.TRIPLANAR_normalMap = { value: atlas.map["normal"].atlas };
-          s.uniforms.TRIPLANAR_diffuseMap = {
-            value: atlas.map["diffuse"].atlas,
-          };
-          s.uniforms.TRIPLANAR_noiseMap = { value: noiseTexture };
-    
-          // s.fragmentShader += 'poop';
-        };
-      })
-    })
+    atlas.load("normal", [
+      "./resources/terrain/dirt_01_normal-1024.jpg",
+      "./resources/terrain/grass1-normal-1024.jpg",
+      "./resources/terrain/sandyground-normal-1024.jpg",
+      "./resources/terrain/worn-bumpy-rock-normal-1024.jpg",
+      "./resources/terrain/rock-snow-ice-normal-1024.jpg",
+      "./resources/terrain/snow-packed-normal-1024.jpg",
+      "./resources/terrain/rough-wet-cobble-normal-1024.jpg",
+      // './resources/terrain/sandy-rocks1-normal-1024.jpg',
+      "./resources/terrain/bark1-normal3.jpg",
+    ])
 
     this.material = new THREE.MeshStandardMaterial({
       side: THREE.BackSide,
       vertexColors: true,
     });
+
+    this.material.onBeforeCompile = (s) => {
+      let vsh = s.vertexShader;
+      vsh = VS1 + s.vertexShader;
+      const vi1 = vsh.search("#include <fog_vertex>");
+      vsh = [vsh.slice(0, vi1) + VS2 + vsh.slice(vi1)].join(
+        "",
+      );
+      s.vertexShader = vsh;
+
+      s.fragmentShader = PS1 + s.fragmentShader;
+      const fi1 = s.fragmentShader.search(
+        "#include <lights_physical_fragment>",
+      );
+      s.fragmentShader = [
+        s.fragmentShader.slice(0, fi1) + PS2 +
+        s.fragmentShader.slice(fi1),
+      ].join("");
+
+      s.uniforms.TRIPLANAR_normalMap = { value: atlas.map["normal"].atlas };
+      s.uniforms.TRIPLANAR_diffuseMap = {
+        value: atlas.map["diffuse"].atlas,
+      };
+      s.uniforms.TRIPLANAR_noiseMap = { value: noiseTexture };
+
+      // s.fragmentShader += 'poop';
+    };
 
     this.world.scene.add(...this.groups);
   }

@@ -16,8 +16,8 @@ export class Entity {
   }
 
   destroy() {
-    this.id = null
-    this.position = null
-    this.quaternion = null
+    this.id = undefined
+    this.position = undefined
+    this.quaternion = undefined
   }
 }

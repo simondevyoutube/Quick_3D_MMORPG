@@ -1,5 +1,5 @@
 import { Entity } from "./entity.js";
-import { create } from "./model.js";
+import { create } from "../interfaces/assets.js";
 
 
 export class NPC extends Entity {

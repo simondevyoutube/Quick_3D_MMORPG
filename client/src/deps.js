@@ -10,4 +10,5 @@ export { WireframeGeometry2 } from "https://cdn.skypack.dev/three/examples/jsm/l
 export { FBXLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/FBXLoader.js";
 export { GLTFLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js";
 export { OBJLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js";
+export { MTLLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/MTLLoader.js";
 export { clone as deepClone } from "https://cdn.skypack.dev/three/examples/jsm/utils/SkeletonUtils.js";

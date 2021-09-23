@@ -2,20 +2,10 @@ import { THREE } from "../deps.js";
 import { TextureSplatter } from "./texturesplatter.js";
 import { Noise } from "./noise.js";
 import { terrainConstants, biomeConstants, colourConstants } from "../data/terrain/constants.js"
-import { AdaptedPoissonDiscSample } from "./poissonDisc.js";
-import { PusedoRandom } from "./pusedoRandom.js";
+import { points, terrainSize } from "./pusedoRandom.js";
 
-// lets go min and build up?
-const size = terrainConstants.QT_MIN_CELL_SIZE * Math.pow(2, 2)
-PusedoRandom(true)
-const disc = new AdaptedPoissonDiscSample(200, [size, size], 20, PusedoRandom)
-const sample = disc.GeneratePoints()
-// make the points tile nicer
-const points = sample.map((val) => {
-  return [(val[0] + size/2) % size, (val[1] + size/2) % size]
-})
-// console.log(points.length);
 
+const size = terrainSize
 let widthArg;
 let resolutionArg;
 let offsetArg;
@@ -347,57 +337,43 @@ function rebuild() {
  * @returns {number[][]} some points
  */
 function getPoints(offset, width) {
-  // TODO-DefinitelyMaybe: Sort out scenery within the worker
+  let newPoints = []
   const chunkOffset = new THREE.Vector3().copy(offset)
-  chunkOffset.setX(chunkOffset.x % size)
-  chunkOffset.setZ(chunkOffset.z % size)
-  // console.log({chunkOffset, offset, width, size});
-
-  // easy check and return
-  if (chunkOffset.x % 512 == 0 && chunkOffset.z % 512 == 0 && width == size) {
-    // console.log("Easy clap");
-    return points.map((val) => {
-      return [val[0]+offset.x, val[1] + offset.z]
-    })
-  }
-
-  // otherwise
+  // the quads are centered by their center not a corner.
+  chunkOffset.setX(Math.abs((chunkOffset.x % size)) - (width/2))
+  chunkOffset.setZ(Math.abs((chunkOffset.z % size)) - (width/2))
   const corner = new THREE.Vector3().copy(chunkOffset)
   corner.addScalar(width)
+  corner.setY(0)
 
-  // are we dealing with a smaller subsection
-  if (corner.x <= size && corner.z <= size) {
-    // console.log("tiny clap");
+  // are we dealing with a small subsection
+  if (width < size) {
     // filter the points
-    return points.filter((val) => {
-      // TODO-DefinitelyMaybe: check that the (x, z) shouldn't be switched around
-      if (chunkOffset.x <= val[0] && chunkOffset.z <= val[1] && val[0] <= corner.x && val[1] <= corner.z) {
+    newPoints = points.filter(val => {
+      const x = val[0]
+      const z = val[1]
+      if (chunkOffset.x <= x && chunkOffset.z <= z && x <= corner.x && z <= corner.z) {
         return true
       }
       return false
-    }).map((val) => {
-      return [val[0]+offset.x, val[1] + offset.z]
+    }).map(val => {
+      // if we were a multiple of a bigger square, which one is it?
+      const square = [Math.floor(offset.x / size),Math.floor(offset.z / size)]
+      return [val[0]+(square[0]*size), val[1]+(square[1]*size)]
     })
-    
   }
 
-  // or do we need to need to multiply
-  const multipler = width / size
-  const newPoints = []
-  for (let i = 0; i < multipler; i++) {
-    for (let j = 0; j < multipler; j++) {
-      if (i == 0 && j == 0) {
-        newPoints.push(points)
-      } else {
-        const offsetX = j * size
-        const offsetY = i * size
-        newPoints.push(points.map((val) => {
-          return [val[0]+offsetX, val[1]+offsetY]
-        }))
-      }
-    }
+  // one thats the same width as size
+  if (width == size) {
+    newPoints = points.map(val => {
+      return [val[0]+offset.x-(width/2), val[1] + offset.z - (width/2)]
+    })
   }
-  // console.log("multiple claps");
+
+  // or one thats bigger
+  if (width > size) {
+    console.error("Big sized chunks -> Not Yet Implemented");
+  }
   return newPoints
 }
 

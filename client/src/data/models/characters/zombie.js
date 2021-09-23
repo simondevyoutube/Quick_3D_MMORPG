@@ -6,4 +6,5 @@ export const zombie = {
   },
   nameOffset: 8,
   scale: 4.0,
+  physics: {}
 }

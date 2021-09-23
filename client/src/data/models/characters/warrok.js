@@ -6,4 +6,5 @@ export const warrok = {
   },
   nameOffset: 16,
   scale: 8.0,
+  physics: {}
 }

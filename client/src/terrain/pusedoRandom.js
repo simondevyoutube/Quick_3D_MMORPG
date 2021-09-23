@@ -1,11 +1,13 @@
 import { ltqnorm } from "./probit.js";
 import { SimplexNoise } from "./simplex.js";
+import { AdaptedPoissonDiscSample } from "./poissonDisc.js";
+import { terrainConstants } from "../data/terrain/constants.js";
 
 let index = -1
 const numbers = []
 
 // The noise function is used to populate the numbers array
-const noise = new SimplexNoise()
+const noise = new SimplexNoise(terrainConstants.NOISE_PARAMS.seed)
 
 // Lets make around 1024 numbers
 const amount = 1024
@@ -91,3 +93,13 @@ export function PusedoRandom(reset = false) {
   }
   return numbers[index]
 }
+
+// lets go min and build up?
+export const terrainSize = terrainConstants.QT_MIN_CELL_SIZE * Math.pow(2, 2)
+const disc = new AdaptedPoissonDiscSample(200, [terrainSize, terrainSize], 20, PusedoRandom)
+PusedoRandom(true)
+const sample = disc.GeneratePoints()
+// make the points tile nicer
+export const points = sample.map((val) => {
+  return [(val[0] + terrainSize/2) % terrainSize, (val[1] + terrainSize/2) % terrainSize]
+})

@@ -5,7 +5,7 @@ export class ChunkBuilder {
   old = [];
   queue = [];
 
-  constructor(numWorkers=2){
+  constructor(numWorkers=4){
     this.workers = [...Array(numWorkers)].map((_) => new Worker("src/terrain/terrainWorker.js", { type: "module" }));
     this.free = [...this.workers];
   }
