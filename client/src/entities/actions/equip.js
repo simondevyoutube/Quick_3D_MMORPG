@@ -1,5 +1,8 @@
 import { FBXLoader, THREE } from "../../deps.js";
 
+/** 
+ * Warning: This class hasn't been touched and will probably not work
+ */
 export class Equip {
   target = undefined;
 

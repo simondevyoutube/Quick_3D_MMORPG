@@ -25,8 +25,6 @@ export class World {
 
     this.camera.position.set(-30, 20, -40)
 
-    // terrain doesnt make sense unless three has already been initialized
-    // ...unless we're just computing height...
     this.terrain = new InfiniteTerrain(this)
 
     this.renderer.setAnimationLoop(()=>this.animate());
@@ -36,7 +34,6 @@ export class World {
 
   resize() {
     if (this.initialized) {
-      // TODO-DefinitelyMaybe: Adjusts game aspect ratio not layout.
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);

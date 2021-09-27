@@ -74,7 +74,7 @@ function rebuild() {
       _W.copy(_P);
 
       // Purturb height along z-vector
-      const height = heightGenerator.Get(_W.x, _W.y, _W.z);
+      const height = heightGenerator.get(_W.x, _W.z);
       _H.copy(_D);
       _H.multiplyScalar(height);
       _P.add(_H);

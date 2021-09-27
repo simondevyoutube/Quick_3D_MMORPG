@@ -60,7 +60,7 @@
 </script>
 
 <details>
-  <summary>Simplex Tool</summary>
+  <summary>Simplex</summary>
   <div id="container">
     <div>Seed: <input type="number" bind:value="{seed}"></div>
     <div>Size: <input type="range" bind:value="{scale}" min="0" max="100" step="5">{scale}</div>

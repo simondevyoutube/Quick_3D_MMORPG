@@ -4,7 +4,7 @@ import { PS1, PS2, VS1, VS2 } from "./shaders.js";
 import { ChunkBuilder } from "./builder.js"
 // TODO-DefinitelyMaybe: use the quad tree, not the cubequadtree
 import { CubeQuadTree } from "./trees.js"
-import { MostlyOldTextureAtlas } from "./textureAtlas.js";
+import { TextureAtlas } from "./textureAtlas.js";
 import { load } from "../interfaces/assets.js";
 
 
@@ -28,7 +28,7 @@ export class InfiniteTerrain {
     noiseTexture.wrapS = THREE.RepeatWrapping;
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
-    const atlas = new MostlyOldTextureAtlas();
+    const atlas = new TextureAtlas();
     atlas.load("diffuse", [
       "./resources/terrain/dirt_01_diffuse-1024.png",
       "./resources/terrain/grass1-albedo3-1024.png",

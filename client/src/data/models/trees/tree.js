@@ -2,15 +2,14 @@ import { THREE } from "../../../deps.js";
 
 export const tree1 = {
   name: "Tree",
-  scale: 0.1,
-  collision: true,
+  url: "./resources/trees/FBX/Tree_1.fbx",
   textures: {
     Bark: "./resources/trees/Textures/Tree_Bark.jpg",
     Tree_Leaves: "./resources/trees/Textures/Tree_Leaves.png",
   },
   textureData: {
     Tree_Leaves: {
-      // TODO-DefinitelyMaybe: Frustrum culling?
+      // TODO-DefinitelyMaybe: get these working again
       // emissive: new THREE.Color(0x000000),
       // specular: new THREE.Color(0x000000),
       // castShadow: true,
@@ -22,5 +21,10 @@ export const tree1 = {
       side: THREE.DoubleSide,
     }
   },
-  url: "./resources/trees/FBX/Tree_1.fbx",
+  children: {
+    Tree_1: {
+      scale: 8,
+    }
+  },
+  physics: {},
 }

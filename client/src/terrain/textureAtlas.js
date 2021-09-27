@@ -16,7 +16,7 @@ function _GetImageData(image) {
 export class TextureAtlas {
   map = {};
 
-  load(atlas, names) {
+  async load(atlas, names) {
     this.map[atlas] = {
       textures: [],
       atlas: undefined,
@@ -24,18 +24,19 @@ export class TextureAtlas {
     for (let i = 0; i < names.length; i++) {
       this.map[atlas].textures.push(load(names[i]))
     }
-  }
 
-  onLoad(atlas){
+    await Promise.all(this.map[atlas].textures)
+
     const data = new Uint8Array(this.map[atlas].textures.length * 4 * 1024 * 1024);
 
     for (let t = 0; t < this.map[atlas].textures.length; t++) {
-      const curTexture = this.map[atlas].textures[t];
-      console.log(curTexture.image);
-      const curData = _GetImageData(curTexture.image);
-      const offset = t * (4 * 1024 * 1024);
+      const curTexture = this.map[atlas].textures[t]
+      await curTexture.then(val => {
+        const curData = _GetImageData(val.image);
+        const offset = t * (4 * 1024 * 1024);
 
-      data.set(curData.data, offset);
+        data.set(curData.data, offset);
+      });
     }
 
     const diffuse = new THREE.DataTexture2DArray(
@@ -54,62 +55,7 @@ export class TextureAtlas {
     diffuse.anisotropy = 4;
 
     this.map[atlas].atlas = diffuse;
-  }
-}
 
-export class MostlyOldTextureAtlas {
-  constructor() {
-    this._manager = new THREE.LoadingManager();
-    this._loader = new THREE.TextureLoader(this._manager);
-    this.map = {};
-
-    this._manager.onLoad = () => {
-      this._OnLoad();
-    };
-
-    this.onLoad = () => {};
-  }
-
-  load(atlas, names) {
-    this.map[atlas] = {
-      textures: names.map(n => this._LoadTexture(n) ),
-      atlas: undefined,
-    };
-  }
-
-  _LoadTexture(n) {
-    const t = this._loader.load(n);
-    t.encoding = THREE.sRGBEncoding;
-    return t;
-  }
-
-  _OnLoad() {
-    for (const k in this.map) {
-      const atlas = this.map[k];
-      const data = new Uint8Array(atlas.textures.length * 4 * 1024 * 1024);
-
-      for (let t = 0; t < atlas.textures.length; t++) {
-        const curTexture = atlas.textures[t];
-        const curData = _GetImageData(curTexture.image);
-        const offset = t * (4 * 1024 * 1024);
-
-        data.set(curData.data, offset);
-      }
-
-      const diffuse = new THREE.DataTexture2DArray(data, 1024, 1024, atlas.textures.length);
-      diffuse.format = THREE.RGBAFormat;
-      diffuse.type = THREE.UnsignedByteType;
-      diffuse.minFilter = THREE.LinearMipMapLinearFilter;
-      diffuse.magFilter = THREE.LinearFilter;
-      diffuse.wrapS = THREE.RepeatWrapping;
-      diffuse.wrapT = THREE.RepeatWrapping;
-      diffuse.generateMipmaps = true;
-
-      diffuse.anisotropy = 4;
-
-      atlas.atlas = diffuse;
-    }
-
-    this.onLoad();
+    return
   }
 }

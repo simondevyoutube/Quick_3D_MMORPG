@@ -62,14 +62,17 @@
 }}"></Chat>
 <HUD></HUD>
 <Menu on:test="{test}" on:test2="{test2}"></Menu>
-<Simplex></Simplex>
-<Points></Points>
+<details>
+  <summary>Helpers</summary>
+  <Simplex></Simplex>
+  <Points></Points>
+</details>
 
 <style>
   :global(body) {
     width: 100%;
     height: 100%;
-    background: #000000;
+    background: black;
     color: white;
     margin: 0;
     overflow: hidden;

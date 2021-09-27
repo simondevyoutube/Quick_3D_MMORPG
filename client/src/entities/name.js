@@ -1,7 +1,9 @@
 import { THREE } from "../deps.js";
 import { newCharacterData } from "../data/models/characters/mod.js";
 
-
+/** 
+ * Warning: This class hasn't been touched and will probably not work
+ */
 export class FloatingName {
   visible_ = true;
   

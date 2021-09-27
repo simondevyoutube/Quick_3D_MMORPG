@@ -1,4 +1,6 @@
 import { THREE } from "../deps.js";
+import { Noise } from "./noise.js";
+import { terrainConstants } from "../data/terrain/constants.js";
 
 export class Chunk {
   constructor(args) {
@@ -11,6 +13,8 @@ export class Chunk {
     // TODO-DefinitelyMaybe: Add physics collision mesh
     // https://pmndrs.github.io/cannon-es/examples/bunny
     // https://github.com/pmndrs/cannon-es/blob/master/examples/bunny.html
+    // TODO-DefinitelyMaybe: Use instanced geometry for scenery
+    // https://github.com/mrdoob/three.js/blob/master/examples/webgl_instancing_performance.html
 
     this.geometry = new THREE.BufferGeometry();
     this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -20,6 +24,7 @@ export class Chunk {
 
     this.scenery = new THREE.Group()
     this.entities = args.entities
+    this.heightGenerator = new Noise(terrainConstants.NOISE_PARAMS);
 
     this.group.add(this.mesh);
     this.group.add(this.scenery)
@@ -62,26 +67,18 @@ export class Chunk {
       "weights2",
       new THREE.Float32BufferAttribute(data.weights2, 4),
     );
-    // TODO-DefinitelyMaybe: What is bounding box for?
     this.geometry.computeBoundingBox();
-    // TODO-DefinitelyMaybe: What about vvv?
-    // .geometry.computeFaceNormals();
-    // .geometry.computeVertexNormals();
 
     
-    if (this.mesh.children.length > 0) {
-      console.log("Removed previous scenery");
-      this.mesh.remove(this.scenery)
-    }
     this.scenery = new THREE.Group()
-    // console.log(data.scenery.length, this.width);
     for (let i = 0; i < data.scenery.length; i++) {
       const pos = data.scenery[i];
+      const height = this.heightGenerator.get(pos[0], pos[1]) - 2
       const ent = this.entities.create({
         entity: "npc",
         id: 0,
         model: "tree",
-        position: [pos[0], 0, pos[1]],
+        position: [pos[0], height, pos[1]],
         quaternion: [0, 0, 0, 1],
       })
       if (ent.model instanceof Promise) {

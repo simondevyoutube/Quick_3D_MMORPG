@@ -15,7 +15,8 @@ export class Network {
       console.error(event);
     }
     this.ws.onclose = () => {
-      console.log("connection lost");
+      console.log("Connection lost");
+      window.location.href = "/login"
     };
   }
 

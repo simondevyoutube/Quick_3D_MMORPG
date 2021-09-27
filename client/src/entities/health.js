@@ -21,6 +21,9 @@ void main() {
 }
 `;
 
+/** 
+ * Warning: This class hasn't been touched and will probably not work
+ */
 export class HealthBar {
   material_ = new THREE.ShaderMaterial({
     uniforms: {

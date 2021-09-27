@@ -1,6 +1,9 @@
 import { GLTFLoader, FBXLoader, OBJLoader, MTLLoader, LineMaterial, THREE, Wireframe, WireframeGeometry2, deepClone, cannon } from "../deps.js"
 import { newModelData } from "../data/models/mod.js";
 
+// Setting THREE up to cache the loaded resources
+THREE.Cache.enabled = true;
+
 /** 
  * @param {{model:string, entity:Entity}} args
  */
@@ -25,11 +28,11 @@ export async function create(args) {
         mtl.preload()
         loader.setMaterials(mtl)
         const p2 = loader.loadAsync(modelData.url).then(val => {
-          console.log("here");
           asset = val
           group = val
+          return val
         })
-        promises.push(p2)
+        return p2
       })
       promises.push(p1)
     }
@@ -41,6 +44,7 @@ export async function create(args) {
       } else {
         group = deepClone(val)
       }
+      return val
     })
     promises.push(p)
   }
@@ -51,8 +55,9 @@ export async function create(args) {
       const textureLoader = getLoaderFor(textureURL)
       const p = textureLoader.loadAsync(textureURL).then(val => {
         textures[name] = val;
-      }).catch(error => {
-        console.error(error);
+        return val
+      }).catch(err => {
+        return err;
       })
       promises.push(p)
     }
@@ -61,29 +66,40 @@ export async function create(args) {
   // wait for all the reasources to load
   await Promise.all(promises)
   const data = {model:group}
-  // console.log(data);
-
 
   const entityPos = entity.position
-  const entityQuat = entity.quaternion
-
   group.position.copy(entityPos)
-  group.quaternion.copy(entityQuat)
-  group.scale.setScalar(modelData.scale);
 
-  if (asset.animations) {
-    if (asset.animations.length > 0) {
-      const animations = {}
-      const mixer = new THREE.AnimationMixer(group)
-  
-      for (let i = 0; i < asset.animations.length; i++) {
-        const animation = asset.animations[i];
-        const name = animation.name.toLowerCase()
-        animations[name] = mixer.clipAction(animation)
+  if (modelData.children) {
+    for (let i = 0; i < group.children.length; i++) {
+      const child = group.children[i];
+      if (child.name in modelData.children) {
+        const data = modelData.children[child.name]
+        // console.log(child);
+        for (const key in data) {
+          const val = data[key];
+          if (key == 'scale') {
+            child[key].setScalar(val);
+          }
+          if (key == "rotate") {
+            child.applyQuaternion(new THREE.Quaternion(val[0],val[1],val[2],val[3]));
+          }
+        }
       }
-      animations["idle"].play()
-      data.animator = mixer 
     }
+  }
+
+  if (asset.animations?.length > 0) {
+    const animations = {}
+    const mixer = new THREE.AnimationMixer(group)
+
+    for (let i = 0; i < asset.animations.length; i++) {
+      const animation = asset.animations[i];
+      const name = animation.name.toLowerCase()
+      animations[name] = mixer.clipAction(animation)
+    }
+    animations["idle"].play()
+    data.animator = mixer 
   }
   
   if (modelData.physics) {
@@ -108,14 +124,13 @@ export async function create(args) {
 
   if (modelData.textures) {
     group.children.forEach(child => {
-      child.material.forEach(material => {
-        // console.log(material);
+      const materials = Array.isArray(child.material) ? child.material : [child.material]
+      materials.forEach(material => {
         if (material.name in textures && material.map == null) {
           material.map = textures[material.name]
           // loop through texture data
           if (modelData.textureData) {
             if (material.name in modelData.textureData) {
-              // console.log("Yup");
               const textureData = modelData.textureData[material.name];
               for (const key in textureData) {
                 // console.log({key, value:textureData[key]});
@@ -123,7 +138,6 @@ export async function create(args) {
               }
             }
           }
-          // console.log(material);
         }
       })
     })
@@ -134,7 +148,7 @@ export async function create(args) {
 
 export function load(url) {
   const loader = getLoaderFor(url)
-  return loader.load(url)
+  return loader.loadAsync(url)
 }
 
 function getExt(url) {

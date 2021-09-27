@@ -41,7 +41,7 @@
 </script>
 
 <details>
-  <summary>Points Tool</summary>
+  <summary>Points</summary>
   <div id="container">
     <div>radius: <input type="number" bind:value="{radius}">{radius}</div>
     <div>width: <input type="range" bind:value="{width}" min="10" max="200" step="10">{width}</div>

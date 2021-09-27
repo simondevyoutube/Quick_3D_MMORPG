@@ -28,8 +28,8 @@ export class World {
     
     // then set that objects camera
     const player = this.entities.get(0)
-    player.camera.target.set(0, 5.4, 0)
-    player.camera.update()
+    player.cameraControls.target.set(0, 5.4, 0)
+    player.cameraControls.update()
 
 
     this.animate();
@@ -41,9 +41,7 @@ export class World {
   changeModel(model) {
     const currentEnt = this.entities.get(0)
     currentEnt.destroy()
-    const newEnt = this.entities.create({id:0, entity:"player", world:this, state:"idle", position:[0,0,0], quaternion:[0,0,0,1], model})
-    newEnt.camera.target.set(0, 5.4, 0)
-    newEnt.camera.update()
+    this.entities.create({id:0, entity:"player", world:this, state:"idle", position:[0,0,0], quaternion:[0,0,0,1], model})
   }
 
   animate() {

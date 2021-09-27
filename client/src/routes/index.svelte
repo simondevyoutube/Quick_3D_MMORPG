@@ -13,5 +13,6 @@
     color: white;
     margin: 0;
     overflow: hidden;
+    font-size: x-large;
   }
 </style>

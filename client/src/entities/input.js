@@ -1,4 +1,5 @@
 export class Input {
+
   constructor(args) {
     // not needed yet but we'll see
     this.entity = args.entity
@@ -14,28 +15,49 @@ export class Input {
 
   handleKeyup(event) {
     // console.log(event.key);
+    switch (event.key) {
+      case " ":
+        this.entity.move.jump = 0
+        break;
+      case "w":
+        this.entity.move.forward = 0
+        break;
+      case "s":
+        this.entity.move.backward = 0
+        break;
+      case "a":
+        this.entity.move.left = 0
+        break;
+      case "d":
+        this.entity.move.right = 0
+        break;
+      default:
+        break;
+    }
   }
 
   handleKeydown(event) {
     // console.log(event.key);
-    switch (event.key) {
-      case " ":
-        this.entity.move([0, 10, 0])
-        break;
-      case "w":
-        this.entity.move([10, 0, 0])
-        break;
-      case "s":
-        this.entity.move([-10, 0, 0])
-        break;
-      case "a":
-        this.entity.move([0, 0, 10])
-        break;
-      case "d":
-        this.entity.move([0, 0, -10])
-        break;
-      default:
-        break;
+    if (this.entity.canMove) {
+      switch (event.key) {
+        case " ":
+          this.entity.move.jump = 1
+          break;
+        case "w":
+          this.entity.move.forward = 1
+          break;
+        case "s":
+          this.entity.move.backward = 1
+          break;
+        case "a":
+          this.entity.move.left = 1 
+          break;
+        case "d":
+          this.entity.move.right = 1
+          break;
+        default:
+          break;
+      } 
     }
   }
 }

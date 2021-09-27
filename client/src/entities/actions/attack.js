@@ -1,3 +1,6 @@
+/** 
+ * Warning: This class hasn't been touched and will probably not work
+ */
 export class Attack {
   action_ = undefined;
 

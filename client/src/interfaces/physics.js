@@ -16,12 +16,19 @@ export class Physics {
   }
 
   update(deltaTime){
+    // TODO-DefinitelyMaybe: There's a better way to do this but this'll do for now
+    // If the time taken was too long... don't do it
+    if (deltaTime > 0.1) {
+      return
+    }
     this.world.step(deltaTime)
     const entities = this.world.bodies.filter(body => body.entity)
     for (let i = 0; i < entities.length; i++) {
       const body = entities[i];
       const pos = body.position
+      const quat = body.quaternion
       body.entity.position.set(pos.x, pos.y, pos.z)
+      body.entity.quaternion.set(quat.x, quat.y, quat.z, quat.w)
     }
   }
 }

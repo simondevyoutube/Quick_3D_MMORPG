@@ -39,6 +39,9 @@ const _FS = /* glsl */`
     gl_FragColor.w *= vBlend;
   }`;
 
+/** 
+ * Warning: This class hasn't been touched and will probably not work
+ */
 export class ParticleEmitter {
   emissionRate_ = 0.0;
   emissionAccumulator_ = 0.0;

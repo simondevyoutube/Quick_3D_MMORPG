@@ -7,7 +7,7 @@
 
   $: if (selected) {
     data = []
-    for (const key in newModelData[selected]) {
+    for (const key in newModelData?.[selected]) {
       const val = newModelData[selected][key];
       data.push({key, val});
     }
@@ -18,14 +18,14 @@
   }
 </script>
 
-<label for="">Model:</label>
-<select bind:value="{selected}" on:change>
-  {#each models as name}
-    <option value="{name}">{name}</option>
-  {/each}
-</select>
-<details open>
+<details>
   <summary>Model Data:</summary>
+  <label for="">Model:</label>
+  <select bind:value="{selected}" on:change>
+    {#each models as name}
+      <option value="{name}">{name}</option>
+    {/each}
+  </select>
   {#each data as pair}
     {#if typeof(pair.val) == "string"}
       <label for="">{pair.key}</label><input type="text" bind:value="{pair.val}"><br>
@@ -45,7 +45,6 @@
 
 <style>
   details {
-    position: absolute;
     background-color: black;
   }
 </style>
