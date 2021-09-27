@@ -4,7 +4,12 @@ export const warrok = {
   equip: {
     rightHand: "RightHandIndex1",
   },
+  children: {
+    Character: {
+      scale: 0.08,
+      rotate: [0,1,0,0]
+    }
+  },
   nameOffset: 16,
-  scale: 8.0,
   physics: {}
 }

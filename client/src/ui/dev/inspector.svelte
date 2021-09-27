@@ -14,7 +14,7 @@
   }
 </script>
 
-<details open>
+<details>
   <summary>Inspector</summary>
   {#if object}
   <select bind:value="{selected}">

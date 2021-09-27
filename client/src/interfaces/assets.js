@@ -14,7 +14,7 @@ export async function create(args) {
   const promises = []
   const textures = {}
   let asset;
-  /** @type {THREE.Group | THREE.Scene | undefined} */
+  /** @type {THREE.Group | THREE.Scene} */
   let group;
   
   if (loader instanceof OBJLoader) {
@@ -65,7 +65,9 @@ export async function create(args) {
 
   // wait for all the reasources to load
   await Promise.all(promises)
+  /** @type {{model:THREE.Group | THREE.Scene, physicsBody?:cannon.Body, animator?:THREE.AnimationMixer}}} */
   const data = {model:group}
+  console.log(group);
 
   const entityPos = entity.position
   group.position.copy(entityPos)

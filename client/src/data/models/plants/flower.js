@@ -1,5 +1,9 @@
 export const flowers1 = {
   name: "Flowers",
-  scale: 0.05,
   url: "./resources/nature/FBX/Flowers.fbx",
+  children: {
+    Flowers: {
+      scale: 5,
+    }
+  }
 }
