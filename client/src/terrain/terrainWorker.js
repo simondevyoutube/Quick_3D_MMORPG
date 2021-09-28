@@ -254,11 +254,6 @@ function rebuild() {
     weights2.push(splats[2][typeValues[0].key].strength);
   }
 
-  const scenery = getPoints(offset, width)
-  if (width == 1024) {
-    // console.log({offset, width, size, numPoints:scenery.length}); 
-  }
-
   function _Unindex(src, stride) {
     const dst = [];
     for (let i = 0, n = indices.length; i < n; i += 3) {
@@ -319,6 +314,12 @@ function rebuild() {
   weights1Array.set(uiWeights1, 0);
   weights2Array.set(uiWeights2, 0);
 
+  const scenery = getPoints(offset, width)
+  
+  if (width == 1024) {
+    // console.log({offset, width, size, numPoints:scenery.length}); 
+  }
+
   return {
     positions: positionsArray,
     colours: coloursArray,
@@ -374,6 +375,16 @@ function getPoints(offset, width) {
   if (width > size) {
     console.error("Big sized chunks -> Not Yet Implemented");
   }
+
+  // With the generated points
+  if (points.length > 0) {
+    // calculate the height point as well
+    newPoints = newPoints.map(val => {
+      const height = heightGenerator.get(val[0], val[1]);
+      return [val[0], height, val[1]]
+    })
+  }
+
   return newPoints
 }
 

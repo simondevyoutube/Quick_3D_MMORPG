@@ -24,6 +24,7 @@ export const tree1 = {
   children: {
     Tree_1: {
       scale: 8,
+      rotate: [0.707, 0, 0, -0.707]
     }
   },
   physics: {},

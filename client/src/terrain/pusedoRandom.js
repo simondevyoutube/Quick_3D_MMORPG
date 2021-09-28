@@ -96,7 +96,8 @@ export function PusedoRandom(reset = false) {
 
 // lets go min and build up?
 export const terrainSize = terrainConstants.QT_MIN_CELL_SIZE * Math.pow(2, 2)
-const disc = new AdaptedPoissonDiscSample(200, [terrainSize, terrainSize], 20, PusedoRandom)
+const radius = 50
+const disc = new AdaptedPoissonDiscSample(radius, [terrainSize, terrainSize], 20, PusedoRandom)
 PusedoRandom(true)
 const sample = disc.GeneratePoints()
 // make the points tile nicer

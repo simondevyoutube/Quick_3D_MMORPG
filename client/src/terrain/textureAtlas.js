@@ -26,6 +26,14 @@ export class TextureAtlas {
     }
 
     await Promise.all(this.map[atlas].textures)
+    for (let i = 0; i < this.map[atlas].textures.length; i++) {
+      const promise = this.map[atlas].textures[i];
+      // TODO-DefinitelyMaybe: remove this if terrain no longer loads up black
+      if (promise == undefined) {
+        console.log(this);
+        debugger
+      }
+    }
 
     const data = new Uint8Array(this.map[atlas].textures.length * 4 * 1024 * 1024);
 
@@ -56,6 +64,6 @@ export class TextureAtlas {
 
     this.map[atlas].atlas = diffuse;
 
-    return
+    return this.map[atlas]
   }
 }

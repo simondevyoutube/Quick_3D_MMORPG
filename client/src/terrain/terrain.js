@@ -29,7 +29,7 @@ export class InfiniteTerrain {
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
     const atlas = new TextureAtlas();
-    atlas.load("diffuse", [
+    const p1 = atlas.load("diffuse", [
       "./resources/terrain/dirt_01_diffuse-1024.png",
       "./resources/terrain/grass1-albedo3-1024.png",
       "./resources/terrain/sandyground-albedo-1024.png",
@@ -41,7 +41,7 @@ export class InfiniteTerrain {
       "./resources/terrain/bark1-albedo.jpg",
     ])
     
-    atlas.load("normal", [
+    const p2 = atlas.load("normal", [
       "./resources/terrain/dirt_01_normal-1024.jpg",
       "./resources/terrain/grass1-normal-1024.jpg",
       "./resources/terrain/sandyground-normal-1024.jpg",
@@ -58,32 +58,35 @@ export class InfiniteTerrain {
       vertexColors: true,
     });
 
-    this.material.onBeforeCompile = (s) => {
-      let vsh = s.vertexShader;
-      vsh = VS1 + s.vertexShader;
-      const vi1 = vsh.search("#include <fog_vertex>");
-      vsh = [vsh.slice(0, vi1) + VS2 + vsh.slice(vi1)].join(
-        "",
-      );
-      s.vertexShader = vsh;
-
-      s.fragmentShader = PS1 + s.fragmentShader;
-      const fi1 = s.fragmentShader.search(
-        "#include <lights_physical_fragment>",
-      );
-      s.fragmentShader = [
-        s.fragmentShader.slice(0, fi1) + PS2 +
-        s.fragmentShader.slice(fi1),
-      ].join("");
-
-      s.uniforms.TRIPLANAR_normalMap = { value: atlas.map["normal"].atlas };
-      s.uniforms.TRIPLANAR_diffuseMap = {
-        value: atlas.map["diffuse"].atlas,
+    Promise.all([p1,p2]).then(val => {
+      console.log(val);
+      this.material.onBeforeCompile = (s) => {
+        let vsh = s.vertexShader;
+        vsh = VS1 + s.vertexShader;
+        const vi1 = vsh.search("#include <fog_vertex>");
+        vsh = [vsh.slice(0, vi1) + VS2 + vsh.slice(vi1)].join(
+          "",
+        );
+        s.vertexShader = vsh;
+  
+        s.fragmentShader = PS1 + s.fragmentShader;
+        const fi1 = s.fragmentShader.search(
+          "#include <lights_physical_fragment>",
+        );
+        s.fragmentShader = [
+          s.fragmentShader.slice(0, fi1) + PS2 +
+          s.fragmentShader.slice(fi1),
+        ].join("");
+  
+        s.uniforms.TRIPLANAR_normalMap = { value: atlas.map["normal"].atlas };
+        s.uniforms.TRIPLANAR_diffuseMap = {
+          value: atlas.map["diffuse"].atlas,
+        };
+        s.uniforms.TRIPLANAR_noiseMap = { value: noiseTexture };
+  
+        // s.fragmentShader += 'poop';
       };
-      s.uniforms.TRIPLANAR_noiseMap = { value: noiseTexture };
-
-      // s.fragmentShader += 'poop';
-    };
+    })
 
     this.world.scene.add(...this.groups);
   }

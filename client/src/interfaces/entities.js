@@ -1,6 +1,7 @@
 import { newEntityClass } from "../entities/mod.js";
 
 export class Entities {
+  // TODO-DefinitelyMaybe: Split map into layers/categories
   map = {};
   entities = [];
   player;
