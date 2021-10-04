@@ -23,7 +23,12 @@ This is a refactoring of simon's project original project.
   - 3D options: [cannon-es](https://github.com/pmndrs/cannon-es)...
 - UI
   - [x] svelte-kit web ui framework
-- Networking
+- Networking (WIP)
+  - Server is truth
+    1. know the present (Sync)
+    2. interpolate (smooth movement)
+    3. prioritize (reduce bandwidth to acceptable constraints for server and client)
+  - Client is a display and input.
   - [x] Server changed to deno
   - [ ] Multi-player...
   - Logic regarding an entity has moved closer to that entity
