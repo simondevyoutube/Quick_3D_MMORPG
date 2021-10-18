@@ -52,3 +52,6 @@ The client server is still node.js so `cd ./client` then `npm i` then `npm Clien
 - Multiplayer is not there atm
 - There's less in the world
 
+# Serverless
+
+If your interested in my hack-of-an-attempt at running this within a serverless environment, check out my [other repo](https://github.com/DefinitelyMaybe/glowing-octo-train).
