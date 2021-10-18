@@ -1,6 +1,6 @@
 # Quick_3D_MMORPG
 
-This is a refactoring of simon's project original project.
+This is a refactoring of simon's original project.
 
 - Organization
   - folder structure
