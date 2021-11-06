@@ -1,6 +1,6 @@
 # Quick_3D_MMORPG
 
-This is a refactoring of simon's project original project.
+This is a refactoring of simon's original project.
 
 - Organization
   - folder structure
@@ -40,3 +40,6 @@ Structure will set you free.
 
 The client server runs via sveltekit so a normal node setup is required. `npm i` then `npm run dev`
 
+# Serverless
+
+If your interested in my hack-of-an-attempt at running this within a serverless environment, check out my [other repo](https://github.com/DefinitelyMaybe/glowing-octo-train).
