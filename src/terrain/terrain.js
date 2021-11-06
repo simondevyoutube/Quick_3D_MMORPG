@@ -58,8 +58,8 @@ export class InfiniteTerrain {
       vertexColors: true,
     });
 
-    Promise.all([p1,p2]).then(val => {
-      console.log(val);
+    Promise.all([p1,p2]).then(_val => {
+      // console.log(_val);
       this.material.onBeforeCompile = (s) => {
         let vsh = s.vertexShader;
         vsh = VS1 + s.vertexShader;

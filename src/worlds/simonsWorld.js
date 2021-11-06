@@ -2,7 +2,6 @@ import { THREE } from "../deps.js";
 import { Entities } from "../interfaces/entities.js";
 import { ThreeInit } from "../interfaces/graphics.js";
 import { Input } from "../interfaces/input.js";
-import { Network } from "../interfaces/network.js";
 import { Physics } from "../interfaces/physics.js";
 import { InfiniteTerrain } from "../terrain/terrain.js";
 
@@ -10,7 +9,6 @@ import { InfiniteTerrain } from "../terrain/terrain.js";
 export class World {
   initialized = false;
 
-  network = new Network(this);
   physics = new Physics()
   input = new Input(this)
   entities = new Entities(this);
@@ -25,7 +23,12 @@ export class World {
 
     this.camera.position.set(-30, 20, -40)
 
+    // create the terrain
     this.terrain = new InfiniteTerrain(this)
+    
+    // create the player
+    this.entities.create({id:0, position:[0,0,0], entity:'player', quaternion:[0,0,0,1], model:"sorceror"})
+    this.entities.player = this.entities.get(0)
 
     this.renderer.setAnimationLoop(()=>this.animate());
     this.resize();
