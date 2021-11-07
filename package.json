@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.0.1",
   "author": "DefinitelyMaybe",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "svelte-kit dev --open --port=8080",
@@ -12,5 +12,9 @@
   "devDependencies": {
     "@sveltejs/kit": "next",
     "svelte": "^3.34.0"
+  },
+  "dependencies": {
+    "cannon-es": "^0.18.0",
+    "three": "^0.134.0"
   }
 }
