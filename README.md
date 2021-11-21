@@ -7,7 +7,8 @@
 - *From the root folder*
 - run `yarn`. The Yarn workspace settings will handle installing the packages for client and server.
 - run `yarn shared build`
-- run `yarn server start:dev` 
+- run `yarn server start:watch`
+- run `yarn client start:dev`
 - Ensure a browser is open to localhost:7700 _(Maybe. See below)_
   -  Example `yarn client start:dev`
 - This should set the server to auto restart on changes. 
