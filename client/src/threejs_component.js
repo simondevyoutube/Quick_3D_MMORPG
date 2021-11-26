@@ -130,6 +130,12 @@ export const threejs_component = (() => {
       this.LoadSky_();
     }
 
+    _OnWindowResize() {
+      this.camera_.aspect = window.innerWidth / window.innerHeight;
+      this.camera_.updateProjectionMatrix();
+      this.threejs_.setSize(window.innerWidth, window.innerHeight);
+    }
+
     LoadSky_() {
       const hemiLight = new THREE.HemisphereLight(0x424a75, 0x6a88b5, 0.7);
       // hemiLight.color.setHSL(0.6, 1, 0.4);
