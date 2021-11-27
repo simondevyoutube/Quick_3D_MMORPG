@@ -81,18 +81,18 @@ export class ThreeJSController extends entity.Component {
       varying vec3 vWorldPosition;
     #endif`;
 
-    this.threejs_ = new THREE.WebGLRenderer({
+    this.threejs = new THREE.WebGLRenderer({
       antialias: false,
     });
-    this.threejs_.outputEncoding = THREE.sRGBEncoding;
-    this.threejs_.gammaFactor = 2.2;
-    this.threejs_.shadowMap.enabled = true;
-    this.threejs_.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.threejs_.setPixelRatio(window.devicePixelRatio);
-    this.threejs_.setSize(window.innerWidth, window.innerHeight);
-    this.threejs_.domElement.id = 'threejs';
+    this.threejs.outputEncoding = THREE.sRGBEncoding;
+    this.threejs.gammaFactor = 2.2;
+    this.threejs.shadowMap.enabled = true;
+    this.threejs.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.threejs.setPixelRatio(window.devicePixelRatio);
+    this.threejs.setSize(window.innerWidth, window.innerHeight);
+    this.threejs.domElement.id = 'threejs';
 
-    document.getElementById('container').appendChild(this.threejs_.domElement);
+    document.getElementById('container').appendChild(this.threejs.domElement);
 
     window.addEventListener('resize', () => {
       this._OnWindowResize();
@@ -131,7 +131,7 @@ export class ThreeJSController extends entity.Component {
   _OnWindowResize() {
     this.camera_.aspect = window.innerWidth / window.innerHeight;
     this.camera_.updateProjectionMatrix();
-    this.threejs_.setSize(window.innerWidth, window.innerHeight);
+    this.threejs.setSize(window.innerWidth, window.innerHeight);
   }
 
   LoadSky_() {
