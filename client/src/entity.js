@@ -52,6 +52,10 @@ export class Entity {
     this.dead_ = true;
   }
 
+  push(c) {
+    this.AddComponent(c)
+  }
+
   AddComponent(c) {
     c.SetParent(this);
     this._components[c.constructor.name] = c;
