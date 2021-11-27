@@ -7,6 +7,7 @@ let _IDs = 0;
 
 export class WorkerThread {
   constructor(s) {
+    // Note Firefox doesn't support `type:module` https://developer.mozilla.org/en-US/docs/Web/API/Worker/Worker#browser_compatibility
     this._worker = new Worker(s, {type: 'module'});
     this._worker.onmessage = (e) => {
       this._OnMessage(e);
@@ -165,6 +166,6 @@ export class TerrainChunkRebuilder_Threaded {
 
 export const terrain_builder_threaded = (function() {
   return {
-    TerrainChunkRebuilder_Threaded: TerrainChunkRebuilder_Threaded
+    TerrainChunkRebuilder_Threaded
   }
 })();

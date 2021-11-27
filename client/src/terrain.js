@@ -1,17 +1,20 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-
 import {entity} from './entity.js';
 import {quadtree} from './quadtree.js';
 import {terrain_shader} from './terrain-shader.js';
-import {terrain_builder_threaded} from './terrain-builder-threaded.js';
+import {TerrainChunkRebuilder} from './terrain-builder.js';
+import {TerrainChunkRebuilder_Threaded} from './terrain-builder-threaded.js';
 import {texture_splatter} from './texture-splatter.js';
 import {textures} from './textures.js';
 import {utils} from './utils.js';
-
 import {terrain_constants} from '/shared/terrain-constants.mjs';
 import {terrain_height} from '/shared/terrain-height.mjs';
-
 import {noise} from '/shared/noise.mjs';
+
+// Threaded / non threaded ?
+// Note Firefox doesn't support new Worker(url, {type:module`}) https://developer.mozilla.org/en-US/docs/Web/API/Worker/Worker#browser_compatibility
+const THREADED = true
+const TerrainRebuilder = THREADED ? TerrainChunkRebuilder_Threaded : TerrainChunkRebuilder
 
 export class TerrainChunkManager extends entity.Component {
   constructor(params) {
@@ -86,8 +89,8 @@ export class TerrainChunkManager extends entity.Component {
       // s.fragmentShader += 'poop';
     };
 
-    this._builder = new terrain_builder_threaded.TerrainChunkRebuilder_Threaded();
-    // this._builder = new terrain_builder.TerrainChunkRebuilder();
+    // this._builder = new terrain_builder_threaded.TerrainChunkRebuilder_Threaded();
+    this._builder = new TerrainRebuilder();
 
     this._InitNoise();
     this._InitBiomes(params);

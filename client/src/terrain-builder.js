@@ -72,6 +72,7 @@ export class TerrainChunkRebuilder {
     } else {
       const b = this._queued.pop();
       if (b) {
+        // TODO TerrainChunk has no _Rebuild method
         this._active = b._Rebuild();
         this._new.push(b);
       }
@@ -92,8 +93,6 @@ export class TerrainChunkRebuilder {
 }
 
 export const terrain_builder = (function() {
-
-  
   return {
     TerrainChunkRebuilder
   }
