@@ -1,13 +1,10 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-
 import {texture_splatter} from './texture-splatter.js' ;
-
 import {math} from '/shared/math.mjs';
 import {noise} from '/shared/noise.mjs';
 import {terrain_height} from '/shared/terrain-height.mjs' ;
 
-
-class _TerrainBuilderThreadedWorker {
+export class TerrainBuilderThreadedWorker {
   constructor() {
   }
 
@@ -324,7 +321,7 @@ class _TerrainBuilderThreadedWorker {
   }
 }
 
-const _CHUNK = new _TerrainBuilderThreadedWorker();
+const _CHUNK = new TerrainBuilderThreadedWorker();
 
 self.onmessage = (msg) => {
   if (msg.data.subject == 'build_chunk') {
