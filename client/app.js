@@ -27,8 +27,6 @@ if (username) {
     loadWorld(username)
 }
 
-
-
 /**
  * Start the world
  */
@@ -48,6 +46,8 @@ function loadWorld() {
     })
     
     engine.start()
+    // engine.setupThree()
+
     // engine.emit('ready')
 }
 
