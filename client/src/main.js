@@ -13,9 +13,28 @@ import {spatial_hash_grid} from '/shared/spatial-hash-grid.mjs';
 import {defs} from '/shared/defs.mjs';
 import {threejs_component} from './threejs_component.js';
 
+export class EventEmitter{
+  constructor(){
+      this.callbacks = {}
+  }
+
+  on(event = '', cb = () => {}){
+      if(!this.callbacks[event]) this.callbacks[event] = [];
+      this.callbacks[event].push(cb)
+  }
+
+  emit(event = '', data){
+      let cbs = this.callbacks[event]
+      if(cbs){
+          cbs.forEach(cb => cb(data))
+      }
+  }
+}
+
 export class GameEngine {
   constructor() {
     this.entityManager_ = new entity_manager.EntityManager();
+    this.eventEmitter = new EventEmitter
   }
   
   start() {
@@ -42,6 +61,10 @@ export class GameEngine {
     this._gui.close();
   }
 
+  get THREE() {
+    return this.threejs
+  }
+
   LoadControllers_() {
     const threejs = new entity.Entity();
     threejs.AddComponent(new threejs_component.ThreeJSController());
@@ -50,7 +73,7 @@ export class GameEngine {
     // Hack
     this.scene_ = threejs.GetComponent('ThreeJSController').scene_;
     this.camera_ = threejs.GetComponent('ThreeJSController').camera_;
-    this.threejs_ = threejs.GetComponent('ThreeJSController').threejs_;
+    this.threejs = threejs.GetComponent('ThreeJSController').threejs;
 
     const ui = new entity.Entity();
     ui.AddComponent(new ui_controller.UIController());
@@ -66,7 +89,7 @@ export class GameEngine {
         target: 'player',
         gui: this._gui,
         guiParams: this._guiParams,
-        threejs: this.threejs_,
+        threejs: this.threejs,
     }));
     this.entityManager_.Add(t, 'terrain');
 
@@ -105,14 +128,11 @@ export class GameEngine {
       database.GetComponent('InventoryDatabaseController').AddItem(
           k, defs.WEAPONS_DATA[k]);
     }
+
+    this.eventEmitter.emit('ready', this)
   }
 
   LoadPlayer_() {
-    const params = {
-      camera: this.camera_,
-      scene: this.scene_,
-    };
-
     const levelUpSpawner = new entity.Entity();
     levelUpSpawner.AddComponent(new level_up_component.LevelUpComponentSpawner({
         camera: this.camera_,
@@ -124,7 +144,7 @@ export class GameEngine {
   _OnWindowResize() {
     this.camera_.aspect = window.innerWidth / window.innerHeight;
     this.camera_.updateProjectionMatrix();
-    this.threejs_.setSize(window.innerWidth, window.innerHeight);
+    this.threejs.setSize(window.innerWidth, window.innerHeight);
   }
 
   RAF_() {
@@ -133,7 +153,7 @@ export class GameEngine {
         this.previousRAF_ = t;
       }
 
-      this.threejs_.render(this.scene_, this.camera_);
+      this.threejs.render(this.scene_, this.camera_);
       this.Step_(t - this.previousRAF_);
       this.previousRAF_ = t;
 
