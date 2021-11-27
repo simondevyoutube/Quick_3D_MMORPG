@@ -190,9 +190,3 @@ export class ThreeJSController extends Component {
     this.sun_.target.updateMatrixWorld();
   }
 }
-
-export const threejs_component = (() => {
-  return {
-      ThreeJSController,
-  };
-})();

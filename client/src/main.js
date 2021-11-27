@@ -12,7 +12,7 @@ import { terrain } from './terrain.js';
 import { inventory_controller } from './inventory-controller.js';
 import { spatial_hash_grid } from '/shared/spatial-hash-grid.mjs';
 import { defs } from '/shared/defs.mjs';
-import { threejs_component } from './threejs_component.js';
+import { ThreeJSController } from './threejs_component.js';
 
 
 /**
@@ -67,7 +67,7 @@ export class EventEmitter {
 
 export class GameEngine {
   constructor() {
-    this.entityManager_ = new EntityManager();
+    this.entityManager = new EntityManager();
     this.eventEmitter = new EventEmitter
 
     // Set alias
@@ -82,6 +82,7 @@ export class GameEngine {
     this.grid_ = new spatial_hash_grid.SpatialHashGrid(
       [[-1000, -1000], [1000, 1000]], [100, 100]);
 
+    this.setupThree();
     this.LoadControllers();
     this.LoadPlayer();
 
@@ -107,24 +108,28 @@ export class GameEngine {
     return this.scene_
   }
 
-  LoadControllers() {
+  setupThree() {
+    // Setup ThreeJS
     const threejs = new Entity();
-    threejs.AddComponent(new threejs_component.ThreeJSController());
-    this.entityManager_.Add(threejs);
+    threejs.AddComponent(new ThreeJSController());
+    this.entityManager.Add(threejs);
 
-    // Hack
     this.scene_ = threejs.GetComponent('ThreeJSController').scene_;
     this.camera_ = threejs.GetComponent('ThreeJSController').camera_;
     this.threejs = threejs.GetComponent('ThreeJSController').threejs;
+  }
 
+  LoadControllers() {
+    
     const ui = new Entity();
     ui.AddComponent(new ui_controller.UIController());
-    this.entityManager_.Add(ui, 'ui');
+    this.entityManager.Add(ui, 'ui');
 
     const network = new Entity();
     network.AddComponent(new NetworkController());
-    this.entityManager_.Add(network, 'network');
+    this.entityManager.Add(network, 'network');
 
+    // Terrain
     const t = new Entity();
     t.AddComponent(new terrain.TerrainChunkManager({
       scene: this.scene_,
@@ -133,19 +138,19 @@ export class GameEngine {
       guiParams: this._guiParams,
       threejs: this.threejs,
     }));
-    this.entityManager_.Add(t, 'terrain');
+    this.entityManager.Add(t, 'terrain');
 
     // Add loader entity
     const l = new Entity();
     l.AddComponent(new LoadController());
-    this.entityManager_.Add(l, 'loader');
+    this.entityManager.Add(l, 'loader');
 
     const scenery = new Entity();
     scenery.AddComponent(new scenery_controller.SceneryController({
       scene: this.scene_,
       grid: this.grid_,
     }));
-    this.entityManager_.Add(scenery, 'scenery');
+    this.entityManager.Add(scenery, 'scenery');
 
     // Add PlayerSpawner
     const spawner = new Entity();
@@ -161,17 +166,16 @@ export class GameEngine {
       scene: this.scene_,
       camera: this.camera_,
     }));
-    this.entityManager_.Add(spawner, 'spawners');
+    this.entityManager.Add(spawner, 'spawners');
 
 
     const database = new Entity();
     database.AddComponent(new inventory_controller.InventoryDatabaseController());
-    this.entityManager_.Add(database, 'database');
+    this.entityManager.Add(database, 'database');
 
-    // HACK
+    // Add weapons
     for (let k in defs.WEAPONS_DATA) {
-      database.GetComponent('InventoryDatabaseController').AddItem(
-        k, defs.WEAPONS_DATA[k]);
+      database.GetComponent('InventoryDatabaseController').AddItem(k, defs.WEAPONS_DATA[k]);
     }
 
     // Tell parent we are ready
@@ -184,7 +188,7 @@ export class GameEngine {
       camera: this.camera_,
       scene: this.scene_,
     }));
-    this.entityManager_.Add(levelUpSpawner, 'level-up-spawner');
+    this.entityManager.Add(levelUpSpawner, 'level-up-spawner');
   }
 
   RAF() {
@@ -201,7 +205,7 @@ export class GameEngine {
   step(timeElapsed) {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
 
-    this.entityManager_.Update(timeElapsedS);
+    this.entityManager.Update(timeElapsedS);
   }
 }
 
