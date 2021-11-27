@@ -1,32 +1,32 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118.1/build/three.module.js';
-import {GUI} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
-import {EntityManager} from './entity-manager.js';
-import {Entity, Component} from './entity.js';
-import {ui_controller} from './ui-controller.js';
-import {level_up_component} from './level-up-component.js';
-import {NetworkController} from './network-controller.js';
-import {scenery_controller} from './scenery-controller.js';
-import {LoadController} from './load-controller.js';
-import {spawners} from './spawners.js';
-import {terrain} from './terrain.js';
-import {inventory_controller} from './inventory-controller.js';
-import {spatial_hash_grid} from '/shared/spatial-hash-grid.mjs';
-import {defs} from '/shared/defs.mjs';
-import {threejs_component} from './threejs_component.js';
+import { GUI } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
+import { EntityManager } from './entity-manager.js';
+import { Entity, Component } from './entity.js';
+import { ui_controller } from './ui-controller.js';
+import { level_up_component } from './level-up-component.js';
+import { NetworkController } from './network-controller.js';
+import { scenery_controller } from './scenery-controller.js';
+import { LoadController } from './load-controller.js';
+import { spawners } from './spawners.js';
+import { terrain } from './terrain.js';
+import { inventory_controller } from './inventory-controller.js';
+import { spatial_hash_grid } from '/shared/spatial-hash-grid.mjs';
+import { defs } from '/shared/defs.mjs';
+import { threejs_component } from './threejs_component.js';
 
 
 /**
  * AnimationFrame
  * @example: new AnimationFrame(() => {}).start()
  */
- export class AnimationFrame {
-  constructor (animate = () => {}, fps = 60) {
+export class AnimationFrame {
+  constructor(animate = () => { }, fps = 60) {
     this.requestID = 0
     this.fps = fps
     this.animate = animate
   }
 
-  start () {
+  start() {
     let then = performance.now()
     const interval = 1000 / this.fps
 
@@ -42,26 +42,26 @@ import {threejs_component} from './threejs_component.js';
     this.requestID = requestAnimationFrame(animateLoop)
   }
 
-  stop () {
+  stop() {
     cancelAnimationFrame(this.requestID)
   }
 }
 
-export class EventEmitter{
-  constructor(){
-      this.callbacks = {}
+export class EventEmitter {
+  constructor() {
+    this.callbacks = {}
   }
 
-  on(event = '', cb = () => {}){
-      if(!this.callbacks[event]) this.callbacks[event] = [];
-      this.callbacks[event].push(cb)
+  on(event = '', cb = () => { }) {
+    if (!this.callbacks[event]) this.callbacks[event] = [];
+    this.callbacks[event].push(cb)
   }
 
-  emit(event = '', data){
-      let cbs = this.callbacks[event]
-      if(cbs){
-          cbs.forEach(cb => cb(data))
-      }
+  emit(event = '', data) {
+    let cbs = this.callbacks[event]
+    if (cbs) {
+      cbs.forEach(cb => cb(data))
+    }
   }
 }
 
@@ -80,7 +80,7 @@ export class GameEngine {
     this.CreateGUI();
 
     this.grid_ = new spatial_hash_grid.SpatialHashGrid(
-        [[-1000, -1000], [1000, 1000]], [100, 100]);
+      [[-1000, -1000], [1000, 1000]], [100, 100]);
 
     this.LoadControllers();
     this.LoadPlayer();
@@ -127,11 +127,11 @@ export class GameEngine {
 
     const t = new Entity();
     t.AddComponent(new terrain.TerrainChunkManager({
-        scene: this.scene_,
-        target: 'player',
-        gui: this._gui,
-        guiParams: this._guiParams,
-        threejs: this.threejs,
+      scene: this.scene_,
+      target: 'player',
+      gui: this._gui,
+      guiParams: this._guiParams,
+      threejs: this.threejs,
     }));
     this.entityManager_.Add(t, 'terrain');
 
@@ -142,24 +142,24 @@ export class GameEngine {
 
     const scenery = new Entity();
     scenery.AddComponent(new scenery_controller.SceneryController({
-        scene: this.scene_,
-        grid: this.grid_,
+      scene: this.scene_,
+      grid: this.grid_,
     }));
     this.entityManager_.Add(scenery, 'scenery');
 
     // Add PlayerSpawner
     const spawner = new Entity();
     spawner.AddComponent(new spawners.PlayerSpawner({
-        grid: this.grid_,
-        scene: this.scene_,
-        camera: this.camera_,
+      grid: this.grid_,
+      scene: this.scene_,
+      camera: this.camera_,
     }));
 
     // Add NetworkEntitySpawner
     spawner.AddComponent(new spawners.NetworkEntitySpawner({
-        grid: this.grid_,
-        scene: this.scene_,
-        camera: this.camera_,
+      grid: this.grid_,
+      scene: this.scene_,
+      camera: this.camera_,
     }));
     this.entityManager_.Add(spawner, 'spawners');
 
@@ -171,7 +171,7 @@ export class GameEngine {
     // HACK
     for (let k in defs.WEAPONS_DATA) {
       database.GetComponent('InventoryDatabaseController').AddItem(
-          k, defs.WEAPONS_DATA[k]);
+        k, defs.WEAPONS_DATA[k]);
     }
 
     // Tell parent we are ready
@@ -181,8 +181,8 @@ export class GameEngine {
   LoadPlayer() {
     const levelUpSpawner = new Entity();
     levelUpSpawner.AddComponent(new level_up_component.LevelUpComponentSpawner({
-        camera: this.camera_,
-        scene: this.scene_,
+      camera: this.camera_,
+      scene: this.scene_,
     }));
     this.entityManager_.Add(levelUpSpawner, 'level-up-spawner');
   }
@@ -192,7 +192,7 @@ export class GameEngine {
       this.threejs.render(this.scene_, this.camera_);
       this.step(t);
 
-      this.emit('render',t)
+      this.emit('render', t)
     }
 
     return new AnimationFrame(render).start()
