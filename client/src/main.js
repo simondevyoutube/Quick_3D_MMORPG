@@ -35,7 +35,13 @@ export class GameEngine {
   constructor() {
     this.entityManager_ = new entity_manager.EntityManager();
     this.eventEmitter = new EventEmitter
+
+    // Set alias
+    this.on = this.eventEmitter.on.bind(this.eventEmitter)
+    this.emit = this.eventEmitter.emit.bind(this.eventEmitter)
   }
+
+
   
   start() {
     this.CreateGUI_();
