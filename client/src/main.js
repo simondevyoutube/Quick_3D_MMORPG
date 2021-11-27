@@ -1,37 +1,24 @@
 import {GUI} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
-
 import {entity_manager} from './entity-manager.js';
 import {entity} from './entity.js';
 import {ui_controller} from './ui-controller.js';
 import {level_up_component} from './level-up-component.js';
 import {network_controller} from './network-controller.js';
 import {scenery_controller} from './scenery-controller.js';
-import {load_controller} from './load-controller.js';
+import {LoadController} from './load-controller.js';
 import {spawners} from './spawners.js';
 import {terrain} from './terrain.js';
 import {inventory_controller} from './inventory-controller.js';
-
 import {spatial_hash_grid} from '/shared/spatial-hash-grid.mjs';
 import {defs} from '/shared/defs.mjs';
 import {threejs_component} from './threejs_component.js';
 
-
-
-class CrappyMMOAttempt {
+export class GameEngine {
   constructor() {
-    this._Initialize();
-  }
-
-  _Initialize() {
     this.entityManager_ = new entity_manager.EntityManager();
-
-    document.getElementById('login-ui').style.visibility = 'visible';
-    document.getElementById('login-button').onclick = () => {
-      this.OnGameStarted_();
-    };
   }
-
-  OnGameStarted_() {
+  
+  start() {
     this.CreateGUI_();
 
     this.grid_ = new spatial_hash_grid.SpatialHashGrid(
@@ -83,8 +70,9 @@ class CrappyMMOAttempt {
     }));
     this.entityManager_.Add(t, 'terrain');
 
+    // Add loader entity
     const l = new entity.Entity();
-    l.AddComponent(new load_controller.LoadController());
+    l.AddComponent(new LoadController());
     this.entityManager_.Add(l, 'loader');
 
     const scenery = new entity.Entity();
@@ -163,8 +151,10 @@ class CrappyMMOAttempt {
 }
 
 
-let _APP = null;
+// let _APP = null;
 
-window.addEventListener('DOMContentLoaded', () => {
-  _APP = new CrappyMMOAttempt();
-});
+// window.addEventListener('DOMContentLoaded', () => {
+//   _APP = new GameEngine();
+// });
+
+export default GameEngine
