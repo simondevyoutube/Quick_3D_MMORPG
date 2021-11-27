@@ -1,3 +1,4 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118.1/build/three.module.js';
 import {GUI} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
 import {entity_manager} from './entity-manager.js';
 import {Entity, Component} from './entity.js';
@@ -12,6 +13,39 @@ import {inventory_controller} from './inventory-controller.js';
 import {spatial_hash_grid} from '/shared/spatial-hash-grid.mjs';
 import {defs} from '/shared/defs.mjs';
 import {threejs_component} from './threejs_component.js';
+
+
+/**
+ * AnimationFrame
+ * @example: new AnimationFrame(() => {}).start()
+ */
+ export class AnimationFrame {
+  constructor (animate = () => {}, fps = 60) {
+    this.requestID = 0
+    this.fps = fps
+    this.animate = animate
+  }
+
+  start () {
+    let then = performance.now()
+    const interval = 1000 / this.fps
+
+    const animateLoop = (now) => {
+      this.requestID = requestAnimationFrame(animateLoop)
+      const delta = now - then
+
+      if (delta > interval) {
+        then = now - (delta % interval)
+        this.animate(delta)
+      }
+    }
+    this.requestID = requestAnimationFrame(animateLoop)
+  }
+
+  stop () {
+    cancelAnimationFrame(this.requestID)
+  }
+}
 
 export class EventEmitter{
   constructor(){
@@ -42,19 +76,19 @@ export class GameEngine {
   }
 
   start() {
-    this.CreateGUI_();
+    // Dat.gui
+    this.CreateGUI();
 
     this.grid_ = new spatial_hash_grid.SpatialHashGrid(
         [[-1000, -1000], [1000, 1000]], [100, 100]);
 
-    this.LoadControllers_();
-    this.LoadPlayer_();
+    this.LoadControllers();
+    this.LoadPlayer();
 
-    this.previousRAF_ = null;
-    this.RAF_();
+    this.RAF();
   }
 
-  CreateGUI_() {
+  CreateGUI() {
     this._guiParams = {
       general: {
       },
@@ -66,10 +100,14 @@ export class GameEngine {
   }
 
   get THREE() {
-    return this.threejs
+    return THREE
   }
 
-  LoadControllers_() {
+  get scene() {
+    return this.scene_
+  }
+
+  LoadControllers() {
     const threejs = new Entity();
     threejs.AddComponent(new threejs_component.ThreeJSController());
     this.entityManager_.Add(threejs);
@@ -136,10 +174,11 @@ export class GameEngine {
           k, defs.WEAPONS_DATA[k]);
     }
 
-    this.eventEmitter.emit('ready', this)
+    // Tell parent we are ready
+    this.emit('ready', this)
   }
 
-  LoadPlayer_() {
+  LoadPlayer() {
     const levelUpSpawner = new Entity();
     levelUpSpawner.AddComponent(new level_up_component.LevelUpComponentSpawner({
         camera: this.camera_,
@@ -148,29 +187,18 @@ export class GameEngine {
     this.entityManager_.Add(levelUpSpawner, 'level-up-spawner');
   }
 
-  _OnWindowResize() {
-    this.camera_.aspect = window.innerWidth / window.innerHeight;
-    this.camera_.updateProjectionMatrix();
-    this.threejs.setSize(window.innerWidth, window.innerHeight);
-  }
-
-  RAF_() {
-    requestAnimationFrame((t) => {
-      if (this.previousRAF_ === null) {
-        this.previousRAF_ = t;
-      }
-
+  RAF() {
+    const render = (t) => {
       this.threejs.render(this.scene_, this.camera_);
-      this.Step_(t - this.previousRAF_);
-      this.previousRAF_ = t;
+      this.step(t);
 
-      setTimeout(() => {
-        this.RAF_();
-      }, 1);
-    });
+      this.emit('render',t)
+    }
+
+    return new AnimationFrame(render).start()
   }
 
-  Step_(timeElapsed) {
+  step(timeElapsed) {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
 
     this.entityManager_.Update(timeElapsedS);
