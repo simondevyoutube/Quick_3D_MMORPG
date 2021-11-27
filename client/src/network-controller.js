@@ -159,9 +159,3 @@ export class NetworkController extends Component {
     }
   }
 };
-
-export const network_controller = (() => {
-  return {
-      NetworkController
-  };
-})();

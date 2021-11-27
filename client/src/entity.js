@@ -157,9 +157,3 @@ export class Component {
   }
 };
 
-export const entity = (() => {
-  return {
-    Entity,
-    Component,
-  };
-})();

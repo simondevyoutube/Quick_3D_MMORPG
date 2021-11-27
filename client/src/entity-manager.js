@@ -77,9 +77,3 @@
     this._entities = alive;
   }
 }
-
-export const entity_manager = (() => {
-  return {
-    EntityManager
-  };
-})();

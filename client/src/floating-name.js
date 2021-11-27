@@ -75,9 +75,3 @@ export class FloatingName extends Component {
     msg.model.add(this.sprite_);
   }
 };
-
-export const floating_name = (() => {
-  return {
-      FloatingName,
-  };
-})();

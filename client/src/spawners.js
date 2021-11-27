@@ -7,15 +7,15 @@ import {player_input} from './player-input.js';
 import {spatial_grid_controller} from './spatial-grid-controller.js';
 import {inventory_controller} from './inventory-controller.js';
 import {equip_weapon_component} from './equip-weapon-component.js';
-import {attack_controller} from './attacker-controller.js';
+import {AttackController} from './attacker-controller.js';
 
 import {npc_entity} from './npc-entity.js';
 import {health_bar} from './health-bar.js';
 import {network_entity_controller} from './network-entity-controller.js';
 import {network_player_controller} from './network-player-controller.js';
-import {floating_name} from './floating-name.js';
+import {FloatingName} from './floating-name.js';
 import {sorceror_effect} from './sorceror-effect.js';
-import {blood_effect} from './blood-effect.js';
+import {BloodEffect} from './blood-effect.js';
 
 export class PlayerSpawner extends Component {
   constructor(params) {
@@ -54,7 +54,7 @@ export class PlayerSpawner extends Component {
         new spatial_grid_controller.SpatialGridController(
             {grid: this.params_.grid}));
     player.AddComponent(
-        new attack_controller.AttackController());
+        new AttackController());
     player.AddComponent(
         new third_person_camera.ThirdPersonCamera({
             camera: this.params_.camera,
@@ -63,7 +63,7 @@ export class PlayerSpawner extends Component {
         new network_player_controller.NetworkEntityController({
             camera: this.params_.camera,
             target: player}));
-    player.AddComponent(new blood_effect.BloodEffect({
+    player.AddComponent(new BloodEffect({
         camera: this.params_.camera,
         scene: this.params_.scene,
     }));
@@ -110,12 +110,12 @@ class NetworkEntitySpawner extends Component {
         new network_entity_controller.NetworkEntityController());
     if (desc.account.name) {
       npc.AddComponent(
-          new floating_name.FloatingName({desc: desc}));
+          new FloatingName({desc: desc}));
     }
     npc.AddComponent(
         new equip_weapon_component.EquipWeapon({desc: desc}));
     npc.AddComponent(new inventory_controller.InventoryController());
-    npc.AddComponent(new blood_effect.BloodEffect({
+    npc.AddComponent(new BloodEffect({
         camera: this.params_.camera,
         scene: this.params_.scene,
     }));

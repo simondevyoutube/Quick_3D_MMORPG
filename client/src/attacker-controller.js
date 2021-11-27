@@ -24,9 +24,3 @@ export class AttackController extends Component {
     }
   }
 };
-
-export const attack_controller = (() => {
-  return {
-      AttackController,
-  };
-})();

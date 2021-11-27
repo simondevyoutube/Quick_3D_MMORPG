@@ -48,7 +48,7 @@ export class BloodEffectEmitter extends particle_system.ParticleEmitter {
 };
 
 
-class FireFXEmitter extends particle_system.ParticleEmitter {
+export class FireFXEmitter extends particle_system.ParticleEmitter {
   constructor(parent) {
     super();
     this.parent_ = parent;
@@ -97,7 +97,7 @@ class FireFXEmitter extends particle_system.ParticleEmitter {
 };
 
 
-class BloodEffect extends Component {
+export class BloodEffect extends Component {
   constructor(params) {
     super();
     this.params_ = params;
@@ -218,9 +218,3 @@ class BloodEffect extends Component {
     this.fireFX_.Update(timeElapsed);
   }
 }
-
-export const blood_effect = (() => {
-  return {
-    BloodEffect,
-  };
-})();

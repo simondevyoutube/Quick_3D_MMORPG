@@ -1,10 +1,10 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118.1/build/three.module.js';
 import {GUI} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
-import {entity_manager} from './entity-manager.js';
+import {EntityManager} from './entity-manager.js';
 import {Entity, Component} from './entity.js';
 import {ui_controller} from './ui-controller.js';
 import {level_up_component} from './level-up-component.js';
-import {network_controller} from './network-controller.js';
+import {NetworkController} from './network-controller.js';
 import {scenery_controller} from './scenery-controller.js';
 import {LoadController} from './load-controller.js';
 import {spawners} from './spawners.js';
@@ -67,7 +67,7 @@ export class EventEmitter{
 
 export class GameEngine {
   constructor() {
-    this.entityManager_ = new entity_manager.EntityManager();
+    this.entityManager_ = new EntityManager();
     this.eventEmitter = new EventEmitter
 
     // Set alias
@@ -122,7 +122,7 @@ export class GameEngine {
     this.entityManager_.Add(ui, 'ui');
 
     const network = new Entity();
-    network.AddComponent(new network_controller.NetworkController());
+    network.AddComponent(new NetworkController());
     this.entityManager_.Add(network, 'network');
 
     const t = new Entity();
