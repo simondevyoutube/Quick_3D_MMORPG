@@ -1,0 +1,1 @@
+> Example resources alter these to customize your game
