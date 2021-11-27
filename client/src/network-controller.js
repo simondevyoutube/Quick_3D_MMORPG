@@ -1,13 +1,12 @@
 import 'https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js';
-import {Entity, Component} from './entity.js';
-import { ui_controller } from './ui-controller.js';
+import {Component} from './entity.js';
 
 export class NetworkController extends Component {
   constructor(params) {
     super();
 
     this.playerID_ = null;
-    this.SetupSocket_();
+    this.SetupSocket();
   }
 
   GenerateRandomName_() {
@@ -28,44 +27,44 @@ export class NetworkController extends Component {
     return n1 + ' ' + n2;
   }
 
-  SetupSocket_() {
-    this.socket_ = io('ws://localhost:3030', {
+  SetupSocket() {
+    this.socket = io('ws://localhost:3030', {
         reconnection: false,
         transports: ['websocket'],
         timeout: 10000,
     });
 
-    this.socket_.on("connect", () => {
-      console.log(this.socket_.id);
+    this.socket.on("connect", () => {
+      console.log(this.socket.id);
       const randomName = this.GenerateRandomName_();
       // Input validation is for losers
-      this.socket_.emit(
+      this.socket.emit(
           'login.commit', document.getElementById('login-input').value);
     });
 
-    this.socket_.on("disconnect", () => {
-      console.log('DISCONNECTED: ' + this.socket_.id); // undefined
+    this.socket.on("disconnect", () => {
+      console.log('DISCONNECTED: ' + this.socket.id); // undefined
     });
 
-    this.socket_.onAny((e, d) => {
+    this.socket.onAny((e, d) => {
       this.OnMessage_(e, d);
     });
   }
 
   SendChat(txt) {
-    this.socket_.emit('chat.msg', txt);
+    this.socket.emit('chat.msg', txt);
   }
 
   SendTransformUpdate(transform) {
-    this.socket_.emit('world.update', transform);
+    this.socket.emit('world.update', transform);
   }
 
   SendActionAttack_() {
-    this.socket_.emit('action.attack');
+    this.socket.emit('action.attack');
   }
 
   SendInventoryChange_(packet) {
-    this.socket_.emit('world.inventory', packet);
+    this.socket.emit('world.inventory', packet);
   }
 
   GetEntityID_(serverID) {
@@ -117,6 +116,10 @@ export class NetworkController extends Component {
           npc = this.FindEntity(id);
         }
 
+        if (!npc) {
+          throw new Error('npc is required here')
+        }
+        
         // Translate events, hardcoded, bad, sorry
         let events = [];
         if (u.events) {

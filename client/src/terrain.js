@@ -19,10 +19,10 @@ const TerrainRebuilder = THREADED ? TerrainChunkRebuilder_Threaded : TerrainChun
 export class TerrainChunkManager extends Component {
   constructor(params) {
     super();
-    this._Init(params);
+    this.init(params);
   }
 
-  _Init(params) {
+  init(params) {
     this._params = params;
 
     const loader = new THREE.TextureLoader();
@@ -58,12 +58,12 @@ export class TerrainChunkManager extends Component {
       './resources/terrain/bark1-normal3.jpg',
     ]);
 
-    this._material = new THREE.MeshStandardMaterial({
+    this.material = new THREE.MeshStandardMaterial({
       side: THREE.BackSide,
       vertexColors: true,
     });
 
-    this._material.onBeforeCompile = (s) => {
+    this.material.onBeforeCompile = (s) => {
       let a = 0;
       let vsh = s.vertexShader;
       vsh = terrain_shader.VS1 + s.vertexShader;
@@ -89,19 +89,18 @@ export class TerrainChunkManager extends Component {
       // s.fragmentShader += 'poop';
     };
 
-    // this._builder = new terrain_builder_threaded.TerrainChunkRebuilder_Threaded();
-    this._builder = new TerrainRebuilder();
+    this.builder = new TerrainRebuilder();
 
-    this._InitNoise();
-    this._InitBiomes(params);
-    this._InitTerrain(params);
+    this.initNoise();
+    this.initBiomes(params);
+    this.initTerrain(params);
   }
 
-  _InitNoise() {
+  initNoise() {
     this.heightGenerator_ = new terrain_height.HeightGenerator();
   }
 
-  _InitBiomes(params) {
+  initBiomes(params) {
     params.guiParams.biomes = {
       octaves: 2,
       persistence: 0.5,
@@ -114,7 +113,7 @@ export class TerrainChunkManager extends Component {
     };
 
     const onNoiseChanged = () => {
-      this._builder.Rebuild(this._chunks);
+      this.builder.Rebuild(this._chunks);
     };
 
     const noiseRollup = params.gui.addFolder('Terrain.Biomes');
@@ -129,8 +128,8 @@ export class TerrainChunkManager extends Component {
     noiseRollup.add(params.guiParams.biomes, "exponentiation", 0.1, 10.0).onChange(
         onNoiseChanged);
 
-    this._biomes = new noise.Noise(params.guiParams.biomes);
-    this._biomesParams = params.guiParams.biomes;
+    this.biomes = new noise.Noise(params.guiParams.biomes);
+    this.biomesParams = params.guiParams.biomes;
 
     const colourParams = {
       octaves: 1,
@@ -146,7 +145,7 @@ export class TerrainChunkManager extends Component {
     this._colourNoiseParams = colourParams;
   }
 
-  _InitTerrain(params) {
+  initTerrain(params) {
     params.guiParams.terrain= {
       wireframe: false,
     };
@@ -169,21 +168,21 @@ export class TerrainChunkManager extends Component {
     const params = {
       group: group,
       transform: groupTransform,
-      material: this._material,
+      material: this.material,
       width: width,
       offset: offset,
       // origin: this._params.camera.position.clone(),
       radius: terrain_constants.PLANET_RADIUS,
       resolution: resolution,
-      biomeGenerator: this._biomes,
+      biomeGenerator: this.biomes,
       colourGenerator: new texture_splatter.TextureSplatter(
-          {biomeGenerator: this._biomes, colourNoise: this._colourNoise}),
+          {biomeGenerator: this.biomes, colourNoise: this._colourNoise}),
       heightGenerators: [this.heightGenerator_],
       noiseParams: terrain_constants.NOISE_PARAMS,
       colourNoiseParams: this._colourNoiseParams,
-      biomesParams: this._biomesParams,
+      biomesParams: this.biomesParams,
       colourGeneratorParams: {
-        biomeGeneratorParams: this._biomesParams,
+        biomeGeneratorParams: this.biomesParams,
         colourNoiseParams: this._colourNoiseParams,
       },
       heightGeneratorsParams: {
@@ -192,7 +191,7 @@ export class TerrainChunkManager extends Component {
       }
     };
 
-    return this._builder.AllocateChunk(params);
+    return this.builder.AllocateChunk(params);
   }
 
   GetHeight(pos) {
@@ -200,7 +199,7 @@ export class TerrainChunkManager extends Component {
   }
 
   GetBiomeAt(pos) {
-    return this._biomes.Get(pos.x, 0.0, pos.z);
+    return this.biomes.Get(pos.x, 0.0, pos.z);
   }
 
   Update(_) {
@@ -209,15 +208,15 @@ export class TerrainChunkManager extends Component {
       return;
     }
 
-    this._builder.Update();
-    if (!this._builder.Busy) {
+    this.builder.Update();
+    if (!this.builder.Busy) {
       this._UpdateVisibleChunks_Quadtree(target);
     }
 
     for (let k in this._chunks) {
       this._chunks[k].chunk.Update(target.Position);
     }
-    for (let c of this._builder._old) {
+    for (let c of this.builder._old) {
       c.chunk.Update(target.Position);
     }
 
@@ -264,7 +263,7 @@ export class TerrainChunkManager extends Component {
     const difference = utils.DictDifference(newTerrainChunks, this._chunks);
     const recycle = Object.values(utils.DictDifference(this._chunks, newTerrainChunks));
 
-    this._builder.RetireChunks(recycle);
+    this.builder.RetireChunks(recycle);
 
     newTerrainChunks = intersection;
 

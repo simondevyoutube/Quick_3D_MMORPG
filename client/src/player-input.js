@@ -28,12 +28,12 @@ export class BasicCharacterControllerInput extends Component {
       backspace: false,
     };
     this._raycaster = new THREE.Raycaster();
-    document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
-    document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
-    document.addEventListener('mouseup', (e) => this._onMouseUp(e), false);
+    document.addEventListener('keydown', (e) => this.onKeyDown(e), false);
+    document.addEventListener('keyup', (e) => this.onKeyUp(e), false);
+    document.addEventListener('mouseup', (e) => this.onMouseUp(e), false);
   }
 
-  _onMouseUp(event) {
+  onMouseUp(event) {
     const rect = document.getElementById('threejs').getBoundingClientRect();
     const pos = {
       x: ((event.clientX - rect.left) / rect.width) * 2  - 1,
@@ -71,7 +71,7 @@ export class BasicCharacterControllerInput extends Component {
     }
   }
 
-  _onKeyDown(event) {
+  onKeyDown(event) {
     if (event.currentTarget.activeElement != document.body) {
       return;
     }
@@ -100,7 +100,7 @@ export class BasicCharacterControllerInput extends Component {
     }
   }
 
-  _onKeyUp(event) {
+  onKeyUp(event) {
     if (event.currentTarget.activeElement != document.body) {
       return;
     }
