@@ -1,12 +1,9 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-
-import {entity} from './entity.js';
-
+import {Component} from './entity.js';
 import {defs} from '/shared/defs.mjs';
-
 import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
 
-export class EquipWeapon extends entity.Component {
+export class EquipWeapon extends Component {
   constructor(params) {
     super();
     this.params_ = params;

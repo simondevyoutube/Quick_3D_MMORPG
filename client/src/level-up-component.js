@@ -1,16 +1,17 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 
 import {particle_system} from "./particle-system.js";
-import {entity} from "./entity.js";
+import {Entity, Component} from './entity.js';
 
-export class LevelUpComponentSpawner extends entity.Component {
+
+export class LevelUpComponentSpawner extends Component {
   constructor(params) {
     super();
     this._params = params;
   }
 
   Spawn(pos) {
-    const e = new entity.Entity();
+    const e = new Entity();
     e.SetPosition(pos);
     e.AddComponent(new LevelUpComponent(this._params));
     this.Manager.Add(e);
@@ -19,7 +20,7 @@ export class LevelUpComponentSpawner extends entity.Component {
   }
 };
 
-export class LevelUpComponent extends entity.Component {
+export class LevelUpComponent extends Component {
   constructor(params) {
     super();
     this._params = params;

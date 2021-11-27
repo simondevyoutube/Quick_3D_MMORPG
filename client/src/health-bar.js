@@ -1,7 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-
-import {entity} from './entity.js';
-
+import {Component} from './entity.js';
 import {math} from '/shared/math.mjs';
 
 const _VS = `
@@ -25,7 +23,7 @@ void main() {
 }
 `;
 
-export class HealthBar extends entity.Component {
+export class HealthBar extends Component {
   constructor(params) {
     super();
     this.params_ = params;

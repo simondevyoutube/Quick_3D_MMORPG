@@ -1,8 +1,8 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 
-import {entity} from './entity.js';
+import {Component} from './entity.js';
 
-export class AttackController extends entity.Component {
+export class AttackController extends Component {
   constructor() {
     super();
     this.action_ = null;

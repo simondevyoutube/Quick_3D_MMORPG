@@ -1,6 +1,6 @@
 import {GUI} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/libs/dat.gui.module.js';
 import {entity_manager} from './entity-manager.js';
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 import {ui_controller} from './ui-controller.js';
 import {level_up_component} from './level-up-component.js';
 import {network_controller} from './network-controller.js';
@@ -41,8 +41,6 @@ export class GameEngine {
     this.emit = this.eventEmitter.emit.bind(this.eventEmitter)
   }
 
-
-  
   start() {
     this.CreateGUI_();
 
@@ -72,7 +70,7 @@ export class GameEngine {
   }
 
   LoadControllers_() {
-    const threejs = new entity.Entity();
+    const threejs = new Entity();
     threejs.AddComponent(new threejs_component.ThreeJSController());
     this.entityManager_.Add(threejs);
 
@@ -81,15 +79,15 @@ export class GameEngine {
     this.camera_ = threejs.GetComponent('ThreeJSController').camera_;
     this.threejs = threejs.GetComponent('ThreeJSController').threejs;
 
-    const ui = new entity.Entity();
+    const ui = new Entity();
     ui.AddComponent(new ui_controller.UIController());
     this.entityManager_.Add(ui, 'ui');
 
-    const network = new entity.Entity();
+    const network = new Entity();
     network.AddComponent(new network_controller.NetworkController());
     this.entityManager_.Add(network, 'network');
 
-    const t = new entity.Entity();
+    const t = new Entity();
     t.AddComponent(new terrain.TerrainChunkManager({
         scene: this.scene_,
         target: 'player',
@@ -100,23 +98,26 @@ export class GameEngine {
     this.entityManager_.Add(t, 'terrain');
 
     // Add loader entity
-    const l = new entity.Entity();
+    const l = new Entity();
     l.AddComponent(new LoadController());
     this.entityManager_.Add(l, 'loader');
 
-    const scenery = new entity.Entity();
+    const scenery = new Entity();
     scenery.AddComponent(new scenery_controller.SceneryController({
         scene: this.scene_,
         grid: this.grid_,
     }));
     this.entityManager_.Add(scenery, 'scenery');
 
-    const spawner = new entity.Entity();
+    // Add PlayerSpawner
+    const spawner = new Entity();
     spawner.AddComponent(new spawners.PlayerSpawner({
         grid: this.grid_,
         scene: this.scene_,
         camera: this.camera_,
     }));
+
+    // Add NetworkEntitySpawner
     spawner.AddComponent(new spawners.NetworkEntitySpawner({
         grid: this.grid_,
         scene: this.scene_,
@@ -125,7 +126,7 @@ export class GameEngine {
     this.entityManager_.Add(spawner, 'spawners');
 
 
-    const database = new entity.Entity();
+    const database = new Entity();
     database.AddComponent(new inventory_controller.InventoryDatabaseController());
     this.entityManager_.Add(database, 'database');
 
@@ -139,7 +140,7 @@ export class GameEngine {
   }
 
   LoadPlayer_() {
-    const levelUpSpawner = new entity.Entity();
+    const levelUpSpawner = new Entity();
     levelUpSpawner.AddComponent(new level_up_component.LevelUpComponentSpawner({
         camera: this.camera_,
         scene: this.scene_,

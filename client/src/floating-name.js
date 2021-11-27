@@ -1,10 +1,8 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-
-import {entity} from './entity.js';
-
+import {Component} from './entity.js';
 import {defs} from '/shared/defs.mjs';
 
-export class FloatingName extends entity.Component {
+export class FloatingName extends Component {
   constructor(params) {
     super();
     this.params_ = params;

@@ -1,11 +1,9 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
 import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
+import {Component} from './entity.js';
 
-import {entity} from './entity.js';
-
-export class StaticModelComponent extends entity.Component {
+export class StaticModelComponent extends Component {
   constructor(params) {
     super();
     this._Init(params);
@@ -101,7 +99,7 @@ export class StaticModelComponent extends entity.Component {
 };
 
 
-export class AnimatedModelComponent extends entity.Component {
+export class AnimatedModelComponent extends Component {
   constructor(params) {
     super();
     this._Init(params);

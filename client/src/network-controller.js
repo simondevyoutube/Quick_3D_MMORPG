@@ -1,10 +1,8 @@
 import 'https://cdn.jsdelivr.net/npm/socket.io-client@3.1.0/dist/socket.io.js';
-
-
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 import { ui_controller } from './ui-controller.js';
 
-export class NetworkController extends entity.Component {
+export class NetworkController extends Component {
   constructor(params) {
     super();
 

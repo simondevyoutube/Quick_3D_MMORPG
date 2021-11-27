@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 
-export class ThirdPersonCamera extends entity.Component {
+export class ThirdPersonCamera extends Component {
   constructor(params) {
     super();
 

@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 import {quadtree} from './quadtree.js';
 import {terrain_shader} from './terrain-shader.js';
 import {TerrainChunkRebuilder} from './terrain-builder.js';
@@ -16,7 +16,7 @@ import {noise} from '/shared/noise.mjs';
 const THREADED = true
 const TerrainRebuilder = THREADED ? TerrainChunkRebuilder_Threaded : TerrainChunkRebuilder
 
-export class TerrainChunkManager extends entity.Component {
+export class TerrainChunkManager extends Component {
   constructor(params) {
     super();
     this._Init(params);

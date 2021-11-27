@@ -1,6 +1,6 @@
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 
-class UIController extends entity.Component {
+class UIController extends Component {
   constructor(params) {
     super();
     this._params = params;

@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 import {finite_state_machine} from './finite-state-machine.js';
 import {player_state} from './player-state.js';
 import {defs} from '/shared/defs.mjs';
@@ -31,7 +31,7 @@ class BasicCharacterControllerProxy {
   }
 };
 
-class BasicCharacterController extends entity.Component {
+class BasicCharacterController extends Component {
   constructor(params) {
     super();
     this.params_ = params;

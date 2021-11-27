@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 
 import {particle_system} from "./particle-system.js";
-import {entity} from "./entity.js";
+import {Entity, Component} from './entity.js';
 
 export class BloodEffectEmitter extends particle_system.ParticleEmitter {
   constructor(parent) {
@@ -97,7 +97,7 @@ class FireFXEmitter extends particle_system.ParticleEmitter {
 };
 
 
-class BloodEffect extends entity.Component {
+class BloodEffect extends Component {
   constructor(params) {
     super();
     this.params_ = params;

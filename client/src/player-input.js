@@ -1,8 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import {Entity, Component} from './entity.js';
 
-import {entity} from "./entity.js";
-
-export class PickableComponent extends entity.Component {
+export class PickableComponent extends Component {
   constructor() {
     super();
   }
@@ -11,7 +10,7 @@ export class PickableComponent extends entity.Component {
   }
 };
 
-export class BasicCharacterControllerInput extends entity.Component {
+export class BasicCharacterControllerInput extends Component {
   constructor(params) {
     super();
     this._params = params;

@@ -1,6 +1,7 @@
-import {entity} from './entity.js';
+import {Component} from './entity.js';
 
-export class InventoryDatabaseController extends entity.Component {
+
+export class InventoryDatabaseController extends Component {
   constructor() {
     super();
 
@@ -16,7 +17,7 @@ export class InventoryDatabaseController extends entity.Component {
   }
 };
 
-export class UIInventoryController extends entity.Component {
+export class UIInventoryController extends Component {
   constructor() {
     super();
   }
@@ -88,7 +89,7 @@ export class UIInventoryController extends entity.Component {
 };
 
 
-export class InventoryController extends entity.Component {
+export class InventoryController extends Component {
   constructor() {
     super();
 
@@ -183,7 +184,7 @@ export class InventoryController extends entity.Component {
 };
 
 
-export class InventoryItem extends entity.Component {
+export class InventoryItem extends Component {
   constructor(params) {
     super();
     this._params = params;

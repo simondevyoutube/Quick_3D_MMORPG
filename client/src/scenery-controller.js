@@ -1,6 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 import {render_component} from './render-component.js';
 import {spatial_grid_controller} from './spatial-grid-controller.js';
 
@@ -89,7 +89,7 @@ for (let k in multiples) {
   }
 }
 
-export class SceneryController extends entity.Component {
+export class SceneryController extends Component {
   constructor(params) {
     super();
     this.params_ = params;
@@ -122,7 +122,7 @@ export class SceneryController extends entity.Component {
           500,
           (Math.random() * 2.0 - 1.0) * 5000);
 
-      const e = new entity.Entity();
+      const e = new Entity();
       e.AddComponent(new render_component.RenderComponent({
         scene: this.params_.scene,
         resourcePath: './resources/nature2/GLTF/',
@@ -170,7 +170,7 @@ export class SceneryController extends entity.Component {
     const randomProp = _SCENERY[
         matchingScenery[Math.round(roll * (matchingScenery.length - 1))]];
 
-    const e = new entity.Entity();
+    const e = new Entity();
     e.AddComponent(new render_component.RenderComponent({
       scene: this.params_.scene,
       resourcePath: randomProp.resourcePath,

@@ -1,6 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 
-import {entity} from "./entity.js";
+import {Entity, Component} from './entity.js';
 
 
 const _VS = `
@@ -36,7 +36,7 @@ void main() {
   gl_FragColor = vec4(sky, 1.0);
 }`;
 
-export class ThreeJSController extends entity.Component {
+export class ThreeJSController extends Component {
   constructor() {
     super();
   }
@@ -125,7 +125,7 @@ export class ThreeJSController extends entity.Component {
 
     this.sun_ = light;
 
-    this.LoadSky_();
+    // this.LoadSky();
   }
 
   _OnWindowResize() {
@@ -134,7 +134,7 @@ export class ThreeJSController extends entity.Component {
     this.threejs.setSize(window.innerWidth, window.innerHeight);
   }
 
-  LoadSky_() {
+  LoadSky() {
     const hemiLight = new THREE.HemisphereLight(0x424a75, 0x6a88b5, 0.7);
     // hemiLight.color.setHSL(0.6, 1, 0.4);
     // hemiLight.groundColor.setHSL(0.095, 1, 0.5);

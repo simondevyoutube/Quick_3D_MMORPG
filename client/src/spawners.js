@@ -1,4 +1,4 @@
-import {entity} from './entity.js';
+import {Entity, Component} from './entity.js';
 
 import {third_person_camera} from './third-person-camera.js';
 import {player_entity} from './player-entity.js'
@@ -17,7 +17,7 @@ import {floating_name} from './floating-name.js';
 import {sorceror_effect} from './sorceror-effect.js';
 import {blood_effect} from './blood-effect.js';
 
-export class PlayerSpawner extends entity.Component {
+export class PlayerSpawner extends Component {
   constructor(params) {
     super();
     this.params_ = params;
@@ -30,7 +30,7 @@ export class PlayerSpawner extends entity.Component {
       desc: playerParams,
     };
 
-    const player = new entity.Entity();
+    const player = new Entity();
     player.Account = playerParams.account;
     player.AddComponent(new player_input.BasicCharacterControllerInput(params));
     player.AddComponent(new player_entity.BasicCharacterController(params));
@@ -77,14 +77,14 @@ export class PlayerSpawner extends entity.Component {
   }
 };
 
-class NetworkEntitySpawner extends entity.Component {
+class NetworkEntitySpawner extends Component {
   constructor(params) {
     super();
     this.params_ = params;
   }
 
   Spawn(name, desc) {
-    const npc = new entity.Entity();
+    const npc = new Entity();
     npc.Account = desc.account;
     npc.AddComponent(new npc_entity.NPCController({
         camera: this.params_.camera,
