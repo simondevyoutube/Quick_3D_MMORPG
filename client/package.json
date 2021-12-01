@@ -1,0 +1,14 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Modifications.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "deploy": "gh-pages -d dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

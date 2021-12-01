@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>SimonDev Crappy MMO</title>
+  <title>OpenWorld</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="base.css">
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="./app.css">
+  <!-- Add icon library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+
 <body>
-  <script src="./src/main.js" type="module">
-  </script>
   <div class="container" id="container">
     <div class="ui" id="login-ui">
       <div class="login-screen">
-        <div class="login-screen-layout">
-          <div class="login-screen-layout window">
-            <div class="login-text">Account Name</div>
-            <input class="login-input" id="login-input" maxlength="64" type="text"></input>
-            <button class="login-button" id="login-button">Login</button>
+        <form id="login-form">
+          <div class="spacer"></div>
+          <h1>Welcome to OpenWorld</h1>
+          <div class="InputGroup">
+            <input type="text" autofocus name="username" id="login-input" placeholder="What's your username?" />
+            <!-- <input type="email" placeholder="What's your email?" /> -->
+            <button type="submit" id="login-button"><i class="fa fa-arrow-right icon ion-android-arrow-forward"></i></button>
           </div>
-        </div>
+          <div class="spacer"></div>
+          <!-- <progress id="progress" max="100" value="70"> 70% </progress> -->
+        </form>
       </div>
     </div>
+
     <div class="ui" id="game-ui">
       <div class="icon-bar" id="icon-bar">
-        <div class="icon-bar-item" id="icon-bar-stats" style="background-image: url('./resources/icons/ui/skills.png');"></div>
-        <div class="icon-bar-item" id="icon-bar-inventory" style="background-image: url('./resources/icons/ui/backpack.png');"></div>
-        <div class="icon-bar-item" id="icon-bar-quests" style="background-image: url('./resources/icons/ui/tied-scroll.png');"></div>
+        <div class="icon-bar-item" id="icon-bar-stats"
+          style="background-image: url('./resources/icons/ui/skills.png');"></div>
+        <div class="icon-bar-item" id="icon-bar-inventory"
+          style="background-image: url('./resources/icons/ui/backpack.png');"></div>
+        <div class="icon-bar-item" id="icon-bar-quests"
+          style="background-image: url('./resources/icons/ui/tied-scroll.png');"></div>
       </div>
+
       <div class="health-ui">
+        <progress id="progress" max="100" value="70"> 70% </progress>
         <div class="health-bar" id="health-bar"></div>
       </div>
+
       <div class="quest-journal" id="quest-journal"></div>
       <div class="quest-ui-layout" id="quest-ui">
         <div class="quest-ui">
@@ -44,13 +55,15 @@
           <div class="stats-title">Statistics</div>
           <div class="stats-row">
             <div class="stats-tooltip">Strength
-              <div class="stats-tooltiptext">How strong you are, affects how much damage you do. So blah blah if you're doing stuff then its stronger or whatever, the damage is up. This is text to show the tooltip.</div>
+              <div class="stats-tooltiptext">How strong you are, affects how much damage you do. So blah blah if you're
+                doing stuff then its stronger or whatever, the damage is up. This is text to show the tooltip.</div>
             </div>
             <div id="stats-strength">0</div>
           </div>
           <div class="stats-row">
             <div class="stats-tooltip">Wisdomness
-              <div class="stats-tooltiptext">Wisdom is the guage of something to do with wisdom in the game because wisdom is important and wisdom is wise to wisdoming.</div>
+              <div class="stats-tooltiptext">Wisdom is the guage of something to do with wisdom in the game because
+                wisdom is important and wisdom is wise to wisdoming.</div>
             </div>
             <div id="stats-wisdomness">0</div>
           </div>
@@ -62,13 +75,15 @@
           </div>
           <div class="stats-row">
             <div class="stats-tooltip">Curl
-              <div class="stats-tooltiptext">The ultimate expression of strength, this affects literally everything in your life.</div>
+              <div class="stats-tooltiptext">The ultimate expression of strength, this affects literally everything in
+                your life.</div>
             </div>
             <div id="stats-curl">0</div>
           </div>
           <div class="stats-row">
             <div class="stats-tooltip">XP
-              <div class="stats-tooltiptext">How much xp you've accumulated by killing things for xp. Get enough and you'll gain a level or something.</div>
+              <div class="stats-tooltiptext">How much xp you've accumulated by killing things for xp. Get enough and
+                you'll gain a level or something.</div>
             </div>
             <div id="stats-experience">0</div>
           </div>
@@ -128,10 +143,13 @@
 
       <div class="chat-ui">
         <div class="chat-ui-text-area" id="chat-ui-text-area">
-          <input class="chat-text chat-input" id="chat-input" maxLength="64" type="text"></input>
+          <input class="chat-text chat-input" id="chat-input" maxLength="64" type="text" />
         </div>
       </div>
     </div>
   </div>
+
+  <script src="./app.js" type="module"></script>
 </body>
+
 </html>

@@ -1,13 +1,8 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
-
-import {entity} from './entity.js';
-
+import {Component} from './entity.js';
 import {math} from '/shared/math.mjs';
 
-
-export const health_bar = (() => {
-
-  const _VS = `
+const _VS = `
 varying vec2 vUV;
 
 void main() {
@@ -28,7 +23,7 @@ void main() {
 }
 `;
 
-class HealthBar extends entity.Component {
+export class HealthBar extends Component {
   constructor(params) {
     super();
     this.params_ = params;
@@ -135,7 +130,8 @@ class HealthBar extends entity.Component {
   }
 };
 
+export const health_bar = (() => {
   return {
-    HealthBar: HealthBar,
+    HealthBar,
   };
 })();
