@@ -1,0 +1,12 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "gl-matrix": "^3.3.0",
+    "socket.io": "^3.1.1"
+  },
+  "scripts": {
+    "start": "node index.mjs"
+  }
+}
