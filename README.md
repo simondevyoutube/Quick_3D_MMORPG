@@ -11,3 +11,6 @@ Now it <em>is</em> supported, and it is <em>not</em> full of infuriating bugs! F
 3. Run `node index.mjs`. Leave it running in that terminal, and open up a new one in the <kbd>client</kbd> folder.
 4. Run `npm install -g http-server`. Again, this is only a one-time step.
 5. Now, run `http-server`, and open any of the links given. There it is!
+
+# Notes
+1. Steps two and four are the only ones which need to be executed once. All the other commands MUST be executed in order for the game to run.
