@@ -14,4 +14,4 @@ Now it <em>is</em> supported, and it is <em>not</em> full of infuriating bugs! F
 
 # Notes
 1. Steps two and four are the only ones which need to be executed once. All the other commands MUST be executed in order for the game to run.
-2. I will try to maintain this to the best of my ability, but I am not very good at coding - not as good as simondev - so please do try to help if you want an update.
+2. I will try to maintain this to the best of my ability, but I am not very good at coding - not as good as simondev - so please do try to help if you want an update. (Add a village or something if you want - go crazy with it!)
