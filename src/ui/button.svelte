@@ -1,1 +1,1 @@
-<button on:click></button>
+<button on:click />

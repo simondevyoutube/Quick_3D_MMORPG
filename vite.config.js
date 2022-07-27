@@ -1,4 +1,4 @@
-import { sveltekit } from "@sveltejs/kit/vite";
+import { sveltekit } from '@sveltejs/kit/vite';
 
 // Refer to docs https://vitejs.dev/config/server-options.html#server-fs-allow for configurations and more details.
 // files in the public directory are served at the root path.
@@ -7,7 +7,7 @@ import { sveltekit } from "@sveltejs/kit/vite";
 
 /** @type {import('vite').UserConfig} */
 const config = {
-  plugins: [sveltekit()],
+	plugins: [sveltekit()]
 };
 
 export default config;

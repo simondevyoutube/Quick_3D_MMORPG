@@ -1,20 +1,20 @@
 {
-  "deno.enable": false,
-  // "deno.codeLens.implementations": true,
-  // "deno.codeLens.references": true,
-  // "deno.codeLens.referencesAllFunctions": true,
-  "deno.suggest.autoImports": true,
-  "deno.suggest.imports.autoDiscover": true,
-  "deno.suggest.imports.hosts": {
-    "https://esm.": false,
-    "https://deno.land": false,
-    "https://skypack.esm.sh": false,
-    "https://esm.cdn.skypack.dev": false,
-    "https://dev.esm.sh": false,
-    "https://cdn.esm.sh": false,
-    "https://cdn.skypack.esm.sh": false,
-    "https://cdn.skypack.dev": false
-  },
-  "deno.lint": true,
-  "deno.unstable": true
+	"deno.enable": false,
+	// "deno.codeLens.implementations": true,
+	// "deno.codeLens.references": true,
+	// "deno.codeLens.referencesAllFunctions": true,
+	"deno.suggest.autoImports": true,
+	"deno.suggest.imports.autoDiscover": true,
+	"deno.suggest.imports.hosts": {
+		"https://esm.": false,
+		"https://deno.land": false,
+		"https://skypack.esm.sh": false,
+		"https://esm.cdn.skypack.dev": false,
+		"https://dev.esm.sh": false,
+		"https://cdn.esm.sh": false,
+		"https://cdn.skypack.esm.sh": false,
+		"https://cdn.skypack.dev": false
+	},
+	"deno.lint": true,
+	"deno.unstable": true
 }

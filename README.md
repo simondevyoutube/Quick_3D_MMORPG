@@ -24,9 +24,9 @@ This is a refactoring of simon's original project.
 - UI
   - [x] svelte-kit web ui framework
 - <details>
-  <summary>Networking has been cut</summary>
-  In an attempt to simplify further I've cut out the server folder. This is to focus on other issues first. It also doesn't make as much sense as it previously did considering the introduction of sveltekit within the client folder. Progress will be made within a local environment. Later down the road we'll look into dedicated servers.
-</details>
+    <summary>Networking has been cut</summary>
+    In an attempt to simplify further I've cut out the server folder. This is to focus on other issues first. It also doesn't make as much sense as it previously did considering the introduction of sveltekit within the client folder. Progress will be made within a local environment. Later down the road we'll look into dedicated servers.
+  </details>
 
 Structure will set you free.
 

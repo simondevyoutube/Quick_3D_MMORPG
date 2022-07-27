@@ -1,7 +1,7 @@
-import { NPC } from "./npc.js";
-import { Player } from "./player.js";
+import { NPC } from './npc.js';
+import { Player } from './player.js';
 
 export const newEntityClass = {
-  "player": Player,
-  "npc": NPC,
-}
+	player: Player,
+	npc: NPC
+};

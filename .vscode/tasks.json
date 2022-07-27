@@ -1,25 +1,19 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "World Server",
-      "command": "deno",
-      "args": [
-        "run",
-        "-A",
-        "--unstable",
-        "--watch",
-        "./server/src/interfaces/http.js"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "type": "npm",
-      "script": "Client Dev",
-      "path": "client/",
-      "problemMatcher": [],
-      "label": "Client Dev",
-      "detail": "svelte-kit dev"
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "World Server",
+			"command": "deno",
+			"args": ["run", "-A", "--unstable", "--watch", "./server/src/interfaces/http.js"],
+			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "Client Dev",
+			"path": "client/",
+			"problemMatcher": [],
+			"label": "Client Dev",
+			"detail": "svelte-kit dev"
+		}
+	]
 }

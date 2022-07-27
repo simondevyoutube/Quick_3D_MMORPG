@@ -1,33 +1,27 @@
 <script>
-  function FadeoutLogin() {
-    const loginElement = document.getElementById("login-ui");
-    if (loginElement.classList.contains("fadeOut")) {
-      return;
-    }
+	function FadeoutLogin() {
+		const loginElement = document.getElementById('login-ui');
+		if (loginElement.classList.contains('fadeOut')) {
+			return;
+		}
 
-    loginElement.classList.toggle("fadeOut");
-    document.getElementById("game-ui").style.visibility = "visible";
-  }
-  
+		loginElement.classList.toggle('fadeOut');
+		document.getElementById('game-ui').style.visibility = 'visible';
+	}
 </script>
 
 <div class="ui" id="login-ui" style="visibility: visible;">
-  <div class="login-screen">
-    <div class="login-screen-layout">
-      <div class="login-screen-layout window">
-        <div class="login-text">Account Name</div>
-        <input
-          class="login-input"
-          id="login-input"
-          maxlength="64"
-          type="text"
-        />
-        <button class="login-button" id="login-button">Login</button>
-        
-        <a href="/">Return</a>
-      </div>
-    </div>
-  </div>
+	<div class="login-screen">
+		<div class="login-screen-layout">
+			<div class="login-screen-layout window">
+				<div class="login-text">Account Name</div>
+				<input class="login-input" id="login-input" maxlength="64" type="text" />
+				<button class="login-button" id="login-button">Login</button>
+
+				<a href="/">Return</a>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- <style>
