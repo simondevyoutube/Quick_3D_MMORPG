@@ -1,11 +1,11 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { World } from '../worlds/simonsWorld.js';
-	import Chat from '../ui/game/chat.svelte';
-	import HUD from '../ui/game/hud.svelte';
-	import Menu from '../ui/game/menu.svelte';
-	import Simplex from '../ui/dev/simplex.svelte';
-	import Points from '../ui/dev/poisson.svelte';
+	import Chat from '$lib/game/chat.svelte';
+	import HUD from '$lib/game/hud.svelte';
+	import Menu from '$lib/game/menu.svelte';
+	import Simplex from '$lib/dev/simplex.svelte';
+	import Points from '$lib/dev/poisson.svelte';
 
 	let world;
 	let chat;

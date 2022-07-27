@@ -1,9 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import { World } from '../worlds/entityViewer.js';
-	import Menu from '../ui/game/menu.svelte';
-	import ModelPicker from '../ui/dev/models.svelte';
-	import Inspector from '../ui/dev/inspector.svelte';
+	import Menu from '$lib/game/menu.svelte';
+	import ModelPicker from '$lib/dev/models.svelte';
+	import Inspector from '$lib/dev/inspector.svelte';
 
 	let world;
 	let model = 'paladin';
