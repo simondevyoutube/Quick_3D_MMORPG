@@ -68,7 +68,7 @@
   <Points></Points>
 </details>
 
-<style>
+<!-- <style>
   :global(body) {
     width: 100%;
     height: 100%;
@@ -84,4 +84,4 @@
     left: 0px;
     z-index: -1;
   }
-</style>
+</style> -->

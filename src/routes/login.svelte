@@ -23,15 +23,14 @@
           type="text"
         />
         <button class="login-button" id="login-button">Login</button>
-        <a href="/simonsWorld">Simons World</a>
-        <a href="/entityViewer">Entity Viewer</a>
+        
         <a href="/">Return</a>
       </div>
     </div>
   </div>
 </div>
 
-<style>
+<!-- <style>
   :global(body) {
     width: 100%;
     height: 100%;
@@ -105,4 +104,4 @@
     text-shadow: 2px 2px 5px black;
     color: white;
   }
-</style>
+</style> -->

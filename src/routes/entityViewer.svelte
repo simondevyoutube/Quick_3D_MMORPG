@@ -43,7 +43,7 @@
   <Inspector bind:object="{obj}"></Inspector>
 </details>
 
-<style>
+<!-- <style>
   :global(body) {
     width: 100%;
     height: 100%;
@@ -64,4 +64,4 @@
     flex-direction: column;
     width: 40%;
   }
-</style>
+</style> -->
