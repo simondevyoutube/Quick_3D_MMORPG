@@ -452,7 +452,8 @@ export const PS2 = /* glsl */`
   
   vec4 diffuseBlended = _TerrainBlend_4(diffuseSamples);
   // vec4 normalBlended = _TerrainBlend_4(normalSamples);
-  diffuseColor = sRGBToLinear(diffuseBlended);
+  // TODO-DefinitelyMaybe: uncomment the following line for a fragment error
+  // diffuseColor = sRGBToLinear(diffuseBlended);
   // normal = normalBlended.xyz;
 }
 
