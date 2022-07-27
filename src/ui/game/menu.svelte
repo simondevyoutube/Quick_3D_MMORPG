@@ -4,11 +4,11 @@
 </script>
 
 <nav id="menu">
-  <a href="/">Return</a>
-  <button on:click="{()=>{
+  <a class="btn" href="/">Return</a>
+  <button class="btn" on:click="{()=>{
     dispatch("test")
   }}">Test</button>
-  <button on:click="{()=>{
+  <button class="btn" on:click="{()=>{
     dispatch("test2")
   }}">Test2</button>
 </nav>
