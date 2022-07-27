@@ -42,15 +42,15 @@ export class InfiniteTerrain {
     ])
     
     const p2 = atlas.load("normal", [
-      "./resources/terrain/dirt_01_normal-1024.jpg",
-      "./resources/terrain/grass1-normal-1024.jpg",
-      "./resources/terrain/sandyground-normal-1024.jpg",
-      "./resources/terrain/worn-bumpy-rock-normal-1024.jpg",
-      "./resources/terrain/rock-snow-ice-normal-1024.jpg",
-      "./resources/terrain/snow-packed-normal-1024.jpg",
-      "./resources/terrain/rough-wet-cobble-normal-1024.jpg",
-      // './resources/terrain/sandy-rocks1-normal-1024.jpg',
-      "./resources/terrain/bark1-normal3.jpg",
+      "./terrain/dirt_01_normal-1024.jpg",
+      "./terrain/grass1-normal-1024.jpg",
+      "./terrain/sandyground-normal-1024.jpg",
+      "./terrain/worn-bumpy-rock-normal-1024.jpg",
+      "./terrain/rock-snow-ice-normal-1024.jpg",
+      "./terrain/snow-packed-normal-1024.jpg",
+      "./terrain/rough-wet-cobble-normal-1024.jpg",
+      // './terrain/sandy-rocks1-normal-1024.jpg',
+      "./terrain/bark1-normal3.jpg",
     ])
 
     this.material = new THREE.MeshStandardMaterial({
