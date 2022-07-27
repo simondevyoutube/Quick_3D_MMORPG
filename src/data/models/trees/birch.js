@@ -2,10 +2,10 @@ import { THREE } from "../../../deps.js";
 
 export const birch1 = {
   name: "Birch",
-  url: "./resources/trees/FBX/Birch_1.fbx",
+  url: "./trees/FBX/Birch_1.fbx",
   textures: {
-    Birch_Bark: "./resources/trees/Textures/Birch_Bark.png",
-    Birch_Leaves: "./resources/trees/Textures/Birch_Leaves_Green.png",
+    Birch_Bark: "./trees/Textures/Birch_Bark.png",
+    Birch_Leaves: "./trees/Textures/Birch_Leaves_Green.png",
   },
   textureData: {
     Birch_Leaves: {

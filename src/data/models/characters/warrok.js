@@ -1,6 +1,6 @@
 export const warrok = {
   name: "Warrok",
-  url: "./resources/characters/warrok.glb",
+  url: "./characters/warrok.glb",
   equip: {
     rightHand: "RightHandIndex1",
   },

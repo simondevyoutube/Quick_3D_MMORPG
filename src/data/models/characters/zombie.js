@@ -1,6 +1,6 @@
 export const zombie = {
   name: "Zombie",
-  url: "./resources/characters/zombie-guy.glb",
+  url: "./characters/zombie-guy.glb",
   equip: {
     rightHand: "RightHandIndex1",
   },

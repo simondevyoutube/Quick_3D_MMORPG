@@ -47,20 +47,20 @@ export const scenery = {
   trees: [
     {
       name: "birch1",
-      url: './resources/trees/FBX/Birch_1.fbx',
+      url: './trees/FBX/Birch_1.fbx',
       textures: {
-        Bark: './resources/trees/Textures/Birch_Bark.png',
-        Leaves: './resources/trees/Textures/Birch_Leaves_Yellow.png'
+        Bark: './trees/Textures/Birch_Bark.png',
+        Leaves: './trees/Textures/Birch_Leaves_Yellow.png'
       },
       scale: 0.075,
       physics: {}
     },
     {
       name: 'tree1',
-      url: './resources/trees/FBX/Tree_1.fbx',
+      url: './trees/FBX/Tree_1.fbx',
       textures: {
-        Bark: './resources/trees/Textures/Tree_Bark.jpg',
-        Leaves: './resources/trees/Textures/Tree_Leaves.png'
+        Bark: './trees/Textures/Tree_Bark.jpg',
+        Leaves: './trees/Textures/Tree_Leaves.png'
       },
       scale: 0.1,
       physics: {}
@@ -69,11 +69,11 @@ export const scenery = {
   rocks: [
     {
       name: 'rock1',
-      url: './resources/nature/FBX/Rock_1.fbx',
+      url: './nature/FBX/Rock_1.fbx',
       scale: 0.025,
     },
     {
-      url: './resources/nature/FBX/Rock_Moss_1.fbx',
+      url: './nature/FBX/Rock_Moss_1.fbx',
       name: 'rockmoss1',
       scale: 0.025,
     },
@@ -81,16 +81,16 @@ export const scenery = {
   plants:[
     {
       name: 'plant1',
-      url: './resources/nature/FBX/Plant_1.fbx',
+      url: './nature/FBX/Plant_1.fbx',
       scale: 0.05,
     },
     {
-      url: './resources/nature/FBX/Grass_1.fbx',
+      url: './nature/FBX/Grass_1.fbx',
       names: 'grass1',
       scale: 0.05,
     },
     {
-      url: './resources/nature/FBX/Flowers.fbx',
+      url: './nature/FBX/Flowers.fbx',
       names: 'flowers1',
       scale: 0.05,
     },

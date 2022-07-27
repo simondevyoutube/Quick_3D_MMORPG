@@ -1,6 +1,6 @@
 export const paladin = {
   name: "Paladin",
-  url: "./resources/characters/paladin.glb",
+  url: "./characters/paladin.glb",
   equip: {
     rightHand: "RightHandIndex1",
   },

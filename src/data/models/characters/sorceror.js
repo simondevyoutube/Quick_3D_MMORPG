@@ -1,6 +1,6 @@
 export const sorceror = {
   name: "sorceror",
-  url: "./resources/characters/sorceror.glb",
+  url: "./characters/sorceror.glb",
   equip: {
     rightHand: "RightHandIndex1",
   },

@@ -24,21 +24,21 @@ export class InfiniteTerrain {
     this.world = world
     this.entities = this.world.entities
 
-    const noiseTexture = load("./resources/terrain/simplex-noise.png")
+    const noiseTexture = load("./terrain/simplex-noise.png")
     noiseTexture.wrapS = THREE.RepeatWrapping;
     noiseTexture.wrapT = THREE.RepeatWrapping;
 
     const atlas = new TextureAtlas();
     const p1 = atlas.load("diffuse", [
-      "./resources/terrain/dirt_01_diffuse-1024.png",
-      "./resources/terrain/grass1-albedo3-1024.png",
-      "./resources/terrain/sandyground-albedo-1024.png",
-      "./resources/terrain/worn-bumpy-rock-albedo-1024.png",
-      "./resources/terrain/rock-snow-ice-albedo-1024.png",
-      "./resources/terrain/snow-packed-albedo-1024.png",
-      "./resources/terrain/rough-wet-cobble-albedo-1024.png",
-      // './resources/terrain/sandy-rocks1-albedo-1024.png',
-      "./resources/terrain/bark1-albedo.jpg",
+      "./terrain/dirt_01_diffuse-1024.png",
+      "./terrain/grass1-albedo3-1024.png",
+      "./terrain/sandyground-albedo-1024.png",
+      "./terrain/worn-bumpy-rock-albedo-1024.png",
+      "./terrain/rock-snow-ice-albedo-1024.png",
+      "./terrain/snow-packed-albedo-1024.png",
+      "./terrain/rough-wet-cobble-albedo-1024.png",
+      // './terrain/sandy-rocks1-albedo-1024.png',
+      "./terrain/bark1-albedo.jpg",
     ])
     
     const p2 = atlas.load("normal", [

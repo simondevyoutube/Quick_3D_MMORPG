@@ -1,5 +1,5 @@
 export const cloud = {
   name: "Cloud",
-  url: "./resources/nature2/OBJ/Cloud1.obj",
-  material: "./resources/nature2/OBJ/Cloud1.mtl",
+  url: "./nature2/OBJ/Cloud1.obj",
+  material: "./nature2/OBJ/Cloud1.mtl",
 }
