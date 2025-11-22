@@ -111,6 +111,10 @@ export const render_component = (() => {
             if (this.params_.emissive) {
               m.emissive = this.params_.emissive;
             }
+            // Optimize material for better performance
+            if (m.map) {
+              m.map.anisotropy = 4;
+            }
           }
         }
         if (this.params_.receiveShadow != undefined) {
