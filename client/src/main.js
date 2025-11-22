@@ -157,7 +157,7 @@ class CrappyMMOAttempt {
 
   RAF_() {
     // dynamic XR scale state
-    this._xrScale = 1.3;          // start a bit higher for clarity
+    this._xrScale = 1.0;          // start lower for Quest 3
     this._avgMs   = 0;            // EMA of frame time
     this._targetMs = 1000 / 72;   // will update from XR session.frameRate if available
     this._xrHz = 72;
@@ -166,7 +166,7 @@ class CrappyMMOAttempt {
       this.threejs_.xr.setFramebufferScaleFactor(this._xrScale);
     }
     if (this.threejs_.xr.setFoveation) {
-      this.threejs_.xr.setFoveation(0); // optional: max quality in center
+      this.threejs_.xr.setFoveation(1); // moderate foveation for performance
     }
 
     this.threejs_.setAnimationLoop((t) => {
@@ -189,12 +189,12 @@ class CrappyMMOAttempt {
         this._avgMs = this._avgMs * 0.9 + dt * 0.1;
 
         // hysteresis band to avoid oscillation
-        const upThresh   = this._targetMs * 0.92; // faster than target → scale up (sharper)
-        const downThresh = this._targetMs * 1.08; // slower than target → scale down
+        const upThresh   = this._targetMs * 0.88; // faster than target → scale up (sharper)
+        const downThresh = this._targetMs * 1.12; // slower than target → scale down
 
         // clamp range & small step changes
-        const minScale = 1.0;
-        const maxScale = 1.4;
+        const minScale = 0.7;
+        const maxScale = 1.2;
         const step = 0.05;
 
         if (this._avgMs > downThresh && this._xrScale > minScale) {

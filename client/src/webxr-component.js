@@ -106,7 +106,7 @@ export const webxr_component = (() => {
           this._head.position.z = 0.4;
 
           // XR camera near far
-          this._applyXRCameraClips(0.01, 2000);
+          this._applyXRCameraClips(0.01, 800);
 
           // point head in the right direction
           this._head.rotation.set(0, Math.PI, 0);

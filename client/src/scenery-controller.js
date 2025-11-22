@@ -133,7 +133,7 @@ export const scenery_controller = (() => {
 
     SpawnClouds_() {
       
-      for (let i = 0; i < 20; ++i) {
+      for (let i = 0; i < 10; ++i) {
         const index = math.rand_int(1, 3);
         const pos = new THREE.Vector3(
             (Math.random() * 2.0 - 1.0) * 5000,
@@ -292,8 +292,8 @@ export const scenery_controller = (() => {
       const _V = new THREE.Vector3();
       const terrain = this.FindEntity('terrain').GetComponent('TerrainChunkManager');
 
-      for (let x = -7; x <= 7; ++x) {
-        for (let y = -7; y <= 7; ++y) {
+      for (let x = -5; x <= 5; ++x) {
+        for (let y = -5; y <= 5; ++y) {
           _P.set(x, 0.0, y);
           _P.add(center);
           _P.multiplyScalar(50.0);
@@ -337,7 +337,7 @@ export const scenery_controller = (() => {
       }
 
       // fauna density
-      let faunaDensity = 1.6 // smaller = more
+      let faunaDensity = 2.0 // smaller = more
 
 
       // lots of small stuff
@@ -392,7 +392,7 @@ export const scenery_controller = (() => {
 
     DestroyVegation_(){
       // destroy distance
-      let destroyDistance = 50;
+      let destroyDistance = 400;
       // stuff that is a long way from us can be not removed but HIDDEN
       for (let i = 0; i < this.vegetation_.length; ++i) {
         const veg = this.vegetation_[i];     

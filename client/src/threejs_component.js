@@ -91,8 +91,8 @@ export const threejs_component = (() => {
       this.threejs_.outputEncoding = THREE.sRGBEncoding;
       this.threejs_.gammaFactor = 2.2;
       this.threejs_.shadowMap.enabled = true;
-      this.threejs_.shadowMap.type = THREE.PCFSoftShadowMap;
-      this.threejs_.setPixelRatio(window.devicePixelRatio);
+      this.threejs_.shadowMap.type = THREE.BasicShadowMap;
+      this.threejs_.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       this.threejs_.setSize(window.innerWidth, window.innerHeight);
       this.threejs_.domElement.id = 'threejs';
 
@@ -103,11 +103,11 @@ export const threejs_component = (() => {
       // Enable WebXR support
       this.threejs_.xr.enabled = true;
       if (this.threejs_.xr.setFramebufferScaleFactor) {
-        this.threejs_.xr.setFramebufferScaleFactor(1.3);
+        this.threejs_.xr.setFramebufferScaleFactor(1.0);
       }
       // If available in your build/runtime, lower foveation to reduce periphery shimmer.
       if (this.threejs_.xr.setFoveation) {
-        this.threejs_.xr.setFoveation(0); // 0 = full res, higher = more foveation
+        this.threejs_.xr.setFoveation(1); // 0 = full res, higher = more foveation
       }      
   
       document.getElementById('container').appendChild(this.threejs_.domElement);
@@ -126,15 +126,15 @@ export const threejs_component = (() => {
       // Mobile camera
       if (window.innerWidth <= 768) {
         fov = 50;
-        far = 1200; 
+        far = 800; 
         // 769px - 1080px screen width camera
       } else if (window.innerWidth >= 769 && window.innerWidth <= 1080) {
         fov = 50;
-        far = 1475;        
+        far = 1000;        
         // > 1080px screen width res camera
       } else {
         fov = 40;
-        far = 7500;
+        far = 2000;
       }
         
       const aspect = window.innerWidth / window.innerHeight;
@@ -144,21 +144,21 @@ export const threejs_component = (() => {
       this.camera_.position.set(25, 10, 25);
   
       this.scene_ = new THREE.Scene();
-      this.scene_.fog = new THREE.FogExp2(0x89b2eb, 0.00002);
+      this.scene_.fog = new THREE.FogExp2(0x89b2eb, 0.0004);
   
       let light = new THREE.DirectionalLight(0x8088b3, 0.7);
       light.position.set(-10, 500, 10);
       light.target.position.set(0, 0, 0);
       light.castShadow = true;
       light.shadow.bias = -0.001;
-      light.shadow.mapSize.width = 4096;
-      light.shadow.mapSize.height = 4096;
+      light.shadow.mapSize.width = 1024;
+      light.shadow.mapSize.height = 1024;
       light.shadow.camera.near = 0.1;
-      light.shadow.camera.far = 1000.0;
-      light.shadow.camera.left = 100;
-      light.shadow.camera.right = -100;
-      light.shadow.camera.top = 100;
-      light.shadow.camera.bottom = -100;
+      light.shadow.camera.far = 500.0;
+      light.shadow.camera.left = 60;
+      light.shadow.camera.right = -60;
+      light.shadow.camera.top = 60;
+      light.shadow.camera.bottom = -60;
       this.scene_.add(light);
   
       this.sun_ = light;
@@ -202,7 +202,7 @@ export const threejs_component = (() => {
       this.scene_.fog.color.copy(uniforms["bottomColor"].value);
   
   
-      const skyGeo = new THREE.SphereBufferGeometry(5000, 32, 15);
+      const skyGeo = new THREE.SphereBufferGeometry(5000, 16, 8);
       const skyMat = new THREE.ShaderMaterial({
           uniforms: uniforms,
           vertexShader: _VS,
