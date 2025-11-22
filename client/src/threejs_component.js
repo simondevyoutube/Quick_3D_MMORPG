@@ -101,14 +101,7 @@ export const threejs_component = (() => {
 
 
       // Enable WebXR support
-      this.threejs_.xr.enabled = true;
-      if (this.threejs_.xr.setFramebufferScaleFactor) {
-        this.threejs_.xr.setFramebufferScaleFactor(1.0);
-      }
-      // If available in your build/runtime, lower foveation to reduce periphery shimmer.
-      if (this.threejs_.xr.setFoveation) {
-        this.threejs_.xr.setFoveation(1); // 0 = full res, higher = more foveation
-      }      
+      this.threejs_.xr.enabled = true;      
   
       document.getElementById('container').appendChild(this.threejs_.domElement);
 
