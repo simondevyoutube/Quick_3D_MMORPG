@@ -59,6 +59,8 @@ export const terrain = (function() {
       this._material = new THREE.MeshStandardMaterial({
         side: THREE.BackSide,
         vertexColors: true,
+        roughness: 0.8,
+        metalness: 0.0,
       });
 
       this._material.onBeforeCompile = (s) => {
@@ -104,7 +106,7 @@ export const terrain = (function() {
       // this happens
       
       params.guiParams.biomes = {
-        octaves: 2,
+        octaves: 1,
         persistence: 0.5,
         lacunarity: 2.0,
         scale: 1024.0,

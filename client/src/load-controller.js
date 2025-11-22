@@ -22,8 +22,14 @@ export const load_controller = (() => {
         const loader = new THREE.TextureLoader();
         loader.setPath(path);
 
-        this.textures_[name] = {loader: loader, texture: loader.load(name)};
-        this.textures_[name].encoding = THREE.sRGBEncoding;
+        const texture = loader.load(name, (tex) => {
+          tex.encoding = THREE.sRGBEncoding;
+          tex.generateMipmaps = true;
+          tex.minFilter = THREE.LinearMipMapLinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          tex.anisotropy = 4;
+        });
+        this.textures_[name] = {loader: loader, texture: texture};
       }
 
       return this.textures_[name].texture;
