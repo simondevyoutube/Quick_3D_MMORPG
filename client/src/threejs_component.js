@@ -101,6 +101,7 @@ export const threejs_component = (() => {
 
 
       // Enable WebXR support
+      // XR framebuffer scale and foveation are configured dynamically in RAF_ loop
       this.threejs_.xr.enabled = true;      
   
       document.getElementById('container').appendChild(this.threejs_.domElement);

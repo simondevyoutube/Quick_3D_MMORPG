@@ -188,7 +188,7 @@ class CrappyMMOAttempt {
         // exponential moving average of frame time
         this._avgMs = this._avgMs * 0.9 + dt * 0.1;
 
-        // hysteresis band to avoid oscillation
+        // hysteresis band to avoid oscillation (wider band for Quest 3 stability)
         const upThresh   = this._targetMs * 0.88; // faster than target → scale up (sharper)
         const downThresh = this._targetMs * 1.12; // slower than target → scale down
 
