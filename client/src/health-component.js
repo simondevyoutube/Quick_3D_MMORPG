@@ -7,6 +7,11 @@ export const health_component = (() => {
     constructor(params) {
       super();
       this.stats_ = params;
+      this.stamina_ = 100; // Current stamina
+      this.maxStamina_ = 100;
+      this.staminaDrainRate_ = 100 / 30; // Drain over 30 seconds
+      this.staminaRegenRate_ = 100 / 60; // Regenerate over 60 seconds
+      this.isRunning_ = false;
     }
 
     InitComponent() {
@@ -16,6 +21,8 @@ export const health_component = (() => {
           'stats.network', (m) => this.OnNetworkUpdate_(m));
       this._RegisterHandler(
           'health.add-experience', (m) => this.OnAddExperience_(m));
+      this._RegisterHandler(
+          'player.action', (m) => this.OnPlayerAction_(m));
 
       this.UpdateUI_();
     }
@@ -28,15 +35,51 @@ export const health_component = (() => {
       return this.stats_.health;
     }
 
+    get Stamina() {
+      return this.stamina_;
+    }
+
+    CanRun() {
+      return this.stamina_ > 0;
+    }
+
+    OnPlayerAction_(msg) {
+      this.isRunning_ = (msg.action === 'run');
+    }
+
+    Update(timeInSeconds) {
+      // Update stamina based on running state (always update, not just for UI)
+      if (this.isRunning_) {
+        // Drain stamina when running
+        this.stamina_ = Math.max(0, this.stamina_ - this.staminaDrainRate_ * timeInSeconds);
+      } else {
+        // Regenerate stamina when not running
+        this.stamina_ = Math.min(this.maxStamina_, this.stamina_ + this.staminaRegenRate_ * timeInSeconds);
+      }
+
+      // Update UI if applicable
+      if (this.stats_.updateUI) {
+        this.UpdateUI_();
+      }
+    }
+
     UpdateUI_() {
       if (!this.stats_.updateUI) {
         return;
       }
 
-      const bar = document.getElementById('health-bar');
+      const healthBar = document.getElementById('health-bar');
+      const staminaBar = document.getElementById('stamina-bar');
 
-      const healthAsPercentage = this.stats_.health / this.stats_.maxHealth;
-      bar.style.width = Math.floor(200 * healthAsPercentage) + 'px';
+      if (healthBar) {
+        const healthAsPercentage = this.stats_.health / this.stats_.maxHealth;
+        healthBar.style.width = Math.floor(100 * healthAsPercentage) + '%';
+      }
+
+      if (staminaBar) {
+        const staminaAsPercentage = this.stamina_ / this.maxStamina_;
+        staminaBar.style.width = Math.floor(100 * staminaAsPercentage) + '%';
+      }
 
       document.getElementById('stats-strength').innerText = this.stats_.strength;
       document.getElementById('stats-wisdomness').innerText = this.stats_.wisdomness;
@@ -111,6 +154,23 @@ export const health_component = (() => {
       this.stats_.health = Math.max(0.0, this.stats_.health - msg.value);
 
       this.OnHealthChanged_();
+    }
+
+    Update(timeInSeconds) {
+      if (!this.stats_.updateUI) {
+        return;
+      }
+
+      // Update stamina based on running state
+      if (this.isRunning_) {
+        // Drain stamina when running
+        this.stamina_ = Math.max(0, this.stamina_ - this.staminaDrainRate_ * timeInSeconds);
+      } else {
+        // Regenerate stamina when not running
+        this.stamina_ = Math.min(this.maxStamina_, this.stamina_ + this.staminaRegenRate_ * timeInSeconds);
+      }
+
+      this.UpdateUI_();
     }
   };
 

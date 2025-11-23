@@ -27,12 +27,17 @@ export const player_entity = (() => {
   };
   
   class BasicCharacterControllerProxy {
-    constructor(animations) {
+    constructor(animations, parent) {
       this.animations_ = animations;
+      this.parent_ = parent;
     }
   
     get animations() {
       return this.animations_;
+    }
+
+    get parent() {
+      return this.parent_;
     }
   };
 
@@ -135,7 +140,7 @@ export const player_entity = (() => {
         this.target_.visible = true;
 
         this.stateMachine_ = new CharacterFSM(
-            new BasicCharacterControllerProxy(this.animations_));
+            new BasicCharacterControllerProxy(this.animations_, this.Parent));
 
         this.stateMachine_.SetState('idle');
 
