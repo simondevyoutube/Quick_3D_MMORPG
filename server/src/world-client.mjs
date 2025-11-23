@@ -267,7 +267,7 @@ export const world_client = (() => {
       this.target_ = vec3.fromValues(targetX, 0, targetZ);
       
       // Set terrain height
-      this.target_[1] = this.terrain_.Get(this.target_[0], this.target_[2])[0];
+      this.target_[1] = this.terrain_.Get(this.target_[0], 0, this.target_[2])[0];
     }
 
     UpdateMovement_(timeElapsed) {
