@@ -25,6 +25,12 @@ export const food_sphere_controller = (() => {
 
       this.center_ = null;
       this.foodSpheres_ = [];
+      
+      // Debug logging flags
+      this._updateLogged = false;
+      this._noPlayerLogged = false;
+      this._playerFoundLogged = false;
+      this._biomeLogged = false;
     }
 
     InitComponent() {
@@ -184,8 +190,8 @@ export const food_sphere_controller = (() => {
       const dz = playerPos.z - spherePos.z;
       const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-      // Collision radius (player size + sphere size)
-      return distance < 2.0; // Generous collision distance
+      // Collision radius (sphere radius 1.0 + approximate player radius 2.0)
+      return distance < 3.0;
     }
 
     Update(timeInSeconds) {
