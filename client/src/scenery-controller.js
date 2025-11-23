@@ -90,6 +90,7 @@ export const scenery_controller = (() => {
   const multiplesSmall = {
     plant1: {name: 'Plant_', key: 'plant', num: 5},
     grass1: {name: 'Grass_', key: 'grass',  num: 2},
+    flowers1: {name: 'Flowers', key: 'flowers', num: 1},
   };  
 
   for (let k in multiples) {
@@ -337,7 +338,7 @@ export const scenery_controller = (() => {
       }
 
       // fauna density
-      const faunaDensity = 2.0; // smaller = more
+      const faunaDensity = 4.0; // smaller = more
 
 
       // lots of small stuff
@@ -409,11 +410,11 @@ export const scenery_controller = (() => {
     }    
 
     Update(_) {
-      //console.log('Vegetation items before:' + this.vegetation_.length);
+      console.log('Vegetation items before:' + this.vegetation_.length);
       this.SpawnVegetation_();
       this.DestroyVegation_();
-      //console.log('Vegetation items after:' + this.vegetation_.length);
-      //console.log('=================')
+      console.log('Vegetation items after:' + this.vegetation_.length);
+      console.log('=================')
 
     }
   };
