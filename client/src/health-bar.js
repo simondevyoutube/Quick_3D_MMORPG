@@ -29,11 +29,17 @@ void main() {
 }
 `;
 
+  // Offset below the floating name (in world units)
+  const HEALTH_BAR_OFFSET = 2.5;
+  // Distance check interval (in frames) to optimize performance
+  const DISTANCE_CHECK_INTERVAL = 10;
+
 class HealthBar extends entity.Component {
   constructor(params) {
     super();
     this.params_ = params;
     this.maxDistance_ = params.maxDistance || 25.0; // Default 25m visibility
+    this.frameCount_ = 0;
     this.Initialize_();
   }
 
@@ -106,13 +112,19 @@ class HealthBar extends entity.Component {
     this.material_.uniforms.health.value = this.animHealth_;
     this.material_.uniforms.colour.value = c;
 
-    // Get player position for distance check
-    const player = this.FindEntity('player');
-    if (player) {
-      const distance = this.parent_.Position.distanceTo(player.Position);
-      this.bar_.visible = distance <= this.maxDistance_;
-    } else {
-      this.bar_.visible = false;
+    // Check distance only every DISTANCE_CHECK_INTERVAL frames for performance
+    this.frameCount_++;
+    if (this.frameCount_ >= DISTANCE_CHECK_INTERVAL) {
+      this.frameCount_ = 0;
+      
+      // Get player position for distance check
+      const player = this.FindEntity('player');
+      if (player) {
+        const distance = this.parent_.Position.distanceTo(player.Position);
+        this.bar_.visible = distance <= this.maxDistance_;
+      } else {
+        this.bar_.visible = false;
+      }
     }
 
     // Update position below the name
@@ -125,8 +137,8 @@ class HealthBar extends entity.Component {
       if (desc && desc.character && desc.character.class) {
         const modelData = defs.CHARACTER_MODELS[desc.character.class];
         if (modelData && modelData.nameOffset) {
-          // Position health bar slightly below the name
-          this.bar_.position.y += modelData.nameOffset - 2.5;
+          // Position health bar below the name
+          this.bar_.position.y += modelData.nameOffset - HEALTH_BAR_OFFSET;
         } else {
           this.bar_.position.y += 8.0; // Fallback
         }
