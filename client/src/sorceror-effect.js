@@ -57,7 +57,7 @@ export const sorceror_effect = (() => {
       this.particles_ = new particle_system.ParticleSystem({
           camera: params.camera,
           parent: params.scene,
-          texture: './resources/textures/fire.png',
+          texture: '/client/resources/textures/fire.png',
       });
     }
 

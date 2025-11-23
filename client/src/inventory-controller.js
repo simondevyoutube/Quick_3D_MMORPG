@@ -82,7 +82,7 @@ export const inventory_controller = (() => {
       const div = document.getElementById(slot);
       const item = this.GetItemDefinition_(itemName);
       if (item) {
-        const path = './resources/icons/weapons/' + item.renderParams.icon;
+        const path = '/client/resources/icons/weapons/' + item.renderParams.icon;
         div.style.backgroundImage = "url('" + path + "')";
       } else {
         div.style.backgroundImage = '';

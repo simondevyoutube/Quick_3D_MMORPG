@@ -1,7 +1,7 @@
 
 
 export const terrain_constants = (function() {
-  const QT_MIN_CELL_SIZE = 100;
+  const QT_MIN_CELL_SIZE = 120;
   // const QT_MIN_CELL_RESOLUTION = 24;
   const QT_MIN_CELL_RESOLUTION = 16;
   // const QT_MIN_CELL_RESOLUTION = 4;
@@ -19,7 +19,7 @@ export const terrain_constants = (function() {
     NOISE_HEIGHT: NOISE_HEIGHT,
     NOISE_SCALE: NOISE_SCALE,
     NOISE_PARAMS: {
-      octaves: 10,
+      octaves: 6,
       persistence: 0.5,
       lacunarity: 1.6,
       exponentiation: 7.5,

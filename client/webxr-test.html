@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebXR Test for Quick 3D MMORPG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+            padding: 10px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 5px;
+        }
+        #vrButton {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 999;
+            padding: 10px 20px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #vrButton:hover {
+            background: #0088ff;
+        }
+        #vrButton:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h3>WebXR Support Test</h3>
+        <div id="status">Checking WebXR support...</div>
+        <div id="features">
+            <h4>Expected VR Features:</h4>
+            <ul>
+                <li>✅ VR Session Management</li>
+                <li>✅ Dual Controller Support</li>
+                <li>✅ Thumbstick Movement</li>
+                <li>✅ Object Interaction</li>
+                <li>✅ UI State Management</li>
+            </ul>
+        </div>
+    </div>
+
+    <button id="vrButton" disabled>VR Not Available</button>
+
+    <script type="module">
+        // Test WebXR availability
+        async function checkWebXRSupport() {
+            const statusDiv = document.getElementById('status');
+            const vrButton = document.getElementById('vrButton');
+
+            if ('xr' in navigator) {
+                try {
+                    const isSupported = await navigator.xr.isSessionSupported('immersive-vr');
+                    if (isSupported) {
+                        statusDiv.innerHTML = `
+                            <span style="color: #00ff00">✅ WebXR is supported!</span><br>
+                            Your browser supports VR sessions.<br>
+                            <small>Note: VR headset required for full functionality</small>
+                        `;
+                        vrButton.disabled = false;
+                        vrButton.textContent = 'Enter VR';
+                        vrButton.onclick = enterVR;
+                    } else {
+                        statusDiv.innerHTML = `
+                            <span style="color: #ffaa00">⚠️ WebXR supported, but no VR device detected</span><br>
+                            VR headset may not be connected or supported.
+                        `;
+                    }
+                } catch (err) {
+                    statusDiv.innerHTML = `
+                        <span style="color: #ff6600">⚠️ WebXR supported but error checking VR device</span><br>
+                        Error: ${err.message}
+                    `;
+                }
+            } else {
+                statusDiv.innerHTML = `
+                    <span style="color: #ff0000">❌ WebXR not supported</span><br>
+                    Your browser does not support WebXR.<br>
+                    Try Chrome/Firefox on Android or desktop.
+                `;
+            }
+        }
+
+        async function enterVR() {
+            const vrButton = document.getElementById('vrButton');
+            try {
+                vrButton.textContent = 'Starting VR...';
+                const session = await navigator.xr.requestSession('immersive-vr');
+                
+                vrButton.textContent = 'VR Active - Exit VR';
+                vrButton.onclick = () => session.end();
+                
+                session.addEventListener('end', () => {
+                    vrButton.textContent = 'Enter VR';
+                    vrButton.onclick = enterVR;
+                });
+
+                alert('VR Session Started! In the actual game, you would now see the 3D world in VR with controller support.');
+                
+            } catch (err) {
+                alert('Failed to start VR: ' + err.message);
+                vrButton.textContent = 'Enter VR';
+            }
+        }
+
+        // Check support when page loads
+        checkWebXRSupport();
+    </script>
+</body>
+</html>

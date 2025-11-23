@@ -5,7 +5,7 @@ export const defs = (() => {
   const _CHARACTER_MODELS = {
     paladin: {
       base: 'paladin.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },
@@ -36,7 +36,7 @@ export const defs = (() => {
     },
     sorceror: {
       base: 'sorceror.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },
@@ -63,7 +63,7 @@ export const defs = (() => {
     },
     warrok: {
       base: 'warrok.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },
@@ -90,7 +90,7 @@ export const defs = (() => {
     },
     zombie: {
       base: 'zombie-guy.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },

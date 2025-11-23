@@ -16,11 +16,11 @@ app.use(express.static('client',[options]));
 //server.use(express.static('client',[]));
 */
 // Setting up the public directory
-app.use(express.static('client', {
+app.use(express.static('.', {
 	setHeaders: (res) => {
-	res.set('x-timestamp', Date.now()),
-	  res.set('Cross-Origin-Opener-Policy', 'same-origin');
-	  res.set('Cross-Origin-Embedder-Policy', 'require-corp');
+		res.set('x-timestamp', Date.now()),
+		res.set('Cross-Origin-Opener-Policy', 'same-origin');
+		res.set('Cross-Origin-Embedder-Policy', 'require-corp');
 	}
 }));
 

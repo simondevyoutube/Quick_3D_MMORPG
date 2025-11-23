@@ -14,6 +14,9 @@ export const third_person_camera = (() => {
 
       this._currentPosition = new THREE.Vector3();
       this._currentLookat = new THREE.Vector3();
+      
+      // VR mode flag - when true, camera updates are disabled
+      this._vrModeActive = false;
     }
 
     _CalculateIdealOffset() {
@@ -40,6 +43,11 @@ export const third_person_camera = (() => {
     }
 
     Update(timeElapsed) {
+      // Skip camera updates when in VR mode
+      if (this._vrModeActive) {
+        return;
+      }
+
       const idealOffset = this._CalculateIdealOffset();
       const idealLookat = this._CalculateIdealLookat();
 

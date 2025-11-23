@@ -38,7 +38,7 @@ body {
   top: 0;
   left: 0;
   font-family: 'IM Fell French Canon', serif;
-  background-image: url('./resources/background-2.jpg');
+  background-image: url('/client/resources/background-2.jpg');
   background-size: cover;
 }
 
@@ -229,7 +229,7 @@ body {
   position: absolute;
   top: 0px;
   left: 0px;
-  background-image: url('./resources/icons/ui/health-bar.png');
+  background-image: url('/client/resources/icons/ui/health-bar.png');
   width: 500px;
   height: 300px;
   z-index: 1;
@@ -348,7 +348,7 @@ body {
 }
 
 .inventory-character {
-  background-image: url('./resources/icons/ui/inventory-character.png');
+  background-image: url('/client/resources/icons/ui/inventory-character.png');
   background-size: cover;
   width: 200px;
   height: 350px;

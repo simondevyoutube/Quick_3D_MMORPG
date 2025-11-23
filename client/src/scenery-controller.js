@@ -4,15 +4,15 @@ import {entity} from './entity.js';
 import {render_component} from './render-component.js';
 import {spatial_grid_controller} from './spatial-grid-controller.js';
 
-import {math} from '/shared/math.mjs';
-import {noise} from '/shared/noise.mjs';
+import {math} from '../shared/math.mjs';
+import {noise} from '../shared/noise.mjs';
 
 export const scenery_controller = (() => {
 
   const _SCENERY = {
     birch1: {
       base: 'Birch_1.fbx',
-      resourcePath: './resources/trees/FBX/',
+      resourcePath: '/client/resources/trees/FBX/',
       names: {
         Bark: 'Birch_Bark.png',
         Leaves: 'Birch_Leaves_Yellow.png'
@@ -23,7 +23,7 @@ export const scenery_controller = (() => {
     },
     tree1: {
       base: 'Tree_1.fbx',
-      resourcePath: './resources/trees/FBX/',
+      resourcePath: '/client/resources/trees/FBX/',
       names: {
         Bark: 'Tree_Bark.jpg',
         Leaves: 'Leaves_Blue.png'
@@ -34,7 +34,7 @@ export const scenery_controller = (() => {
     },
     rock1: {
       base: 'Rock_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      resourcePath: '/client/resources/nature/FBX/',
       names: {},
       scale: 0.25,
       biomes: ['arid', 'desert'],
@@ -42,7 +42,7 @@ export const scenery_controller = (() => {
     },
     rockMoss1: {
       base: 'Rock_Moss_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      resourcePath: '/client/resources/nature/FBX/',
       names: {},
       scale: 0.25,
       biomes: ['forest'],
@@ -53,21 +53,21 @@ export const scenery_controller = (() => {
   const _SCENERYSMALL = {
     plant1: {
       base: 'Plant_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      resourcePath: '/client/resources/nature/FBX/',
       names: {},
       scale: 0.05,
       biomes: ['forest', 'arid'],
     },
     grass1: {
       base: 'Grass_1.fbx',
-      resourcePath: './resources/nature/FBX/',
+      resourcePath: '/client/resources/nature/FBX/',
       names: {},
       scale: 0.05,
       biomes: ['forest', 'arid'],
     },
     flowers1: {
       base: 'Flowers.fbx',
-      resourcePath: './resources/nature/FBX/',
+      resourcePath: '/client/resources/nature/FBX/',
       names: {},
       scale: 0.05,
       biomes: ['forest'],
@@ -133,7 +133,7 @@ export const scenery_controller = (() => {
 
     SpawnClouds_() {
       
-      for (let i = 0; i < 20; ++i) {
+      for (let i = 0; i < 10; ++i) {
         const index = math.rand_int(1, 3);
         const pos = new THREE.Vector3(
             (Math.random() * 2.0 - 1.0) * 5000,
@@ -143,7 +143,7 @@ export const scenery_controller = (() => {
         const e = new entity.Entity();
         e.AddComponent(new render_component.RenderComponent({
           scene: this.params_.scene,
-          resourcePath: './resources/nature2/GLTF/',
+          resourcePath: '/client/resources/nature2/GLTF/',
           resourceName: 'Cloud' + index + '.glb',
           scale: Math.random() * 20 + 40,
           emissive: new THREE.Color(0x000000),
@@ -197,7 +197,7 @@ export const scenery_controller = (() => {
         resourcePath: randomProp.resourcePath,
         resourceName: randomProp.base,
         textures: {
-          resourcePath: './resources/trees/Textures/',
+          resourcePath: '/client/resources/trees/Textures/',
           names: randomProp.names,
           wrap: true,
         },
@@ -244,7 +244,7 @@ export const scenery_controller = (() => {
           resourcePath: randomProp.resourcePath,
           resourceName: randomProp.base,
           //textures: {
-          //  resourcePath: './resources/trees/Textures/',
+          //  resourcePath: '/client/resources/trees/Textures/',
           //  names: randomProp.names,
           //  wrap: true,
           //},
@@ -292,8 +292,8 @@ export const scenery_controller = (() => {
       const _V = new THREE.Vector3();
       const terrain = this.FindEntity('terrain').GetComponent('TerrainChunkManager');
 
-      for (let x = -7; x <= 7; ++x) {
-        for (let y = -7; y <= 7; ++y) {
+      for (let x = -5; x <= 5; ++x) {
+        for (let y = -5; y <= 5; ++y) {
           _P.set(x, 0.0, y);
           _P.add(center);
           _P.multiplyScalar(50.0);
@@ -336,9 +336,13 @@ export const scenery_controller = (() => {
         }
       }
 
+      // fauna density
+      const faunaDensity = 2.0; // smaller = more
+
+
       // lots of small stuff
-      for (let x = -3; x <= 3; x +=0.3) {
-        for (let y = -3; y <= 3; y +=0.4) {
+      for (let x = -3; x <= 3; x +=faunaDensity) {
+        for (let y = -3; y <= 3; y +=faunaDensity) {
           _P.set(x, 0.0, y);
           _P.add(center);
           _P.multiplyScalar(50.0);
@@ -387,11 +391,13 @@ export const scenery_controller = (() => {
 
 
     DestroyVegation_(){
+      // destroy distance
+      let destroyDistance = 400;
       // stuff that is a long way from us can be not removed but HIDDEN
       for (let i = 0; i < this.vegetation_.length; ++i) {
         const veg = this.vegetation_[i];     
         const dist = veg.Position.distanceTo(this.FindEntity('player').Position);
-        if (dist > 150.0) {
+        if (dist > destroyDistance) {
           const e = this.FindEntity(veg.Name)
           //this.Manager.Remove(e);
           e.visible = false;

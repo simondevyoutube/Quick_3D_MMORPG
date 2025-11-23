@@ -1,5 +1,5 @@
 
-import {math} from './math.mjs';
+import {math} from '../shared/math.mjs';
 
 
 export const spatial_hash_grid = (() => {

@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import { VRButton } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/webxr/VRButton.js';
 
 import {entity} from "./entity.js";
 
@@ -86,8 +87,8 @@ export const threejs_component = (() => {
       this.threejs_.outputEncoding = THREE.sRGBEncoding;
       this.threejs_.gammaFactor = 2.2;
       this.threejs_.shadowMap.enabled = true;
-      this.threejs_.shadowMap.type = THREE.PCFSoftShadowMap;
-      this.threejs_.setPixelRatio(window.devicePixelRatio);
+      this.threejs_.shadowMap.type = THREE.BasicShadowMap;
+      this.threejs_.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       this.threejs_.setSize(window.innerWidth, window.innerHeight);
       this.threejs_.domElement.id = 'threejs';
       this.threejs_.setClearColor(0x89b2eb, 1.0);
@@ -120,11 +121,11 @@ export const threejs_component = (() => {
       light.shadow.bias = -0.001;
       light.shadow.mapSize.set(4096, 4096);
       light.shadow.camera.near = 0.1;
-      light.shadow.camera.far = 1000.0;
-      light.shadow.camera.left = 100;
-      light.shadow.camera.right = -100;
-      light.shadow.camera.top = 100;
-      light.shadow.camera.bottom = -100;
+      light.shadow.camera.far = 500.0;
+      light.shadow.camera.left = 60;
+      light.shadow.camera.right = -60;
+      light.shadow.camera.top = 60;
+      light.shadow.camera.bottom = -60;
       this.scene_.add(light);
       this.sun_ = light;
 
@@ -186,12 +187,12 @@ export const threejs_component = (() => {
   
       const loader = new THREE.CubeTextureLoader();
       const texture = loader.load([
-          './resources/terrain/space-posx.jpg',
-          './resources/terrain/space-negx.jpg',
-          './resources/terrain/space-posy.jpg',
-          './resources/terrain/space-negy.jpg',
-          './resources/terrain/space-posz.jpg',
-          './resources/terrain/space-negz.jpg',
+          '/client/resources/terrain/space-posx.jpg',
+          '/client/resources/terrain/space-negx.jpg',
+          '/client/resources/terrain/space-posy.jpg',
+          '/client/resources/terrain/space-negy.jpg',
+          '/client/resources/terrain/space-posz.jpg',
+          '/client/resources/terrain/space-negz.jpg',
       ]);
       texture.encoding = THREE.sRGBEncoding;
   
@@ -207,7 +208,7 @@ export const threejs_component = (() => {
       this.scene_.fog.color.copy(uniforms["bottomColor"].value);
   
   
-      const skyGeo = new THREE.SphereBufferGeometry(5000, 32, 15);
+      const skyGeo = new THREE.SphereBufferGeometry(5000, 16, 8);
       const skyMat = new THREE.ShaderMaterial({
           uniforms: uniforms,
           vertexShader: _VS,

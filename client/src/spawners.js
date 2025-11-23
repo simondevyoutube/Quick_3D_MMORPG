@@ -30,6 +30,7 @@ export const spawners = (() => {
       const params = {
         camera: this.params_.camera,
         scene: this.params_.scene,
+        renderer: this.params_.renderer,
         desc: playerParams,
       };
 

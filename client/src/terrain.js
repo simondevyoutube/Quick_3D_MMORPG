@@ -8,11 +8,9 @@ import {texture_splatter} from './texture-splatter.js';
 import {textures} from './textures.js';
 import {utils} from './utils.js';
 
-import {terrain_constants} from '/shared/terrain-constants.mjs';
-import {terrain_height} from '/shared/terrain-height.mjs';
-
-import {noise} from '/shared/noise.mjs';
-
+import {terrain_constants} from '../shared/terrain-constants.mjs';
+import {terrain_height} from '../shared/terrain-height.mjs';
+import {noise} from '../shared/noise.mjs';
 
 export const terrain = (function() {
 
@@ -27,40 +25,42 @@ export const terrain = (function() {
 
       const loader = new THREE.TextureLoader();
 
-      const noiseTexture = loader.load('./resources/terrain/simplex-noise.png');
+      const noiseTexture = loader.load('./client/resources/terrain/simplex-noise.png');
       noiseTexture.wrapS = THREE.RepeatWrapping;
       noiseTexture.wrapT = THREE.RepeatWrapping;
 
       const diffuse = new textures.TextureAtlas(params);
       diffuse.Load('diffuse', [
-        './resources/terrain/dirt_01_diffuse-1024.png',
-        './resources/terrain/grass1-albedo3-1024.png',
-        './resources/terrain/sandyground-albedo-1024.png',
-        './resources/terrain/worn-bumpy-rock-albedo-1024.png',
-        './resources/terrain/rock-snow-ice-albedo-1024.png',
-        './resources/terrain/snow-packed-albedo-1024.png',
-        './resources/terrain/rough-wet-cobble-albedo-1024.png',
-        // './resources/terrain/sandy-rocks1-albedo-1024.png',
-        './resources/terrain/bark1-albedo.jpg',
+        './client/resources/terrain/dirt_01_diffuse-1024.png',
+        './client/resources/terrain/grass1-albedo3-1024.png',
+        './client/resources/terrain/sandyground-albedo-1024.png',
+        './client/resources/terrain/worn-bumpy-rock-albedo-1024.png',
+        './client/resources/terrain/rock-snow-ice-albedo-1024.png',
+        './client/resources/terrain/snow-packed-albedo-1024.png',
+        './client/resources/terrain/rough-wet-cobble-albedo-1024.png',
+        // './client/resources/terrain/sandy-rocks1-albedo-1024.png',
+        './client/resources/terrain/bark1-albedo.jpg',
       ]);
 
 
       const normal = new textures.TextureAtlas(params);
       normal.Load('normal', [
-        './resources/terrain/dirt_01_normal-1024.jpg',
-        './resources/terrain/grass1-normal-1024.jpg',
-        './resources/terrain/sandyground-normal-1024.jpg',
-        './resources/terrain/worn-bumpy-rock-normal-1024.jpg',
-        './resources/terrain/rock-snow-ice-normal-1024.jpg',
-        './resources/terrain/snow-packed-normal-1024.jpg',
-        './resources/terrain/rough-wet-cobble-normal-1024.jpg',
-        // './resources/terrain/sandy-rocks1-normal-1024.jpg',
-        './resources/terrain/bark1-normal3.jpg',
+        './client/resources/terrain/dirt_01_normal-1024.jpg',
+        './client/resources/terrain/grass1-normal-1024.jpg',
+        './client/resources/terrain/sandyground-normal-1024.jpg',
+        './client/resources/terrain/worn-bumpy-rock-normal-1024.jpg',
+        './client/resources/terrain/rock-snow-ice-normal-1024.jpg',
+        './client/resources/terrain/snow-packed-normal-1024.jpg',
+        './client/resources/terrain/rough-wet-cobble-normal-1024.jpg',
+        // './client/resources/terrain/sandy-rocks1-normal-1024.jpg',
+        './client/resources/terrain/bark1-normal3.jpg',
       ]);
 
       this._material = new THREE.MeshStandardMaterial({
         side: THREE.BackSide,
         vertexColors: true,
+        roughness: 0.8,
+        metalness: 0.0,
       });
 
       this._material.onBeforeCompile = (s) => {
@@ -106,7 +106,7 @@ export const terrain = (function() {
       // this happens
       
       params.guiParams.biomes = {
-        octaves: 2,
+        octaves: 1,
         persistence: 0.5,
         lacunarity: 2.0,
         scale: 1024.0,
