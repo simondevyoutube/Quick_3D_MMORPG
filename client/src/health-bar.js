@@ -87,6 +87,7 @@ class HealthBar extends entity.Component {
 
     this.realHealth_ = 1.0;
     this.animHealth_ = 1.0;
+    this.isDead_ = false; // Track death state to prevent flickering
 
     // Pre-calculate Y offset for positioning (cache for performance)
     this.yOffset_ = this._CalculateYOffset();
@@ -120,12 +121,18 @@ class HealthBar extends entity.Component {
   OnDeath_() {
     // Hide the health bar immediately on death, but don't destroy it yet
     // It will be destroyed when the entity is destroyed
+    this.isDead_ = true; // Mark as dead to prevent visibility updates
     if (this.bar_) {
       this.bar_.visible = false;
     }
   }
 
   Update(timeElapsed) {
+    // Don't update visibility or position if dead
+    if (this.isDead_) {
+      return;
+    }
+
     const t = 1.0 - Math.pow(0.001, timeElapsed);
 
     this.animHealth_ = math.lerp(t, this.animHealth_, this.realHealth_);
