@@ -57,7 +57,7 @@ export const food_sphere_controller = (() => {
 
     SpawnFoodSphere_(spawnPos) {
       // Create sphere geometry
-      const geometry = new THREE.SphereGeometry(1.0, 16, 16); // Increased size for visibility
+      const geometry = new THREE.SphereGeometry(0.5, 16, 16); // Increased size for visibility
       const material = new THREE.MeshStandardMaterial({
         color: 0xff6600, // Orange color for food
         emissive: 0x331100,
@@ -69,7 +69,7 @@ export const food_sphere_controller = (() => {
       sphere.receiveShadow = true;
 
       // Position sphere higher in the air to simulate falling from tree
-      const startHeight = spawnPos.y + 5 + Math.random() * 3; // 5-8 units above ground
+      const startHeight = spawnPos.y + 5 + Math.random() * 5; // 5-10d units above ground
       sphere.position.set(spawnPos.x, startHeight, spawnPos.z);
 
       if (!this.params_.scene) {
@@ -156,7 +156,7 @@ export const food_sphere_controller = (() => {
 
           // Random chance to spawn (not every grid cell gets one)
           const roll = this.noise_.Get(_V.x, 2.0, _V.z);
-          if (roll > 0.7) { // 30% spawn rate
+          if (roll > 0.85) { // 30% spawn rate
             continue;
           }
 
@@ -164,7 +164,7 @@ export const food_sphere_controller = (() => {
           if (!foodSphere) {
             continue; // Skip if scene was undefined
           }
-          console.log('[FoodSphereController] Spawned food sphere at position:', _P.x, _P.y, _P.z);
+          //console.log('[FoodSphereController] Spawned food sphere at position:', _P.x, _P.y, _P.z);
 
           this.Manager.Add(foodSphere, key);
           this.foodSpheres_.push({
@@ -216,7 +216,7 @@ export const food_sphere_controller = (() => {
           sphere.mesh.position.y -= sphere.velocity * timeInSeconds;
 
           // Check if landed on ground
-          if (sphere.mesh.position.y <= sphere.groundHeight) {
+          if (sphere.mesh.position.y + sphere.mesh.geometry.parameters.radius <= sphere.groundHeight) {
             sphere.mesh.position.y = sphere.groundHeight;
             sphere.hasLanded = true;
             sphere.velocity = 0;
@@ -230,7 +230,7 @@ export const food_sphere_controller = (() => {
           if (player) {
             player.Broadcast({
               topic: 'health.heal',
-              value: 5,
+              value: 50,
             });
           }
 
