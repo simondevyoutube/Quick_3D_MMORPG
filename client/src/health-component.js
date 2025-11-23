@@ -7,11 +7,18 @@ export const health_component = (() => {
     constructor(params) {
       super();
       this.stats_ = params;
-      this.stamina_ = 100; // Current stamina
+
+      // --- Stamina ---
+      this.stamina_ = 100;          // Current stamina
       this.maxStamina_ = 100;
       this.staminaDrainRate_ = 100 / 30; // Drain over 30 seconds
       this.staminaRegenRate_ = 100 / 60; // Regenerate over 60 seconds
       this.isRunning_ = false;
+
+      // --- Exhaustion / cooldown ---
+      this.isExhausted_ = false;          // True once we hit 0 stamina
+      this.staminaCooldown_ = 17.0;        // Seconds you must rest after hitting 0
+      this.staminaCooldownRemaining_ = 0; // Countdown timer
     }
 
     InitComponent() {
@@ -40,24 +47,57 @@ export const health_component = (() => {
     }
 
     CanRun() {
-      return this.stamina_ > 0;
+      // Can't run if exhausted or during cooldown, even if stamina just ticked above 0
+      return (
+        this.stamina_ > 0 &&
+        !this.isExhausted_ &&
+        this.staminaCooldownRemaining_ <= 0
+      );
     }
 
     OnPlayerAction_(msg) {
-      this.isRunning_ = (msg.action === 'run');
+      if (msg.action === 'run' && this.CanRun()) {
+        this.isRunning_ = true;
+      } else {
+        // Either not a run action or we aren't allowed to run right now
+        this.isRunning_ = false;
+      }
     }
 
     Update(timeInSeconds) {
-      // Update stamina based on running state (always update, not just for UI)
-      if (this.isRunning_) {
-        // Drain stamina when running
-        this.stamina_ = Math.max(0, this.stamina_ - this.staminaDrainRate_ * timeInSeconds);
-      } else {
-        // Regenerate stamina when not running
-        this.stamina_ = Math.min(this.maxStamina_, this.stamina_ + this.staminaRegenRate_ * timeInSeconds);
+      // --- Handle cooldown timer first ---
+      if (this.staminaCooldownRemaining_ > 0) {
+        this.staminaCooldownRemaining_ -= timeInSeconds;
+        if (this.staminaCooldownRemaining_ <= 0) {
+          this.staminaCooldownRemaining_ = 0;
+          this.isExhausted_ = false;
+        }
       }
 
-      // Update UI if applicable
+      if (this.isRunning_ && !this.isExhausted_) {
+        const prevStamina = this.stamina_;
+
+        // Drain stamina when running
+        this.stamina_ = Math.max(
+          0,
+          this.stamina_ - this.staminaDrainRate_ * timeInSeconds
+        );
+
+        // If we just hit zero this frame, trigger exhaustion + cooldown
+        if (prevStamina > 0 && this.stamina_ === 0) {
+          this.isExhausted_ = true;
+          this.staminaCooldownRemaining_ = this.staminaCooldown_;
+          this.isRunning_ = false; // force stop running immediately
+        }
+      } else {
+        // Regenerate stamina when not running
+        this.stamina_ = Math.min(
+          this.maxStamina_,
+          this.stamina_ + this.staminaRegenRate_ * timeInSeconds
+        );
+      }
+
+      // Only the UI part is gated by this flag; stamina logic always runs
       if (this.stats_.updateUI) {
         this.UpdateUI_();
       }
@@ -140,7 +180,6 @@ export const health_component = (() => {
       this.UpdateUI_();
     }
 
-
     OnNetworkUpdate_(msg) {
       const newStats = msg.value[1];
       for (let k in newStats) {
@@ -152,25 +191,7 @@ export const health_component = (() => {
 
     OnDamage_(msg) {
       this.stats_.health = Math.max(0.0, this.stats_.health - msg.value);
-
       this.OnHealthChanged_();
-    }
-
-    Update(timeInSeconds) {
-      if (!this.stats_.updateUI) {
-        return;
-      }
-
-      // Update stamina based on running state
-      if (this.isRunning_) {
-        // Drain stamina when running
-        this.stamina_ = Math.max(0, this.stamina_ - this.staminaDrainRate_ * timeInSeconds);
-      } else {
-        // Regenerate stamina when not running
-        this.stamina_ = Math.min(this.maxStamina_, this.stamina_ + this.staminaRegenRate_ * timeInSeconds);
-      }
-
-      this.UpdateUI_();
     }
   };
 

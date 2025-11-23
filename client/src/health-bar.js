@@ -30,9 +30,9 @@ void main() {
 `;
 
   // Offset below the floating name (in world units)
-  const HEALTH_BAR_OFFSET = 2.5;
+  const HEALTH_BAR_OFFSET = 0.6;
   // Default Y position when model data is not available
-  const DEFAULT_Y_OFFSET = 8.0;
+  const DEFAULT_Y_OFFSET = 6.0;
   // Distance check interval (in frames) to optimize performance
   const DISTANCE_CHECK_INTERVAL = 10;
 
@@ -40,7 +40,7 @@ class HealthBar extends entity.Component {
   constructor(params) {
     super();
     this.params_ = params;
-    this.maxDistance_ = params.maxDistance || 25.0; // Default 25m visibility
+    this.maxDistance_ = params.maxDistance || 50.0; // Default 50m visibility
     this.maxDistanceSquared_ = this.maxDistance_ * this.maxDistance_; // Pre-calculate for performance
     this.frameCount_ = 0;
     this.Initialize_();
@@ -108,12 +108,17 @@ class HealthBar extends entity.Component {
 
   InitComponent() {
     this._RegisterHandler('health.update', (m) => { this.OnHealth_(m); });
+    this._RegisterHandler('health.death', (m) => { this.OnDeath_(m); });    
   }
 
   OnHealth_(msg) {
     const healthPercent = (msg.health / msg.maxHealth);
     
     this.realHealth_ = healthPercent;
+  }
+
+  OnDeath_() {
+    this.Destroy();
   }
 
   Update(timeElapsed) {
