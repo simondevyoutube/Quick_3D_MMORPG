@@ -31,6 +31,8 @@ void main() {
 
   // Offset below the floating name (in world units)
   const HEALTH_BAR_OFFSET = 2.5;
+  // Default Y position when model data is not available
+  const DEFAULT_Y_OFFSET = 8.0;
   // Distance check interval (in frames) to optimize performance
   const DISTANCE_CHECK_INTERVAL = 10;
 
@@ -39,6 +41,7 @@ class HealthBar extends entity.Component {
     super();
     this.params_ = params;
     this.maxDistance_ = params.maxDistance || 25.0; // Default 25m visibility
+    this.maxDistanceSquared_ = this.maxDistance_ * this.maxDistance_; // Pre-calculate for performance
     this.frameCount_ = 0;
     this.Initialize_();
   }
@@ -120,8 +123,9 @@ class HealthBar extends entity.Component {
       // Get player position for distance check
       const player = this.FindEntity('player');
       if (player) {
-        const distance = this.parent_.Position.distanceTo(player.Position);
-        this.bar_.visible = distance <= this.maxDistance_;
+        // Use distanceToSquared for better performance (avoids sqrt)
+        const distanceSquared = this.parent_.Position.distanceToSquared(player.Position);
+        this.bar_.visible = distanceSquared <= this.maxDistanceSquared_;
       } else {
         this.bar_.visible = false;
       }
@@ -134,18 +138,15 @@ class HealthBar extends entity.Component {
       // Position below the floating name
       // Get the character model data to use the nameOffset
       const desc = this.params_.desc;
-      if (desc && desc.character && desc.character.class) {
-        const modelData = defs.CHARACTER_MODELS[desc.character.class];
-        if (modelData && modelData.nameOffset) {
-          // Position health bar below the name
-          this.bar_.position.y += modelData.nameOffset - HEALTH_BAR_OFFSET;
-        } else {
-          this.bar_.position.y += 8.0; // Fallback
-        }
-      } else {
-        this.bar_.position.y += 8.0; // Fallback
-      }
+      const modelData = (desc && desc.character && desc.character.class) 
+        ? defs.CHARACTER_MODELS[desc.character.class] 
+        : null;
       
+      const yOffset = (modelData && modelData.nameOffset) 
+        ? modelData.nameOffset - HEALTH_BAR_OFFSET 
+        : DEFAULT_Y_OFFSET;
+      
+      this.bar_.position.y += yOffset;
       this.bar_.quaternion.copy(this.params_.camera.quaternion);
     }
   }
