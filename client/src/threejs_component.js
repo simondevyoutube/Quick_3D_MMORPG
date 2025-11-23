@@ -116,20 +116,16 @@ export const threejs_component = (() => {
         document.getElementById('container').appendChild(vrButton);
       }
 
-      let fov, far
-      // Mobile camera
-      if (window.innerWidth <= 768) {
-        fov = 50;
-        far = 800; 
-        // 769px - 1080px screen width camera
-      } else if (window.innerWidth >= 769 && window.innerWidth <= 1080) {
-        fov = 50;
-        far = 1000;        
-        // > 1080px screen width res camera
-      } else {
-        fov = 40;
-        far = 2000;
-      }
+      let fov, far;
+      const { fov, far } = (() => {
+        if (window.innerWidth <= 768) {
+          return { fov: 50, far: 800 };
+        } else if (window.innerWidth >= 769 && window.innerWidth <= 1080) {
+          return { fov: 50, far: 1000 };
+        } else {
+          return { fov: 40, far: 2000 };
+        }
+      })();
         
       const aspect = window.innerWidth / window.innerHeight;
       const near = 0.05;
