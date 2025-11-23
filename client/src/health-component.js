@@ -184,8 +184,23 @@ export const health_component = (() => {
 
     OnNetworkUpdate_(msg) {
       const newStats = msg.value[1];
+      const oldHealth = this.stats_.health;
+      
       for (let k in newStats) {
         this.stats_[k] = newStats[k];
+      }
+
+      // Check if player respawned (health went from 0 to full)
+      if (oldHealth === 0 && this.stats_.health > 0) {
+        // Reset stamina and other vitals
+        this.stamina_ = this.maxStamina_;
+        this.isExhausted_ = false;
+        this.staminaCooldownRemaining_ = 0;
+        
+        // Notify the player controller to reset death state
+        this.Broadcast({
+            topic: 'health.respawn',
+        });
       }
 
       this.OnHealthChanged_();

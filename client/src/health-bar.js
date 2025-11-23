@@ -118,7 +118,11 @@ class HealthBar extends entity.Component {
   }
 
   OnDeath_() {
-    this.Destroy();
+    // Hide the health bar immediately on death, but don't destroy it yet
+    // It will be destroyed when the entity is destroyed
+    if (this.bar_) {
+      this.bar_.visible = false;
+    }
   }
 
   Update(timeElapsed) {
