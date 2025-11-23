@@ -225,13 +225,14 @@ export const food_sphere_controller = (() => {
 
         // Check collision with player
         if (sphere.hasLanded && this.CheckPlayerCollision_(sphere)) {
-          // Add health to player using message system
-          const player = this.FindEntity('player');
-          if (player) {
-            player.Broadcast({
-              topic: 'health.heal',
-              value: 50,
-            });
+          // Send heal request to server instead of applying locally
+          // This ensures the heal is persistent and not overwritten by server updates
+          const network = this.FindEntity('network');
+          if (network) {
+            const networkController = network.GetComponent('NetworkController');
+            if (networkController) {
+              networkController.SendFoodPickup_(50);
+            }
           }
 
           // Remove the food sphere

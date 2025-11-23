@@ -75,8 +75,21 @@ export const world_client = (() => {
         this.OnInventoryChanged_(data);
         return true;
       }
+
+      if (evt == 'action.heal') {
+        this.OnHealAction_(data);
+        return true;
+      }
   
       return false;
+    }
+
+    OnHealAction_(amount) {
+      // Apply heal to player
+      this.entity_.stats_.health = Math.min(
+        this.entity_.stats_.maxHealth,
+        this.entity_.stats_.health + amount
+      );
     }
 
     OnDamageEvent_(_) {}

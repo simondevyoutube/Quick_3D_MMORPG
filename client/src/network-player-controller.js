@@ -11,6 +11,7 @@ export const network_player_controller = (() => {
       super();
       this.updateTimer_ = 0.0;
       this.loaded_ = false;
+      this.previousHealth_ = null;
     }
 
     InitComponent() {
@@ -40,7 +41,31 @@ export const network_player_controller = (() => {
     }
 
     OnUpdate_(msg) {
-      // Don't apply transform updates for the local player - they control their own position
+      // Check if player is respawning (health went from 0 to positive)
+      let isRespawning = false;
+      if (msg.stats) {
+        const currentHealth = msg.stats[1].health;
+        if (this.previousHealth_ !== null && this.previousHealth_ === 0 && currentHealth > 0) {
+          isRespawning = true;
+        }
+        this.previousHealth_ = currentHealth;
+      }
+
+      // Apply position update from server when respawning
+      // This ensures the player respawns at the correct spawn location
+      if (isRespawning && msg.transform) {
+        this.Parent.SetPosition(new THREE.Vector3(...msg.transform[1]));
+        this.Parent.SetQuaternion(new THREE.Quaternion(...msg.transform[2]));
+        
+        // Also update the player controller's internal position
+        const controller = this.GetComponent('BasicCharacterController');
+        if (controller && controller.group_) {
+          controller.group_.position.copy(this.Parent.Position);
+          controller.group_.quaternion.copy(this.Parent.Quaternion);
+        }
+      }
+      
+      // Don't apply transform updates for the local player in normal situations
       // Transform updates from the server are echoes of our own position and would cause jitter
       
       if (msg.stats) {
