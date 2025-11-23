@@ -98,7 +98,7 @@ export const textures = (function() {
           diffuse.needsUpdate = true;
 
           const aniso = this._threejs.capabilities.getMaxAnisotropy();
-          diffuse.anisotropy = Math.min(4, aniso || 1);
+          diffuse.anisotropy = Math.min(16, aniso || 1);
 
           atlas.atlas = diffuse;
         }

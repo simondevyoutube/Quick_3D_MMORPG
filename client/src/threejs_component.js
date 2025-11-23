@@ -81,14 +81,14 @@ export const threejs_component = (() => {
 
       // --- renderer ---
       this.threejs_ = new THREE.WebGLRenderer({
-        antialias: false,
+        antialias: true,
         powerPreference: "high-performance",
       });
       this.threejs_.outputEncoding = THREE.sRGBEncoding;
       this.threejs_.gammaFactor = 2.2;
       this.threejs_.shadowMap.enabled = true;
       this.threejs_.shadowMap.type = THREE.BasicShadowMap;
-      this.threejs_.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      this.threejs_.setPixelRatio(window.devicePixelRatio);
       this.threejs_.setSize(window.innerWidth, window.innerHeight);
       this.threejs_.domElement.id = 'threejs';
       this.threejs_.setClearColor(0x89b2eb, 1.0);

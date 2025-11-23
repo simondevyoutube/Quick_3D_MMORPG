@@ -28,6 +28,10 @@ export const terrain = (function() {
       const noiseTexture = loader.load('./client/resources/terrain/simplex-noise.png');
       noiseTexture.wrapS = THREE.RepeatWrapping;
       noiseTexture.wrapT = THREE.RepeatWrapping;
+      noiseTexture.minFilter = THREE.LinearMipmapLinearFilter;
+      noiseTexture.magFilter = THREE.LinearFilter;
+      noiseTexture.anisotropy = Math.min(params.renderer ? params.renderer.capabilities.getMaxAnisotropy() : 16, 16);
+      noiseTexture.generateMipmaps = true;
 
       const diffuse = new textures.TextureAtlas(params);
       diffuse.Load('diffuse', [
@@ -61,6 +65,9 @@ export const terrain = (function() {
         vertexColors: true,
         roughness: 0.8,
         metalness: 0.0,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
       });
 
       this._material.onBeforeCompile = (s) => {
