@@ -8,6 +8,8 @@ import {defs} from '../shared/defs.mjs';
 
 export const npc_entity = (() => {
 
+  const _BODY_REMOVAL_TIME = 30.0;  // Seconds before dead body is removed
+
   class NPCController extends entity.Component {
     constructor(params) {
       super();
@@ -170,10 +172,10 @@ export const npc_entity = (() => {
         this.mixer_.update(timeInSeconds);
       }
       
-      // Handle death timer - remove body after 30 seconds
+      // Handle death timer - remove body after designated time
       if (this.isDead_) {
         this.deathTimer_ += timeInSeconds;
-        if (this.deathTimer_ >= 30.0) {
+        if (this.deathTimer_ >= _BODY_REMOVAL_TIME) {
           // Mark entity as dead so it gets cleaned up
           this.Parent.SetDead();
         }

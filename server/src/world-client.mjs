@@ -4,6 +4,10 @@ import {quat, vec3} from 'gl-matrix';
 export const world_client = (() => {
 
   const _TIMEOUT = 600.0;
+  const _PLAYER_RESPAWN_TIME = 5.0;  // Seconds before player respawns
+  const _BODY_REMOVAL_TIME = 30.0;   // Seconds before body is removed
+  const _SPAWN_POSITION_BASE = -60;  // Base spawn X coordinate
+  const _SPAWN_POSITION_RANGE = 20;  // Random range for spawn position
 
   class WorldClient {
     constructor(client, entity) {
@@ -133,6 +137,7 @@ export const world_client = (() => {
       super(client, entity);
       this.deathTimer_ = 0.0;
       this.isDead_ = false;
+      this.hasRespawned_ = false;
     }
 
     OnUpdate_(timeElapsed) {
@@ -140,17 +145,20 @@ export const world_client = (() => {
         if (!this.isDead_) {
           this.isDead_ = true;
           this.deathTimer_ = 0.0;
+          this.hasRespawned_ = false;
         }
         
         this.deathTimer_ += timeElapsed;
         
-        // Respawn player after 5 seconds
-        if (this.deathTimer_ >= 5.0 && this.deathTimer_ < 5.0 + timeElapsed) {
+        // Respawn player after designated time
+        if (this.deathTimer_ >= _PLAYER_RESPAWN_TIME && !this.hasRespawned_) {
           this.RespawnPlayer_();
+          this.hasRespawned_ = true;
         }
       } else {
         this.isDead_ = false;
         this.deathTimer_ = 0.0;
+        this.hasRespawned_ = false;
       }
     }
     
@@ -163,9 +171,9 @@ export const world_client = (() => {
       
       // Respawn at a safe location (near starting position)
       this.entity_.position_ = vec3.fromValues(
-        -60 + (Math.random() * 2 - 1) * 20,
+        _SPAWN_POSITION_BASE + (Math.random() * 2 - 1) * _SPAWN_POSITION_RANGE,
         0,
-        (Math.random() * 2 - 1) * 20
+        (Math.random() * 2 - 1) * _SPAWN_POSITION_RANGE
       );
       this.entity_.UpdateGridClient_();
     }
@@ -440,7 +448,7 @@ export const world_client = (() => {
     }
 
     get IsDead() {
-      return this.deathTimer_ >= 30.0;
+      return this.deathTimer_ >= _BODY_REMOVAL_TIME;
     }
 
     OnDeath() {
