@@ -34,7 +34,7 @@ export const network_controller = (() => {
     }
 
     SetupSocket_() {
-      this.socket_ = io('ws://localhost:3001', {
+      this.socket_ = io('ws://localhost:3051', {
           reconnection: false,
           transports: ['websocket'],
           timeout: 10000,
