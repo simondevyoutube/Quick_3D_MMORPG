@@ -303,7 +303,7 @@ export const scenery_controller = (() => {
           const key = '__scenery__[' + _P.x + '][' + _P.z + ']';
           const obj = this.FindEntity(key);
           if (obj) {
-            obj.visible = true;
+            obj.SetActive(true);
             this.vegetation_.push(obj);
             continue;
           }
@@ -323,9 +323,9 @@ export const scenery_controller = (() => {
 
           const e = this.SpawnAt_(biome, _P);
 
-          e.SetPosition(_P);
-
           this.Manager.Add(e, key);
+
+          e.SetPosition(_P);
 
           e.SetActive(false);
           const veg_position = new THREE.Vector3(e.Position);
@@ -351,7 +351,7 @@ export const scenery_controller = (() => {
           const key = '__scenery__[' + _P.x + '][' + _P.z + ']';
           const obj = this.FindEntity(key);
           if (obj) {
-            obj.visible = true;
+            obj.SetActive(true);
             this.vegetation_.push(obj);
             continue;
           }
@@ -374,9 +374,9 @@ export const scenery_controller = (() => {
             continue;
           }
 
-          e.SetPosition(_P);
-
           this.Manager.Add(e, key);
+
+          e.SetPosition(_P);
 
           e.SetActive(false);
           const veg_position = new THREE.Vector3(e.Position);
@@ -401,7 +401,7 @@ export const scenery_controller = (() => {
         if (dist > destroyDistance) {
           const e = this.FindEntity(veg.Name)
           //this.Manager.Remove(e);
-          e.visible = false;
+          e.SetActive(false);
           //e.dead_ = true;
           this.vegetation_.splice(i, 1);
           i--;
