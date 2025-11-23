@@ -47,6 +47,22 @@ export const health_component = (() => {
       this.isRunning_ = (msg.action === 'run');
     }
 
+    Update(timeInSeconds) {
+      // Update stamina based on running state (always update, not just for UI)
+      if (this.isRunning_) {
+        // Drain stamina when running
+        this.stamina_ = Math.max(0, this.stamina_ - this.staminaDrainRate_ * timeInSeconds);
+      } else {
+        // Regenerate stamina when not running
+        this.stamina_ = Math.min(this.maxStamina_, this.stamina_ + this.staminaRegenRate_ * timeInSeconds);
+      }
+
+      // Update UI if applicable
+      if (this.stats_.updateUI) {
+        this.UpdateUI_();
+      }
+    }
+
     UpdateUI_() {
       if (!this.stats_.updateUI) {
         return;
