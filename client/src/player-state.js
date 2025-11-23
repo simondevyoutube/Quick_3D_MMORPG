@@ -195,7 +195,11 @@ export const player_state = (() => {
   
       if (input._keys.forward || input._keys.backward) {
         if (input._keys.shift) {
-          this._parent.SetState('run');
+          // Check if player has stamina to run
+          const healthComp = this._parent._proxy.parent?.GetComponent('HealthComponent');
+          if (healthComp && healthComp.CanRun()) {
+            this._parent.SetState('run');
+          }
         }
         return;
       }
@@ -242,6 +246,13 @@ export const player_state = (() => {
   
     Update(timeElapsed, input) {
       if (!input) {
+        return;
+      }
+
+      // Check if stamina is depleted
+      const healthComp = this._parent._proxy.parent?.GetComponent('HealthComponent');
+      if (healthComp && !healthComp.CanRun()) {
+        this._parent.SetState('walk');
         return;
       }
 
