@@ -6,7 +6,7 @@ import {noise} from '../shared/noise.mjs';
 
 export const food_sphere_controller = (() => {
 
-  const FOOD_HEAL_AMOUNT = 50; // Health restored when picking up food
+  const FOOD_HEAL_AMOUNT = 15; // Health restored when picking up food
 
   class FoodSphereController extends entity.Component {
     constructor(params) {
