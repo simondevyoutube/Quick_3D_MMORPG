@@ -22,6 +22,16 @@ export const load_controller = (() => {
       this.loadQueue_ = [];           // Queue of pending loads
       this.retryAttempts_ = 3;        // Number of retry attempts on failure
       this.retryDelay_ = 1000;        // Delay between retries in ms
+      this.retryTimers_ = [];         // Track retry timers for cleanup
+    }
+
+    Destroy() {
+      // Clear all pending retry timers
+      for (let timer of this.retryTimers_) {
+        clearTimeout(timer);
+      }
+      this.retryTimers_ = [];
+      this.loadQueue_ = [];
     }
 
     // Process the next item in the queue if capacity allows
@@ -98,9 +108,15 @@ export const load_controller = (() => {
         (error) => {
           console.error(`Failed to load texture ${name}, attempt ${attempt + 1}`, error);
           if (attempt < this.retryAttempts_) {
-            setTimeout(() => {
+            const timer = setTimeout(() => {
+              // Remove this timer from tracking
+              const index = this.retryTimers_.indexOf(timer);
+              if (index > -1) {
+                this.retryTimers_.splice(index, 1);
+              }
               this.LoadTextureWithRetry_(loader, name, attempt + 1, callback);
             }, this.retryDelay_);
+            this.retryTimers_.push(timer);
           } else {
             console.error(`Texture ${name} failed after ${this.retryAttempts_} attempts`);
             callback(null);
@@ -129,10 +145,13 @@ export const load_controller = (() => {
                 q(clone);
               }
             } else {
-              // Failed to load - notify all waiting callbacks
+              // Failed to load - notify all waiting callbacks with null
               const queue = this.models_[name].queue;
               this.models_[name].queue = null;
               console.error(`Failed to load FBX model: ${name}`);
+              for (let q of queue) {
+                q(null);
+              }
             }
             onComplete();
           });
@@ -155,9 +174,15 @@ export const load_controller = (() => {
         (error) => {
           console.error(`Failed to load FBX ${name}, attempt ${attempt + 1}`, error);
           if (attempt < this.retryAttempts_) {
-            setTimeout(() => {
+            const timer = setTimeout(() => {
+              // Remove this timer from tracking
+              const index = this.retryTimers_.indexOf(timer);
+              if (index > -1) {
+                this.retryTimers_.splice(index, 1);
+              }
               this.LoadFBXWithRetry_(loader, name, attempt + 1, callback);
             }, this.retryDelay_);
+            this.retryTimers_.push(timer);
           } else {
             console.error(`FBX ${name} failed after ${this.retryAttempts_} attempts`);
             callback(null);
@@ -204,10 +229,13 @@ export const load_controller = (() => {
                 q(clone);
               }
             } else {
-              // Failed to load - notify all waiting callbacks
+              // Failed to load - notify all waiting callbacks with null
               const queue = this.models_[name].queue;
               this.models_[name].queue = null;
               console.error(`Failed to load GLB model: ${name}`);
+              for (let q of queue) {
+                q(null);
+              }
             }
             onComplete();
           });
@@ -232,9 +260,15 @@ export const load_controller = (() => {
         (error) => {
           console.error(`Failed to load GLB ${name}, attempt ${attempt + 1}`, error);
           if (attempt < this.retryAttempts_) {
-            setTimeout(() => {
+            const timer = setTimeout(() => {
+              // Remove this timer from tracking
+              const index = this.retryTimers_.indexOf(timer);
+              if (index > -1) {
+                this.retryTimers_.splice(index, 1);
+              }
               this.LoadGLBWithRetry_(loader, name, attempt + 1, callback);
             }, this.retryDelay_);
+            this.retryTimers_.push(timer);
           } else {
             console.error(`GLB ${name} failed after ${this.retryAttempts_} attempts`);
             callback(null);
