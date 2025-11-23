@@ -25,6 +25,8 @@ export const health_component = (() => {
       this._RegisterHandler(
           'health.damage', (m) => this.OnDamage_(m));
       this._RegisterHandler(
+          'health.heal', (m) => this.OnHeal_(m));
+      this._RegisterHandler(
           'stats.network', (m) => this.OnNetworkUpdate_(m));
       this._RegisterHandler(
           'health.add-experience', (m) => this.OnAddExperience_(m));
@@ -191,6 +193,11 @@ export const health_component = (() => {
 
     OnDamage_(msg) {
       this.stats_.health = Math.max(0.0, this.stats_.health - msg.value);
+      this.OnHealthChanged_();
+    }
+
+    OnHeal_(msg) {
+      this.stats_.health = Math.min(this.stats_.maxHealth, this.stats_.health + msg.value);
       this.OnHealthChanged_();
     }
   };
