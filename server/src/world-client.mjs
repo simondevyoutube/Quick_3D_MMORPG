@@ -228,6 +228,9 @@ export const world_client = (() => {
 
       if (nearby.length > 0) {
         this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
+      } else {
+        // After cooldown, transition to wandering
+        this.parent_.SetState(new AIState_WanderToLocation());
       }
     }
 
@@ -239,6 +242,77 @@ export const world_client = (() => {
         this.UpdateLogic_();
         this.timer_ = 0.0;
       }
+    }
+  };
+
+  class AIState_WanderToLocation extends AIState {
+    constructor() {
+      super();
+      this.target_ = null;
+    }
+
+    Enter() {
+      // Generate a random destination within a reasonable range from current position
+      const currentPos = this.entity_.position_;
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 50 + Math.random() * 100; // Random distance between 50 and 150 units
+      
+      this.target_ = vec3.fromValues(
+        currentPos[0] + Math.cos(angle) * distance,
+        0, // Y will be set by terrain
+        currentPos[2] + Math.sin(angle) * distance
+      );
+      
+      // Set terrain height
+      this.target_[1] = this.terrain_.Get(this.target_[0], this.target_[2])[0];
+    }
+
+    UpdateMovement_(timeElapsed) {
+      this.entity_.state_ = 'walk';
+
+      const direction = vec3.create();
+      const forward = vec3.fromValues(0, 0, 1);
+
+      vec3.sub(direction, this.target_, this.entity_.position_);
+      direction[1] = 0.0;
+
+      const distance = vec3.length(direction);
+      
+      // Check if reached destination
+      if (distance < 5.0) {
+        // Reached destination, transition to cooldown state
+        this.parent_.SetState(new AIState_JustSitThere());
+        return;
+      }
+
+      vec3.normalize(direction, direction);
+      quat.rotationTo(this.entity_.rotation_, forward, direction);
+
+      const movement = vec3.clone(direction);
+      vec3.scale(movement, movement, timeElapsed * 10.0);
+
+      vec3.add(this.entity_.position_, this.entity_.position_, movement);
+
+      this.entity_.position_[1] = this.terrain_.Get(...this.entity_.position_)[0];
+      this.entity_.UpdateGridClient_();
+    }
+
+    UpdateLogic_() {
+      // Check for nearby players while wandering
+      const _IsPlayer = (e) => {
+        return !e.isAI;
+      };
+      const nearby = this.entity_.FindNear(150).filter(e => e.Health > 0).filter(_IsPlayer);
+
+      if (nearby.length > 0) {
+        // Player detected, switch to attack mode
+        this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
+      }
+    }
+
+    Update(timeElapsed) {
+      this.UpdateLogic_();
+      this.UpdateMovement_(timeElapsed);
     }
   };
 
@@ -323,7 +397,7 @@ export const world_client = (() => {
       this.entity_.isAI = true;
 
       this.fsm_ = new AIStateMachine(entity, this.terrain_);
-      this.fsm_.SetState(new AIState_JustSitThere());
+      this.fsm_.SetState(new AIState_WanderToLocation());
 
       this.deathTimer_ = 0.0;
     }
