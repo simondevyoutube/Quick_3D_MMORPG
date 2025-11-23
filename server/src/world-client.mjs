@@ -400,7 +400,7 @@ export const world_client = (() => {
       this.entity_.isAI = true;
 
       this.fsm_ = new AIStateMachine(entity, this.terrain_);
-      this.fsm_.SetState(new AIState_WanderToLocation());
+      this.fsm_.SetState(new AIState_JustSitThere());
 
       this.deathTimer_ = 0.0;
     }
