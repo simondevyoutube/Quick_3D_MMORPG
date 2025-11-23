@@ -40,11 +40,9 @@ export const network_player_controller = (() => {
     }
 
     OnUpdate_(msg) {
-      if (msg.transform) {
-        this.Parent.SetPosition(new THREE.Vector3(...msg.transform[1]));
-        this.Parent.SetQuaternion(new THREE.Quaternion(...msg.transform[2]));
-      }
-
+      // Don't apply transform updates for the local player - they control their own position
+      // Transform updates from the server are echoes of our own position and would cause jitter
+      
       if (msg.stats) {
         this.Broadcast({
             topic: 'stats.network',
