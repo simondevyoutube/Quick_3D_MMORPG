@@ -89,7 +89,7 @@ export const ui_controller = (() => {
           continue;
         }
         
-        if (e.attacker.Name != 'player' && e.target.Name != 'player') {
+        if (e.attacker && e.attacker.Name != 'player' && e.target.Name != 'player') {
           continue;
         }
 

@@ -141,13 +141,16 @@ export const blood_effect = (() => {
         }
 
         // Another hack
-        const hc = e.attacker.GetComponent('HealthComponent');
+        if(e.attacker) {
+          const hc = e.attacker.GetComponent('HealthComponent');
 
-        if (hc.stats_.desc.character.class != 'sorceror') {
-          this.EmitBloodFX_();
-        } else {
-          this.EmitFireFX_();
+          if (hc.stats_.desc.character.class != 'sorceror') {
+            this.EmitBloodFX_();
+          } else {
+            this.EmitFireFX_();
+          }                  
         }
+
       }
     }
 
