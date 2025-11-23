@@ -30,7 +30,7 @@ export const terrain = (function() {
       noiseTexture.wrapT = THREE.RepeatWrapping;
       noiseTexture.minFilter = THREE.LinearMipmapLinearFilter;
       noiseTexture.magFilter = THREE.LinearFilter;
-      noiseTexture.anisotropy = Math.min(params.renderer ? params.renderer.capabilities.getMaxAnisotropy() : 16, 16);
+      noiseTexture.anisotropy = params.renderer ? Math.min(params.renderer.capabilities.getMaxAnisotropy(), 16) : 4;
       noiseTexture.generateMipmaps = true;
 
       const diffuse = new textures.TextureAtlas(params);
