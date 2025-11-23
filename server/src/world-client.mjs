@@ -187,6 +187,7 @@ export const world_client = (() => {
 
       const updates = [{
           id: this.entity_.ID,
+          transform: this.entity_.CreateTransformPacket_(),
           stats: this.entity_.CreateStatsPacket_(),
           events: this.entity_.CreateEventsPacket_(),
       }];
