@@ -265,7 +265,7 @@ export const player_entity = (() => {
       const _R = controlObject.quaternion.clone();
   
       const acc = this.acceleration_.clone();
-      if (input._keys.shift) {
+      if (currentState.Name === 'run') {
         acc.multiplyScalar(2.0);
       }
   
