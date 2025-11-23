@@ -85,6 +85,12 @@ export const world_client = (() => {
     }
 
     OnHealAction_(amount) {
+      // Validate heal amount to prevent abuse
+      if (typeof amount !== 'number' || amount <= 0 || amount > 100) {
+        console.warn('Invalid heal amount received:', amount);
+        return;
+      }
+      
       // Apply heal to player
       this.entity_.stats_.health = Math.min(
         this.entity_.stats_.maxHealth,

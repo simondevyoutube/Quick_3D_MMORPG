@@ -6,6 +6,8 @@ import {noise} from '../shared/noise.mjs';
 
 export const food_sphere_controller = (() => {
 
+  const FOOD_HEAL_AMOUNT = 50; // Health restored when picking up food
+
   class FoodSphereController extends entity.Component {
     constructor(params) {
       super();
@@ -231,7 +233,7 @@ export const food_sphere_controller = (() => {
           if (network) {
             const networkController = network.GetComponent('NetworkController');
             if (networkController) {
-              networkController.SendFoodPickup_(50);
+              networkController.SendFoodPickup_(FOOD_HEAL_AMOUNT);
             }
           }
 
