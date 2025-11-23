@@ -93,6 +93,11 @@ export const player_entity = (() => {
       this.isDead_ = false;
       this.deathTimer_ = 0.0;
       this.stateMachine_.SetState('idle');
+      
+      // Ensure model is visible after respawn
+      if (this.target_) {
+        this.target_.visible = true;
+      }
     }
 
     LoadModels_() {
