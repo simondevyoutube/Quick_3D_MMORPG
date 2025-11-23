@@ -11,6 +11,7 @@ import {spawners} from './spawners.js';
 import {terrain} from './terrain.js';
 import {inventory_controller} from './inventory-controller.js';
 import {webxr_component} from './webxr-component.js';
+import {food_sphere_controller} from './food-sphere-controller.js';
 
 import {spatial_hash_grid} from '../shared/spatial-hash-grid.mjs';
 import {defs} from '../shared/defs.mjs';
@@ -99,6 +100,13 @@ class CrappyMMOAttempt {
     }));
     this.entityManager_.Add(scenery, 'scenery');
     console.log('Added scenery controller')
+
+    const foodSpheres = new entity.Entity();
+    foodSpheres.AddComponent(new food_sphere_controller.FoodSphereController({
+        scene: this.scene_,
+        grid: this.grid_,
+    }));
+    this.entityManager_.Add(foodSpheres, 'food-spheres');
 
     const spawner = new entity.Entity();
     spawner.AddComponent(new spawners.PlayerSpawner({
