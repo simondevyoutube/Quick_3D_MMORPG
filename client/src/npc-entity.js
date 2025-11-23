@@ -12,6 +12,8 @@ export const npc_entity = (() => {
     constructor(params) {
       super();
       this.params_ = params;
+      this.deathTimer_ = 0.0;
+      this.isDead_ = false;
     }
 
     Destroy() {
@@ -72,6 +74,8 @@ export const npc_entity = (() => {
 
     OnDeath_(msg) {
       this.SetState('death');
+      this.isDead_ = true;
+      this.deathTimer_ = 0.0;
     }
 
     OnPosition_(m) {
@@ -164,6 +168,15 @@ export const npc_entity = (() => {
       
       if (this.mixer_) {
         this.mixer_.update(timeInSeconds);
+      }
+      
+      // Handle death timer - remove body after 30 seconds
+      if (this.isDead_) {
+        this.deathTimer_ += timeInSeconds;
+        if (this.deathTimer_ >= 30.0) {
+          // Mark entity as dead so it gets cleaned up
+          this.Parent.SetDead();
+        }
       }
     }
   };

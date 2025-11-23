@@ -131,9 +131,48 @@ export const world_client = (() => {
   class WorldNetworkClient extends WorldClient {
     constructor(client, entity) {
       super(client, entity);
+      this.deathTimer_ = 0.0;
+      this.isDead_ = false;
+      this.bodyRemovalTimer_ = 0.0;
     }
 
     OnUpdate_(timeElapsed) {
+      if (this.entity_.Health <= 0) {
+        if (!this.isDead_) {
+          this.isDead_ = true;
+          this.deathTimer_ = 0.0;
+          this.bodyRemovalTimer_ = 0.0;
+        }
+        
+        this.deathTimer_ += timeElapsed;
+        this.bodyRemovalTimer_ += timeElapsed;
+        
+        // Respawn player after 5 seconds
+        if (this.deathTimer_ >= 5.0 && this.deathTimer_ < 5.0 + timeElapsed) {
+          this.RespawnPlayer_();
+        }
+      } else {
+        this.isDead_ = false;
+        this.deathTimer_ = 0.0;
+        this.bodyRemovalTimer_ = 0.0;
+      }
+    }
+    
+    RespawnPlayer_() {
+      // Reset health and stats to full
+      this.entity_.stats_.health = this.entity_.stats_.maxHealth;
+      this.entity_.stats_.stamina = 100;
+      
+      // Reset state to idle
+      this.entity_.SetState('idle');
+      
+      // Respawn at a safe location (near starting position)
+      this.entity_.position_ = vec3.fromValues(
+        -60 + (Math.random() * 2 - 1) * 20,
+        0,
+        (Math.random() * 2 - 1) * 20
+      );
+      this.entity_.UpdateGridClient_();
     }
 
     OnUpdateClientState_() {

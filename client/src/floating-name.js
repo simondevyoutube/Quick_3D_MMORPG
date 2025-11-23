@@ -48,7 +48,11 @@ export const floating_name = (() => {
     }
 
     OnDeath_() {
-      this.Destroy();
+      // Hide the floating name immediately on death, but don't destroy it yet
+      // It will be destroyed when the entity is destroyed
+      if (this.sprite_) {
+        this.sprite_.visible = false;
+      }
     }
 
     CreateSprite_(msg) {
