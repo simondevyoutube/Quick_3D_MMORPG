@@ -419,7 +419,7 @@ export const world_client = (() => {
 
     Update(timeElapsed) {
       if (!this.target_.Valid || this.target_.Health == 0) {
-        this.parent_.SetState(new AIState_JustSitThere(this.target_));
+        this.parent_.SetState(new AIState_JustSitThere());
         return;
       }
 
