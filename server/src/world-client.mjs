@@ -75,8 +75,27 @@ export const world_client = (() => {
         this.OnInventoryChanged_(data);
         return true;
       }
+
+      if (evt == 'action.heal') {
+        this.OnHealAction_(data);
+        return true;
+      }
   
       return false;
+    }
+
+    OnHealAction_(amount) {
+      // Validate heal amount to prevent abuse
+      if (typeof amount !== 'number' || amount <= 0 || amount > 100) {
+        console.warn('Invalid heal amount received:', amount);
+        return;
+      }
+      
+      // Apply heal to player
+      this.entity_.stats_.health = Math.min(
+        this.entity_.stats_.maxHealth,
+        this.entity_.stats_.health + amount
+      );
     }
 
     OnDamageEvent_(_) {}

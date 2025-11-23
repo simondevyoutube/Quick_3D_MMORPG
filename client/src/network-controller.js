@@ -74,6 +74,10 @@ export const network_controller = (() => {
       this.socket_.emit('world.inventory', packet);
     }
 
+    SendFoodPickup_(amount) {
+      this.socket_.emit('action.heal', amount);
+    }
+
     GetEntityID_(serverID) {
       if (serverID == this.playerID_) {
         return 'player';
