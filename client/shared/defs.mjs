@@ -121,7 +121,7 @@ export const defs = (() => {
       'weapon.axe1':
       {
           type: 'weapon',
-          damage: 10,
+          damage: 2,
           renderParams: {
             name: 'Axe',
             scale: 0.125,
@@ -131,7 +131,7 @@ export const defs = (() => {
       'weapon.sword1':
       {
           type: 'weapon',
-          damage: 15,
+          damage: 4,
           renderParams: {
             name: 'Sword',
             scale: 0.125,
@@ -141,7 +141,7 @@ export const defs = (() => {
       'weapon.hammer1':
       {
           type: 'weapon',
-          damage: 5,
+          damage: 1,
           renderParams: {
             name: 'Hammer_Small',
             scale: 0.125,
