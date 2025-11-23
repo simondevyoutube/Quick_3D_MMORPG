@@ -257,11 +257,14 @@ export const world_client = (() => {
       const angle = Math.random() * Math.PI * 2;
       const distance = 50 + Math.random() * 100; // Random distance between 50 and 150 units
       
-      this.target_ = vec3.fromValues(
-        currentPos[0] + Math.cos(angle) * distance,
-        0, // Y will be set by terrain
-        currentPos[2] + Math.sin(angle) * distance
-      );
+      let targetX = currentPos[0] + Math.cos(angle) * distance;
+      let targetZ = currentPos[2] + Math.sin(angle) * distance;
+      
+      // Clamp to world bounds to prevent going out of terrain
+      targetX = Math.max(-3500, Math.min(3500, targetX));
+      targetZ = Math.max(-3500, Math.min(3500, targetZ));
+      
+      this.target_ = vec3.fromValues(targetX, 0, targetZ);
       
       // Set terrain height
       this.target_[1] = this.terrain_.Get(this.target_[0], this.target_[2])[0];
