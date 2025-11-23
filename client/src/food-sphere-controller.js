@@ -1,7 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 
 import {entity} from './entity.js';
-import {spatial_grid_controller} from './spatial-grid-controller.js';
 
 import {noise} from '../shared/noise.mjs';
 
@@ -134,9 +133,8 @@ export const food_sphere_controller = (() => {
           const foodSphere = this.SpawnFoodSphere_(_P);
 
           this.Manager.Add(foodSphere, key);
-          foodSphere.SetActive(false);
           this.foodSpheres_.push({
-            Name: foodSphere.name,
+            Name: key,
             Entity: foodSphere,
           });
         }
