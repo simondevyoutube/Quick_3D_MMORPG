@@ -337,7 +337,7 @@ export const scenery_controller = (() => {
       }
 
       // fauna density
-      let faunaDensity = 2.0 // smaller = more
+      const faunaDensity = 2.0; // smaller = more
 
 
       // lots of small stuff
