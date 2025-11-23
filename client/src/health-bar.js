@@ -3,6 +3,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.mod
 import {entity} from './entity.js';
 
 import {math} from '../shared/math.mjs';
+import {defs} from '../shared/defs.mjs';
 
 
 export const health_bar = (() => {
@@ -32,12 +33,20 @@ class HealthBar extends entity.Component {
   constructor(params) {
     super();
     this.params_ = params;
+    this.maxDistance_ = params.maxDistance || 25.0; // Default 25m visibility
     this.Initialize_();
   }
 
   Destroy() {
-    this.material_.dispose();
-    this.geometry_.dispose();
+    if (this.material_) {
+      this.material_.dispose();
+    }
+    if (this.geometry_) {
+      this.geometry_.dispose();
+    }
+    if (this.bar_ && this.params_.parent) {
+      this.params_.parent.remove(this.bar_);
+    }
   }
 
   Initialize_() {
@@ -65,6 +74,7 @@ class HealthBar extends entity.Component {
     this.bar_ = new THREE.Mesh(this.geometry_, this.material_);
     this.bar_.frustumCulled = false;
     this.bar_.scale.set(2, 0.125, 1);
+    this.bar_.visible = false; // Start hidden
 
     this.realHealth_ = 1.0;
     this.animHealth_ = 1.0;
@@ -95,9 +105,37 @@ class HealthBar extends entity.Component {
 
     this.material_.uniforms.health.value = this.animHealth_;
     this.material_.uniforms.colour.value = c;
-    this.bar_.position.copy(this.parent_.Position);
-    this.bar_.position.y += 8.0;
-    this.bar_.quaternion.copy(this.params_.camera.quaternion);
+
+    // Get player position for distance check
+    const player = this.FindEntity('player');
+    if (player) {
+      const distance = this.parent_.Position.distanceTo(player.Position);
+      this.bar_.visible = distance <= this.maxDistance_;
+    } else {
+      this.bar_.visible = false;
+    }
+
+    // Update position below the name
+    if (this.bar_.visible) {
+      this.bar_.position.copy(this.parent_.Position);
+      
+      // Position below the floating name
+      // Get the character model data to use the nameOffset
+      const desc = this.params_.desc;
+      if (desc && desc.character && desc.character.class) {
+        const modelData = defs.CHARACTER_MODELS[desc.character.class];
+        if (modelData && modelData.nameOffset) {
+          // Position health bar slightly below the name
+          this.bar_.position.y += modelData.nameOffset - 2.5;
+        } else {
+          this.bar_.position.y += 8.0; // Fallback
+        }
+      } else {
+        this.bar_.position.y += 8.0; // Fallback
+      }
+      
+      this.bar_.quaternion.copy(this.params_.camera.quaternion);
+    }
   }
 
   GenerateBuffers_() {

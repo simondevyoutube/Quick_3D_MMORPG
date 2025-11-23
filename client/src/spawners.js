@@ -117,6 +117,13 @@ export const spawners = (() => {
             new floating_name.FloatingName({desc: desc}));
       }
       npc.AddComponent(
+          new health_bar.HealthBar({
+              camera: this.params_.camera,
+              parent: this.params_.scene,
+              desc: desc,
+              maxDistance: 25.0,
+          }));
+      npc.AddComponent(
           new equip_weapon_component.EquipWeapon({desc: desc}));
       npc.AddComponent(new inventory_controller.InventoryController());
       npc.AddComponent(new blood_effect.BloodEffect({
