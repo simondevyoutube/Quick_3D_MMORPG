@@ -358,7 +358,7 @@ export const world_client = (() => {
 
       vec3.add(this.entity_.position_, this.entity_.position_, movement);
 
-      this.entity_.position_[1] = this.terrain_.Get(...this.entity_.position_)[0];
+      this.entity_.position_[1] = this.terrain_.Get(this.entity_.position_[0], 0, this.entity_.position_[2])[0];
       this.entity_.UpdateGridClient_();
     }
 
@@ -404,7 +404,7 @@ export const world_client = (() => {
 
       vec3.add(this.entity_.position_, this.entity_.position_, movement);
 
-      this.entity_.position_[1] = this.terrain_.Get(...this.entity_.position_)[0];
+      this.entity_.position_[1] = this.terrain_.Get(this.entity_.position_[0], 0, this.entity_.position_[2])[0];
       this.entity_.UpdateGridClient_();
 
       const distance = vec3.distance(this.entity_.position_, this.target_.position_);
@@ -435,6 +435,12 @@ export const world_client = (() => {
     }
 
     Update(_) {
+      // Don't attack dead targets
+      if (!this.target_.Valid || this.target_.Health == 0) {
+        this.parent_.SetState(new AIState_JustSitThere());
+        return;
+      }
+
       this.entity_.state_ = 'attack';
       if (this.entity_.action_) {
         return;
