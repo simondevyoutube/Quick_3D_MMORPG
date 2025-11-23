@@ -74,9 +74,17 @@ export const scenery_controller = (() => {
     },
   };  
 
+  // Density weights for big vegetation
   const _BIOMES = {
     desert: 0.2,
     forest: 1.0,
+    arid: 0.8,
+  };
+
+  // Separate density weights for small vegetation so it isn't starved
+  const _BIOMES_SMALL = {
+    desert: 0.4,
+    forest: 0.9,
     arid: 0.8,
   };
 
@@ -133,7 +141,6 @@ export const scenery_controller = (() => {
     }
 
     SpawnClouds_() {
-      
       for (let i = 0; i < 10; ++i) {
         const index = math.rand_int(1, 3);
         const pos = new THREE.Vector3(
@@ -159,15 +166,12 @@ export const scenery_controller = (() => {
         this.Manager.Add(e);
         e.SetActive(false);  
       }
-      
     }
-
-
 
     FindBiome_(terrain, pos) {
       const biome = terrain.GetBiomeAt(pos);
 
-      // HACK: duplicaed code from texture-splatter
+      // HACK: duplicated code from texture-splatter
       const m = biome;
       const h = math.sat(pos.y / 100.0);
 
@@ -188,9 +192,13 @@ export const scenery_controller = (() => {
         }
       }
 
+      if (!matchingScenery.length) {
+        return null;
+      }
+
       const roll = this.noise_.Get(spawnPos.x, 3.0, spawnPos.z);
-      const randomProp = _SCENERY[
-          matchingScenery[Math.round(roll * (matchingScenery.length - 1))]];
+      const index = Math.round(roll * (matchingScenery.length - 1));
+      const randomProp = _SCENERY[matchingScenery[index]];
 
       const e = new entity.Entity();
       e.AddComponent(new render_component.RenderComponent({
@@ -226,7 +234,6 @@ export const scenery_controller = (() => {
     }
 
     SpawnSmallAt_(biome, spawnPos) {
-
       const matchingScenery = [];
       for (let k in _SCENERYSMALL) {
         if (_SCENERYSMALL[k].biomes.indexOf(biome) >= 0) {
@@ -234,41 +241,37 @@ export const scenery_controller = (() => {
         }
       }
 
-      const roll = this.noise_.Get(spawnPos.x, 3.0, spawnPos.z);
-      const randomProp = _SCENERYSMALL[matchingScenery[Math.round(roll * (matchingScenery.length - 1))]];
-
-      if(matchingScenery.length > 0) {
-
-        const e = new entity.Entity();
-        e.AddComponent(new render_component.RenderComponent({
-          scene: this.params_.scene,
-          resourcePath: randomProp.resourcePath,
-          resourceName: randomProp.base,
-          //textures: {
-          //  resourcePath: '/client/resources/trees/Textures/',
-          //  names: randomProp.names,
-          //  wrap: true,
-          //},
-          emissive: new THREE.Color(0x000000),
-          specular: new THREE.Color(0x000000),
-          scale: randomProp.scale * (0.8 + this.noise_.Get(spawnPos.x, 4.0, spawnPos.z) * 0.4),
-          castShadow: false,
-          receiveShadow: true,
-          onMaterial: (m) => {
-            if (m.name.search('Leaves') >= 0) {
-              m.alphaTest = 0.5;
-            }
-          }
-        }));
-
-        const q = new THREE.Quaternion().setFromAxisAngle(
-            new THREE.Vector3(0, 1, 0), this.noise_.Get(spawnPos.x, 5.0, spawnPos.z) * 360);
-        e.SetQuaternion(q);
-        return e;
+      if (!matchingScenery.length) {
+        return null;
       }
-      return null;
 
+      const roll = this.noise_.Get(spawnPos.x, 3.0, spawnPos.z);
+      const index = Math.round(roll * (matchingScenery.length - 1));
+      const randomProp = _SCENERYSMALL[matchingScenery[index]];
 
+      const e = new entity.Entity();
+      e.AddComponent(new render_component.RenderComponent({
+        scene: this.params_.scene,
+        resourcePath: randomProp.resourcePath,
+        resourceName: randomProp.base,
+        // textures can be supplied here if needed in future
+        emissive: new THREE.Color(0x000000),
+        specular: new THREE.Color(0x000000),
+        scale: randomProp.scale * (0.8 + this.noise_.Get(spawnPos.x, 4.0, spawnPos.z) * 0.4),
+        castShadow: false,
+        receiveShadow: true,
+        onMaterial: (m) => {
+          if (m.name.search('Leaves') >= 0) {
+            m.alphaTest = 0.5;
+          }
+        }
+      }));
+
+      const q = new THREE.Quaternion().setFromAxisAngle(
+          new THREE.Vector3(0, 1, 0), this.noise_.Get(spawnPos.x, 5.0, spawnPos.z) * 360);
+      e.SetQuaternion(q);
+
+      return e;
     }      
 
     SpawnVegetation_() {
@@ -293,18 +296,22 @@ export const scenery_controller = (() => {
       const _V = new THREE.Vector3();
       const terrain = this.FindEntity('terrain').GetComponent('TerrainChunkManager');
 
+      // ------- LARGE VEGETATION -------
       for (let x = -5; x <= 5; ++x) {
         for (let y = -5; y <= 5; ++y) {
           _P.set(x, 0.0, y);
           _P.add(center);
           _P.multiplyScalar(50.0);
 
-          // already an object here 
+          // key for big scenery
           const key = '__scenery__[' + _P.x + '][' + _P.z + ']';
           const obj = this.FindEntity(key);
           if (obj) {
             obj.SetActive(true);
-            this.vegetation_.push(obj);
+            this.vegetation_.push({
+              Name: key,
+              Position: obj.Position.clone(),
+            });
             continue;
           }
 
@@ -322,37 +329,40 @@ export const scenery_controller = (() => {
           }
 
           const e = this.SpawnAt_(biome, _P);
+          if (!e) {
+            continue;
+          }
 
           this.Manager.Add(e, key);
-
           e.SetPosition(_P);
-
           e.SetActive(false);
-          const veg_position = new THREE.Vector3(e.Position);
-          const veg = {
-            Name: e.name,
+
+          const veg_position = e.Position.clone();
+          this.vegetation_.push({
+            Name: key,
             Position: veg_position,
-          }
-          this.vegetation_.push(veg);
+          });
         }
       }
 
-      // fauna density
-      const faunaDensity = 4.0; // smaller = more
+      // ------- SMALL VEGETATION -------
+      const faunaDensity = 1.0; // smaller = more
 
-
-      // lots of small stuff
-      for (let x = -3; x <= 3; x +=faunaDensity) {
-        for (let y = -3; y <= 3; y +=faunaDensity) {
+      for (let x = -3; x <= 3; x += faunaDensity) {
+        for (let y = -3; y <= 3; y += faunaDensity) {
           _P.set(x, 0.0, y);
           _P.add(center);
           _P.multiplyScalar(50.0);
 
-          const key = '__scenery__[' + _P.x + '][' + _P.z + ']';
+          // key for small scenery (separate namespace!)
+          const key = '__scenerySmall__[' + _P.x + '][' + _P.z + ']';
           const obj = this.FindEntity(key);
           if (obj) {
             obj.SetActive(true);
-            this.vegetation_.push(obj);
+            this.vegetation_.push({
+              Name: key,
+              Position: obj.Position.clone(),
+            });
             continue;
           }
 
@@ -365,44 +375,51 @@ export const scenery_controller = (() => {
           const biome = this.FindBiome_(terrain, _P);
 
           const roll = this.noise_.Get(_V.x, 2.0, _V.z);
-          if (roll > _BIOMES[biome]) {
+          if (roll > _BIOMES_SMALL[biome]) {
             continue;
           }
 
           const e = this.SpawnSmallAt_(biome, _P);
-          if(e == null) {
+          if (e == null) {
             continue;
           }
 
           this.Manager.Add(e, key);
 
           e.SetPosition(_P);
-
           e.SetActive(false);
-          const veg_position = new THREE.Vector3(e.Position);
-          const veg = {
-            Name: e.name,
+
+          const veg_position = e.Position.clone();
+          this.vegetation_.push({
+            Name: key,
             Position: veg_position,
-          }
-          this.vegetation_.push(veg);
+          });
         }
       }      
     }
 
-
-
-    DestroyVegation_(){
+    DestroyVegation_() {
       // destroy distance
-      let destroyDistance = 400;
-      // stuff that is a long way from us can be not removed but HIDDEN
+      const destroyDistance = 400;
+      const player = this.FindEntity('player');
+      if (!player) {
+        return;
+      }
+
       for (let i = 0; i < this.vegetation_.length; ++i) {
-        const veg = this.vegetation_[i];     
-        const dist = veg.Position.distanceTo(this.FindEntity('player').Position);
+        const veg = this.vegetation_[i];
+        if (!veg || !veg.Position) {
+          this.vegetation_.splice(i, 1);
+          i--;
+          continue;
+        }
+
+        const dist = veg.Position.distanceTo(player.Position);
         if (dist > destroyDistance) {
-          const e = this.FindEntity(veg.Name)
-          //this.Manager.Remove(e);
-          e.SetActive(false);
-          //e.dead_ = true;
+          const e = this.FindEntity(veg.Name);
+          if (e) {
+            e.SetActive(false);
+          }
           this.vegetation_.splice(i, 1);
           i--;
         }
@@ -410,16 +427,16 @@ export const scenery_controller = (() => {
     }    
 
     Update(_) {
-      console.log('Vegetation items before:' + this.vegetation_.length);
+      // Debug logging – trim or remove once you're happy
+      //console.log('Vegetation items before:', this.vegetation_.length);
       this.SpawnVegetation_();
       this.DestroyVegation_();
-      console.log('Vegetation items after:' + this.vegetation_.length);
-      console.log('=================')
-
+      //console.log('Vegetation items after:', this.vegetation_.length);
+      //console.log('=================');
     }
   };
 
   return {
-      SceneryController: SceneryController,
+    SceneryController: SceneryController,
   };
 })();
