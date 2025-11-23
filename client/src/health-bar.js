@@ -88,8 +88,22 @@ class HealthBar extends entity.Component {
     this.realHealth_ = 1.0;
     this.animHealth_ = 1.0;
 
+    // Pre-calculate Y offset for positioning (cache for performance)
+    this.yOffset_ = this._CalculateYOffset();
+
     this.params_.parent.add(this.bar_);
     this.GenerateBuffers_();
+  }
+
+  _CalculateYOffset() {
+    const desc = this.params_.desc;
+    if (desc && desc.character && desc.character.class) {
+      const modelData = defs.CHARACTER_MODELS[desc.character.class];
+      if (modelData && modelData.nameOffset !== undefined) {
+        return modelData.nameOffset - HEALTH_BAR_OFFSET;
+      }
+    }
+    return DEFAULT_Y_OFFSET;
   }
 
   InitComponent() {
@@ -134,19 +148,7 @@ class HealthBar extends entity.Component {
     // Update position below the name
     if (this.bar_.visible) {
       this.bar_.position.copy(this.parent_.Position);
-      
-      // Position below the floating name
-      // Get the character model data to use the nameOffset
-      const desc = this.params_.desc;
-      const modelData = (desc && desc.character && desc.character.class) 
-        ? defs.CHARACTER_MODELS[desc.character.class] 
-        : null;
-      
-      const yOffset = (modelData && modelData.nameOffset) 
-        ? modelData.nameOffset - HEALTH_BAR_OFFSET 
-        : DEFAULT_Y_OFFSET;
-      
-      this.bar_.position.y += yOffset;
+      this.bar_.position.y += this.yOffset_;
       this.bar_.quaternion.copy(this.params_.camera.quaternion);
     }
   }
