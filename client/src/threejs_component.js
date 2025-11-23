@@ -134,6 +134,10 @@ export const threejs_component = (() => {
       // --- XR enablement ---
       this.threejs_.xr.enabled = true;
 
+      // Add VR button if VR is available
+      const vrButton = VRButton.createButton(this.threejs_);
+      document.body.appendChild(vrButton);
+
       // one animation loop for both XR and non-XR
       this.threejs_.setAnimationLoop(this.Update.bind(this));
 

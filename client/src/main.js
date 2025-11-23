@@ -34,6 +34,12 @@ class CrappyMMOAttempt {
   }
 
   OnGameStarted_() {
+    // Show loading dialog
+    const loadingUI = document.getElementById('loading-ui');
+    if (loadingUI) {
+      loadingUI.style.visibility = 'visible';
+    }
+
     this.CreateGUI_();
 
     this.grid_ = new spatial_hash_grid.SpatialHashGrid(
@@ -44,6 +50,9 @@ class CrappyMMOAttempt {
 
     this.previousRAF_ = null;
     this.RAF_();
+    
+    // Start loading progress simulation
+    this._SimulateLoadingProgress_();
   }
 
   CreateGUI_() {
@@ -149,7 +158,36 @@ class CrappyMMOAttempt {
     this.entityManager_.Add(levelUpSpawner, 'level-up-spawner');
   }
 
-  _OnWindowResize() { 
+  _SimulateLoadingProgress_() {
+    const ui = this.entityManager_.Get('ui');
+    if (ui) {
+      const uiController = ui.GetComponent('UIController');
+      if (uiController) {
+        uiController.ShowLoadingDialog();
+        
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 15 + 5; // Random increment between 5-20%
+          
+          if (progress >= 100) {
+            progress = 100;
+            uiController.UpdateLoadingProgress(progress);
+            clearInterval(progressInterval);
+            
+            // Hide loading dialog and show game after a brief delay
+            setTimeout(() => {
+              uiController.HideLoadingDialog();
+              uiController.FadeoutLogin();
+            }, 500);
+          } else {
+            uiController.UpdateLoadingProgress(progress);
+          }
+        }, 400); // Update every 400ms for smooth progress
+      }
+    }
+  }
+
+  _OnWindowResize() {
     this.camera_.aspect = window.innerWidth / window.innerHeight;
     this.camera_.updateProjectionMatrix();
     this.threejs_.setSize(window.innerWidth, window.innerHeight);
