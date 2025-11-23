@@ -27,8 +27,12 @@ export const food_sphere_controller = (() => {
       this.foodSpheres_ = [];
     }
 
+    InitComponent() {
+      console.log('[FoodSphereController] InitComponent called');
+    }
+
     InitEntity() {
-      // Nothing to initialize at start
+      console.log('[FoodSphereController] InitEntity called');
     }
 
     FindBiome_(terrain, pos) {
@@ -47,7 +51,7 @@ export const food_sphere_controller = (() => {
 
     SpawnFoodSphere_(spawnPos) {
       // Create sphere geometry
-      const geometry = new THREE.SphereGeometry(0.1, 16, 16); // 0.2 diameter = 0.1 radius
+      const geometry = new THREE.SphereGeometry(1.0, 16, 16); // Increased size for visibility
       const material = new THREE.MeshStandardMaterial({
         color: 0xff6600, // Orange color for food
         emissive: 0x331100,
@@ -62,6 +66,11 @@ export const food_sphere_controller = (() => {
       const startHeight = spawnPos.y + 5 + Math.random() * 3; // 5-8 units above ground
       sphere.position.set(spawnPos.x, startHeight, spawnPos.z);
 
+      if (!this.params_.scene) {
+        console.error('[FoodSphereController] ERROR: scene is undefined!');
+        return null;
+      }
+      
       this.params_.scene.add(sphere);
 
       const e = new entity.Entity();
@@ -78,7 +87,16 @@ export const food_sphere_controller = (() => {
     SpawnFoodSpheres_() {
       const player = this.FindEntity('player');
       if (!player) {
+        if (!this._noPlayerLogged) {
+          console.log('[FoodSphereController] Waiting for player to spawn');
+          this._noPlayerLogged = true;
+        }
         return;
+      }
+      
+      if (!this._playerFoundLogged) {
+        console.log('[FoodSphereController] Player found, starting food sphere spawning');
+        this._playerFoundLogged = true;
       }
 
       const center = new THREE.Vector3().copy(player.Position);
@@ -119,6 +137,12 @@ export const food_sphere_controller = (() => {
 
           const biome = this.FindBiome_(terrain, _P);
 
+          // Debug: Log biome info on first spawn attempt
+          if (!this._biomeLogged) {
+            console.log('[FoodSphereController] First biome check - biome:', biome, 'pos:', _P.x, _P.y, _P.z);
+            this._biomeLogged = true;
+          }
+
           // Only spawn in forest biome
           if (biome !== 'forest') {
             continue;
@@ -131,6 +155,10 @@ export const food_sphere_controller = (() => {
           }
 
           const foodSphere = this.SpawnFoodSphere_(_P);
+          if (!foodSphere) {
+            continue; // Skip if scene was undefined
+          }
+          console.log('[FoodSphereController] Spawned food sphere at position:', _P.x, _P.y, _P.z);
 
           this.Manager.Add(foodSphere, key);
           this.foodSpheres_.push({
@@ -161,6 +189,10 @@ export const food_sphere_controller = (() => {
     }
 
     Update(timeInSeconds) {
+      if (!this._updateLogged) {
+        console.log('[FoodSphereController] Update called for first time');
+        this._updateLogged = true;
+      }
       this.SpawnFoodSpheres_();
 
       // Update all food spheres (falling animation and collision detection)

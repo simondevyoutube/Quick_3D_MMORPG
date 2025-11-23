@@ -70,6 +70,7 @@ class CrappyMMOAttempt {
     this.scene_ = threejs.GetComponent('ThreeJSController').scene_;
     this.camera_ = threejs.GetComponent('ThreeJSController').camera_;
     this.threejs_ = threejs.GetComponent('ThreeJSController').threejs_;
+    console.log('Scene initialized:', this.scene_ ? 'YES' : 'NO');
 
     const ui = new entity.Entity();
     ui.AddComponent(new ui_controller.UIController());
@@ -107,6 +108,7 @@ class CrappyMMOAttempt {
         grid: this.grid_,
     }));
     this.entityManager_.Add(foodSpheres, 'food-spheres');
+    console.log('Added food-sphere controller, scene passed:', this.scene_ ? 'YES' : 'NO');
 
     const spawner = new entity.Entity();
     spawner.AddComponent(new spawners.PlayerSpawner({
