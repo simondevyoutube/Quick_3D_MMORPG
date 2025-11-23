@@ -34,12 +34,6 @@ class CrappyMMOAttempt {
   }
 
   OnGameStarted_() {
-    // Show loading dialog
-    const loadingUI = document.getElementById('loading-ui');
-    if (loadingUI) {
-      loadingUI.style.visibility = 'visible';
-    }
-
     this.CreateGUI_();
 
     this.grid_ = new spatial_hash_grid.SpatialHashGrid(
@@ -159,6 +153,12 @@ class CrappyMMOAttempt {
   }
 
   _SimulateLoadingProgress_() {
+    // Loading progress constants
+    const MAX_PROGRESS_INCREMENT = 15;
+    const MIN_PROGRESS_INCREMENT = 5;
+    const PROGRESS_UPDATE_INTERVAL = 400; // milliseconds
+    const COMPLETION_DELAY = 500; // milliseconds before hiding dialog
+    
     const ui = this.entityManager_.Get('ui');
     if (ui) {
       const uiController = ui.GetComponent('UIController');
@@ -167,7 +167,7 @@ class CrappyMMOAttempt {
         
         let progress = 0;
         const progressInterval = setInterval(() => {
-          progress += Math.random() * 15 + 5; // Random increment between 5-20%
+          progress += Math.random() * MAX_PROGRESS_INCREMENT + MIN_PROGRESS_INCREMENT;
           
           if (progress >= 100) {
             progress = 100;
@@ -178,11 +178,11 @@ class CrappyMMOAttempt {
             setTimeout(() => {
               uiController.HideLoadingDialog();
               uiController.FadeoutLogin();
-            }, 500);
+            }, COMPLETION_DELAY);
           } else {
             uiController.UpdateLoadingProgress(progress);
           }
-        }, 400); // Update every 400ms for smooth progress
+        }, PROGRESS_UPDATE_INTERVAL);
       }
     }
   }

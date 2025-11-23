@@ -177,6 +177,7 @@ export const ui_controller = (() => {
     }
 
     ShowLoadingDialog() {
+      const MESSAGE_CYCLE_INTERVAL = 2000; // milliseconds between message changes
       const loadingUI = document.getElementById('loading-ui');
       if (loadingUI) {
         loadingUI.style.visibility = 'visible';
@@ -184,14 +185,15 @@ export const ui_controller = (() => {
         this._loadingMessageIndex = 0;
         this._UpdateLoadingMessage();
         
-        // Cycle through messages every 2 seconds
+        // Cycle through messages
         this._loadingInterval = setInterval(() => {
           this._UpdateLoadingMessage();
-        }, 2000);
+        }, MESSAGE_CYCLE_INTERVAL);
       }
     }
 
     _UpdateLoadingMessage() {
+      const MESSAGE_FADE_DELAY = 150; // milliseconds for fade transition
       const messageElement = document.getElementById('loading-message');
       if (messageElement) {
         // Fade out
@@ -204,7 +206,7 @@ export const ui_controller = (() => {
           
           // Fade in
           messageElement.style.opacity = '1';
-        }, 150);
+        }, MESSAGE_FADE_DELAY);
       }
     }
 
@@ -216,6 +218,7 @@ export const ui_controller = (() => {
     }
 
     HideLoadingDialog() {
+      const FADEOUT_DURATION = 1000; // milliseconds for fade out animation
       if (this._loadingInterval) {
         clearInterval(this._loadingInterval);
         this._loadingInterval = null;
@@ -228,7 +231,7 @@ export const ui_controller = (() => {
         setTimeout(() => {
           loadingUI.style.visibility = 'hidden';
           loadingUI.classList.remove('fadeOut');
-        }, 1000);
+        }, FADEOUT_DURATION);
       }
     }
 
