@@ -2,7 +2,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.mod
 
 import {entity} from './entity.js';
 
-import {defs} from '/shared/defs.mjs';
+import {defs} from '../shared/defs.mjs';
 
 import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/FBXLoader.js';
 
@@ -73,7 +73,7 @@ export const equip_weapon_component = (() => {
 
     _LoadModels(item, cb) {
       const loader = new FBXLoader();
-      loader.setPath('./resources/weapons/FBX/');
+      loader.setPath('/client/resources/weapons/FBX/');
       loader.load(item.renderParams.name + '.fbx', (fbx) => {
         this.target_ = fbx;
         this.target_.scale.setScalar(item.renderParams.scale);

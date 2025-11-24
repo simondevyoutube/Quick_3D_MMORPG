@@ -8,6 +8,26 @@ export const ui_controller = (() => {
       super();
       this._params = params;
       this._quests = {};
+      this._loadingMessages = [
+        "Waking the dragons...",
+        "Sharpening swords...",
+        "Brewing potions...",
+        "Conjuring magic spells...",
+        "Recruiting brave warriors...",
+        "Drawing dungeon maps...",
+        "Polishing armor...",
+        "Training mythical beasts...",
+        "Loading epic loot...",
+        "Preparing epic quests...",
+        "Summoning ancient spirits...",
+        "Forging legendary weapons...",
+        "Enchanting mystical artifacts...",
+        "Awakening sleeping giants...",
+        "Almost ready for adventure!"
+      ];
+      this._loadingMessageIndex = 0;
+      this._loadingInterval = null;
+      this._loadingStartTime = 0;
     }
   
     InitComponent() {
@@ -83,7 +103,13 @@ export const ui_controller = (() => {
         if (e.type != 'attack') {
           continue;
         }
-        if (e.attacker.Name != 'player' && e.target.Name != 'player') {
+        
+        // Skip if either attacker or target is undefined (entity may have been removed)
+        if (!e.attacker || !e.target) {
+          continue;
+        }
+        
+        if (e.attacker && e.attacker.Name != 'player' && e.target.Name != 'player') {
           continue;
         }
 
@@ -148,6 +174,65 @@ export const ui_controller = (() => {
       const visibility = this._ui.inventory.style.visibility;
       this.HideUI_();
       this._ui.inventory.style.visibility = (visibility ? '' : 'hidden');
+    }
+
+    ShowLoadingDialog() {
+      const MESSAGE_CYCLE_INTERVAL = 2000; // milliseconds between message changes
+      const loadingUI = document.getElementById('loading-ui');
+      if (loadingUI) {
+        loadingUI.style.visibility = 'visible';
+        this._loadingStartTime = Date.now();
+        this._loadingMessageIndex = 0;
+        this._UpdateLoadingMessage();
+        
+        // Cycle through messages
+        this._loadingInterval = setInterval(() => {
+          this._UpdateLoadingMessage();
+        }, MESSAGE_CYCLE_INTERVAL);
+      }
+    }
+
+    _UpdateLoadingMessage() {
+      const MESSAGE_FADE_DELAY = 150; // milliseconds for fade transition
+      const messageElement = document.getElementById('loading-message');
+      if (messageElement) {
+        // Fade out
+        messageElement.style.opacity = '0';
+        
+        setTimeout(() => {
+          // Update message
+          messageElement.textContent = this._loadingMessages[this._loadingMessageIndex];
+          this._loadingMessageIndex = (this._loadingMessageIndex + 1) % this._loadingMessages.length;
+          
+          // Fade in
+          messageElement.style.opacity = '1';
+        }, MESSAGE_FADE_DELAY);
+      }
+    }
+
+    UpdateLoadingProgress(progress) {
+      const loadingBar = document.getElementById('loading-bar');
+      if (loadingBar) {
+        loadingBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+      }
+    }
+
+    HideLoadingDialog() {
+      const FADEOUT_DURATION = 1000; // milliseconds for fade out animation
+      if (this._loadingInterval) {
+        clearInterval(this._loadingInterval);
+        this._loadingInterval = null;
+      }
+      
+      const loadingUI = document.getElementById('loading-ui');
+      if (loadingUI) {
+        // Smooth fade out
+        loadingUI.classList.add('fadeOut');
+        setTimeout(() => {
+          loadingUI.style.visibility = 'hidden';
+          loadingUI.classList.remove('fadeOut');
+        }, FADEOUT_DURATION);
+      }
     }
 
     Update(timeInSeconds) {

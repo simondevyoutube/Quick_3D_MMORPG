@@ -4,7 +4,7 @@ import {entity} from './entity.js';
 import {finite_state_machine} from './finite-state-machine.js';
 import {player_state} from './player-state.js';
 
-import {defs} from '/shared/defs.mjs';
+import {defs} from '../shared/defs.mjs';
 
 
 export const player_entity = (() => {
@@ -27,12 +27,17 @@ export const player_entity = (() => {
   };
   
   class BasicCharacterControllerProxy {
-    constructor(animations) {
+    constructor(animations, parent) {
       this.animations_ = animations;
+      this.parent_ = parent;
     }
   
     get animations() {
       return this.animations_;
+    }
+
+    get parent() {
+      return this.parent_;
     }
   };
 
@@ -40,6 +45,8 @@ export const player_entity = (() => {
     constructor(params) {
       super();
       this.params_ = params;
+      this.deathTimer_ = 0.0;
+      this.isDead_ = false;
     }
 
     InitEntity() {
@@ -61,6 +68,7 @@ export const player_entity = (() => {
 
     InitComponent() {
       this._RegisterHandler('health.death', (m) => { this.OnDeath_(m); });
+      this._RegisterHandler('health.respawn', (m) => { this.OnRespawn_(m); });
       this._RegisterHandler(
           'update.position', (m) => { this.OnUpdatePosition_(m); });
       this._RegisterHandler(
@@ -77,6 +85,19 @@ export const player_entity = (() => {
 
     OnDeath_(msg) {
       this.stateMachine_.SetState('death');
+      this.isDead_ = true;
+      this.deathTimer_ = 0.0;
+    }
+    
+    OnRespawn_(msg) {
+      this.isDead_ = false;
+      this.deathTimer_ = 0.0;
+      this.stateMachine_.SetState('idle');
+      
+      // Ensure model is visible after respawn
+      if (this.target_) {
+        this.target_.visible = true;
+      }
     }
 
     LoadModels_() {
@@ -135,7 +156,7 @@ export const player_entity = (() => {
         this.target_.visible = true;
 
         this.stateMachine_ = new CharacterFSM(
-            new BasicCharacterControllerProxy(this.animations_));
+            new BasicCharacterControllerProxy(this.animations_, this.Parent));
 
         this.stateMachine_.SetState('idle');
 
@@ -187,6 +208,26 @@ export const player_entity = (() => {
       }
 
       const input = this.GetComponent('BasicCharacterControllerInput');
+      
+      // Handle death state
+      if (this.isDead_) {
+        this.deathTimer_ += timeInSeconds;
+        
+        // After death animation completes, just update the mixer
+        this.stateMachine_.Update(timeInSeconds, input);
+        if (this._mixer) {
+          this._mixer.update(timeInSeconds);
+        }
+        
+        this.Broadcast({
+            topic: 'player.action',
+            action: this.stateMachine_._currentState.Name,
+        });
+        
+        // Don't process movement while dead
+        return;
+      }
+     
       this.stateMachine_.Update(timeInSeconds, input);
 
       if (this._mixer) {
@@ -224,7 +265,7 @@ export const player_entity = (() => {
       const _R = controlObject.quaternion.clone();
   
       const acc = this.acceleration_.clone();
-      if (input._keys.shift) {
+      if (currentState.Name === 'run') {
         acc.multiplyScalar(2.0);
       }
   

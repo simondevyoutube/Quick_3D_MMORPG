@@ -10,9 +10,11 @@ import {load_controller} from './load-controller.js';
 import {spawners} from './spawners.js';
 import {terrain} from './terrain.js';
 import {inventory_controller} from './inventory-controller.js';
+import {webxr_component} from './webxr-component.js';
+import {food_sphere_controller} from './food-sphere-controller.js';
 
-import {spatial_hash_grid} from '/shared/spatial-hash-grid.mjs';
-import {defs} from '/shared/defs.mjs';
+import {spatial_hash_grid} from '../shared/spatial-hash-grid.mjs';
+import {defs} from '../shared/defs.mjs';
 import {threejs_component} from './threejs_component.js';
 
 
@@ -23,6 +25,7 @@ class CrappyMMOAttempt {
   }
 
   _Initialize() {
+    console.log('INITIALIZING!');
     this.entityManager_ = new entity_manager.EntityManager();
 
     document.getElementById('login-ui').style.visibility = 'visible';
@@ -42,6 +45,9 @@ class CrappyMMOAttempt {
 
     this.previousRAF_ = null;
     this.RAF_();
+    
+    // Start loading progress simulation
+    this._SimulateLoadingProgress_();
   }
 
   CreateGUI_() {
@@ -64,6 +70,7 @@ class CrappyMMOAttempt {
     this.scene_ = threejs.GetComponent('ThreeJSController').scene_;
     this.camera_ = threejs.GetComponent('ThreeJSController').camera_;
     this.threejs_ = threejs.GetComponent('ThreeJSController').threejs_;
+    console.log('Scene initialized:', this.scene_ ? 'YES' : 'NO');
 
     const ui = new entity.Entity();
     ui.AddComponent(new ui_controller.UIController());
@@ -93,12 +100,22 @@ class CrappyMMOAttempt {
         grid: this.grid_,
     }));
     this.entityManager_.Add(scenery, 'scenery');
+    console.log('Added scenery controller')
+
+    const foodSpheres = new entity.Entity();
+    foodSpheres.AddComponent(new food_sphere_controller.FoodSphereController({
+        scene: this.scene_,
+        grid: this.grid_,
+    }));
+    this.entityManager_.Add(foodSpheres, 'food-spheres');
+    console.log('Added food-sphere controller, scene passed:', this.scene_ ? 'YES' : 'NO');
 
     const spawner = new entity.Entity();
     spawner.AddComponent(new spawners.PlayerSpawner({
         grid: this.grid_,
         scene: this.scene_,
         camera: this.camera_,
+        renderer: this.threejs_,
     }));
     spawner.AddComponent(new spawners.NetworkEntitySpawner({
         grid: this.grid_,
@@ -111,6 +128,18 @@ class CrappyMMOAttempt {
     const database = new entity.Entity();
     database.AddComponent(new inventory_controller.InventoryDatabaseController());
     this.entityManager_.Add(database, 'database');
+
+    // WebXR Controller
+    const webxr = new entity.Entity();
+    webxr.AddComponent(new webxr_component.WebXRController({
+        renderer: this.threejs_,
+        scene: this.scene_,
+        camera: this.camera_,
+        unitsPerMeter: 5.3,       // scale up WebXR height to match character scaling
+        eyeOffsetMeters: 0,       // extra bias if needed
+        invertStickY: false       // fix your forward/back        
+    }));
+    this.entityManager_.Add(webxr, 'webxr');
 
     // HACK
     for (let k in defs.WEAPONS_DATA) {
@@ -133,6 +162,41 @@ class CrappyMMOAttempt {
     this.entityManager_.Add(levelUpSpawner, 'level-up-spawner');
   }
 
+  _SimulateLoadingProgress_() {
+    // Loading progress constants
+    const MAX_PROGRESS_INCREMENT = 15;
+    const MIN_PROGRESS_INCREMENT = 5;
+    const PROGRESS_UPDATE_INTERVAL = 400; // milliseconds
+    const COMPLETION_DELAY = 500; // milliseconds before hiding dialog
+    
+    const ui = this.entityManager_.Get('ui');
+    if (ui) {
+      const uiController = ui.GetComponent('UIController');
+      if (uiController) {
+        uiController.ShowLoadingDialog();
+        
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * MAX_PROGRESS_INCREMENT + MIN_PROGRESS_INCREMENT;
+          
+          if (progress >= 100) {
+            progress = 100;
+            uiController.UpdateLoadingProgress(progress);
+            clearInterval(progressInterval);
+            
+            // Hide loading dialog and show game after a brief delay
+            setTimeout(() => {
+              uiController.HideLoadingDialog();
+              uiController.FadeoutLogin();
+            }, COMPLETION_DELAY);
+          } else {
+            uiController.UpdateLoadingProgress(progress);
+          }
+        }, PROGRESS_UPDATE_INTERVAL);
+      }
+    }
+  }
+
   _OnWindowResize() {
     this.camera_.aspect = window.innerWidth / window.innerHeight;
     this.camera_.updateProjectionMatrix();
@@ -140,20 +204,62 @@ class CrappyMMOAttempt {
   }
 
   RAF_() {
-    requestAnimationFrame((t) => {
-      if (this.previousRAF_ === null) {
-        this.previousRAF_ = t;
-      }
+    // dynamic XR scale state
+    this._xrScale = 1.0;          // start lower for Quest 3
+    this._avgMs   = 0;            // EMA of frame time
+    this._targetMs = 1000 / 72;   // will update from XR session.frameRate if available
+    this._xrHz = 72;
 
-      this.threejs_.render(this.scene_, this.camera_);
-      this.Step_(t - this.previousRAF_);
+    if (this.threejs_.xr.setFramebufferScaleFactor) {
+      this.threejs_.xr.setFramebufferScaleFactor(this._xrScale);
+    }
+    if (this.threejs_.xr.setFoveation) {
+      this.threejs_.xr.setFoveation(1); // moderate foveation for performance
+    }
+
+    this.threejs_.setAnimationLoop((t) => {
+      if (this.previousRAF_ === null) this.previousRAF_ = t;
+      const dt = t - this.previousRAF_;
       this.previousRAF_ = t;
 
-      setTimeout(() => {
-        this.RAF_();
-      }, 1);
+      // --- dynamic scaling only while in XR ---
+      const xr = this.threejs_.xr;
+      if (xr && xr.isPresenting) {
+        // pick the headset’s refresh rate if exposed
+        const session = xr.getSession && xr.getSession();
+        const hz = (session && session.frameRate) ? session.frameRate : this._xrHz;
+        if (hz !== this._xrHz) {
+          this._xrHz = hz;
+          this._targetMs = 1000 / hz;
+        }
+
+        // exponential moving average of frame time
+        this._avgMs = this._avgMs * 0.9 + dt * 0.1;
+
+        // hysteresis band to avoid oscillation (wider band for Quest 3 stability)
+        const upThresh   = this._targetMs * 0.88; // faster than target → scale up (sharper)
+        const downThresh = this._targetMs * 1.12; // slower than target → scale down
+
+        // clamp range & small step changes
+        const minScale = 0.7;
+        const maxScale = 1.2;
+        const step = 0.05;
+
+        if (this._avgMs > downThresh && this._xrScale > minScale) {
+          this._xrScale = Math.max(minScale, +(this._xrScale - step).toFixed(2));
+          xr.setFramebufferScaleFactor && xr.setFramebufferScaleFactor(this._xrScale);
+        } else if (this._avgMs < upThresh && this._xrScale < maxScale) {
+          this._xrScale = Math.min(maxScale, +(this._xrScale + step).toFixed(2));
+          xr.setFramebufferScaleFactor && xr.setFramebufferScaleFactor(this._xrScale);
+        }
+      }
+
+      // your original order
+      this.threejs_.render(this.scene_, this.camera_);
+      this.Step_(dt);
     });
   }
+
 
   Step_(timeElapsed) {
     const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);

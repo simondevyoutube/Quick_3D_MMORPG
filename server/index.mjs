@@ -17,7 +17,7 @@ import {world_server} from './src/world-server.mjs';
 
 
 function Main() {
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3051;
 
   const server = http.createServer();
   const io = new socket_io.Server(server, {

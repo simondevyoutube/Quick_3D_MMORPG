@@ -4,6 +4,10 @@ import {quat, vec3} from 'gl-matrix';
 export const world_client = (() => {
 
   const _TIMEOUT = 600.0;
+  const _PLAYER_RESPAWN_TIME = 5.0;  // Seconds before player respawns
+  const _BODY_REMOVAL_TIME = 30.0;   // Seconds before body is removed
+  const _SPAWN_POSITION_BASE = -60;  // Base spawn X coordinate
+  const _SPAWN_POSITION_RANGE = 20;  // Random range for spawn position
 
   class WorldClient {
     constructor(client, entity) {
@@ -23,6 +27,14 @@ export const world_client = (() => {
 
       // Hack
       entity.parent_ = this;
+
+
+      // AI constants
+      this.ai_ = {
+        detect_range: 500,
+        attack_range: 10 
+      };
+
     }
 
     Destroy() {
@@ -63,8 +75,27 @@ export const world_client = (() => {
         this.OnInventoryChanged_(data);
         return true;
       }
+
+      if (evt == 'action.heal') {
+        this.OnHealAction_(data);
+        return true;
+      }
   
       return false;
+    }
+
+    OnHealAction_(amount) {
+      // Validate heal amount to prevent abuse
+      if (typeof amount !== 'number' || amount <= 0 || amount > 100) {
+        console.warn('Invalid heal amount received:', amount);
+        return;
+      }
+      
+      // Apply heal to player
+      this.entity_.stats_.health = Math.min(
+        this.entity_.stats_.maxHealth,
+        this.entity_.stats_.health + amount
+      );
     }
 
     OnDamageEvent_(_) {}
@@ -123,9 +154,47 @@ export const world_client = (() => {
   class WorldNetworkClient extends WorldClient {
     constructor(client, entity) {
       super(client, entity);
+      this.deathTimer_ = 0.0;
+      this.isDead_ = false;
+      this.hasRespawned_ = false;
     }
 
     OnUpdate_(timeElapsed) {
+      if (this.entity_.stats_.health <= 0) {
+        if (!this.isDead_) {
+          this.isDead_ = true;
+          this.deathTimer_ = 0.0;
+          this.hasRespawned_ = false;
+        }
+        
+        this.deathTimer_ += timeElapsed;
+        
+        // Respawn player after designated time
+        if (this.deathTimer_ >= _PLAYER_RESPAWN_TIME && !this.hasRespawned_) {
+          this.RespawnPlayer_();
+          this.hasRespawned_ = true;
+        }
+      } else {
+        this.isDead_ = false;
+        this.deathTimer_ = 0.0;
+        this.hasRespawned_ = false;
+      }
+    }
+    
+    RespawnPlayer_() {
+      // Reset health to full
+      this.entity_.stats_.health = this.entity_.stats_.maxHealth;
+      
+      // Reset state to idle
+      this.entity_.SetState('idle');
+      
+      // Respawn at a safe location (near starting position)
+      this.entity_.position_ = vec3.fromValues(
+        _SPAWN_POSITION_BASE + (Math.random() * 2 - 1) * _SPAWN_POSITION_RANGE,
+        0,
+        (Math.random() * 2 - 1) * _SPAWN_POSITION_RANGE
+      );
+      this.entity_.UpdateGridClient_();
     }
 
     OnUpdateClientState_() {
@@ -133,10 +202,11 @@ export const world_client = (() => {
         return e.ID != this.entity_.ID;
       };
 
-      const nearby = this.entity_.FindNear(500).filter(e => _Filter(e));
+      const nearby = this.entity_.FindNear(150).filter(e => _Filter(e));
 
       const updates = [{
           id: this.entity_.ID,
+          transform: this.entity_.CreateTransformPacket_(),
           stats: this.entity_.CreateStatsPacket_(),
           events: this.entity_.CreateEventsPacket_(),
       }];
@@ -216,10 +286,13 @@ export const world_client = (() => {
       const _IsPlayer = (e) => {
         return !e.isAI;
       };
-      const nearby = this.entity_.FindNear(50.0).filter(e => e.Health > 0).filter(_IsPlayer);
+      const nearby = this.entity_.FindNear(150).filter(e => e.Health > 0).filter(_IsPlayer);
 
       if (nearby.length > 0) {
         this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
+      } else {
+        // After cooldown, transition to wandering
+        this.parent_.SetState(new AIState_WanderToLocation());
       }
     }
 
@@ -231,6 +304,80 @@ export const world_client = (() => {
         this.UpdateLogic_();
         this.timer_ = 0.0;
       }
+    }
+  };
+
+  class AIState_WanderToLocation extends AIState {
+    constructor() {
+      super();
+      this.target_ = null;
+    }
+
+    Enter() {
+      // Generate a random destination within a reasonable range from current position
+      const currentPos = this.entity_.position_;
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 50 + Math.random() * 100; // Random distance between 50 and 150 units
+      
+      let targetX = currentPos[0] + Math.cos(angle) * distance;
+      let targetZ = currentPos[2] + Math.sin(angle) * distance;
+      
+      // Clamp to world bounds to prevent going out of terrain
+      targetX = Math.max(-3500, Math.min(3500, targetX));
+      targetZ = Math.max(-3500, Math.min(3500, targetZ));
+      
+      this.target_ = vec3.fromValues(targetX, 0, targetZ);
+      
+      // Set terrain height
+      this.target_[1] = this.terrain_.Get(this.target_[0], 0, this.target_[2])[0];
+    }
+
+    UpdateMovement_(timeElapsed) {
+      this.entity_.state_ = 'walk';
+
+      const direction = vec3.create();
+      const forward = vec3.fromValues(0, 0, 1);
+
+      vec3.sub(direction, this.target_, this.entity_.position_);
+      direction[1] = 0.0;
+
+      const distance = vec3.length(direction);
+      
+      // Check if reached destination
+      if (distance < 5.0) {
+        // Reached destination, transition to cooldown state
+        this.parent_.SetState(new AIState_JustSitThere());
+        return;
+      }
+
+      vec3.normalize(direction, direction);
+      quat.rotationTo(this.entity_.rotation_, forward, direction);
+
+      const movement = vec3.clone(direction);
+      vec3.scale(movement, movement, timeElapsed * 10.0);
+
+      vec3.add(this.entity_.position_, this.entity_.position_, movement);
+
+      this.entity_.position_[1] = this.terrain_.Get(this.entity_.position_[0], 0, this.entity_.position_[2])[0];
+      this.entity_.UpdateGridClient_();
+    }
+
+    UpdateLogic_() {
+      // Check for nearby players while wandering
+      const _IsPlayer = (e) => {
+        return !e.isAI;
+      };
+      const nearby = this.entity_.FindNear(150).filter(e => e.Health > 0).filter(_IsPlayer);
+
+      if (nearby.length > 0) {
+        // Player detected, switch to attack mode
+        this.parent_.SetState(new AIState_FollowToAttack(nearby[0]));
+      }
+    }
+
+    Update(timeElapsed) {
+      this.UpdateLogic_();
+      this.UpdateMovement_(timeElapsed);
     }
   };
 
@@ -257,22 +404,22 @@ export const world_client = (() => {
 
       vec3.add(this.entity_.position_, this.entity_.position_, movement);
 
-      this.entity_.position_[1] = this.terrain_.Get(...this.entity_.position_)[0];
+      this.entity_.position_[1] = this.terrain_.Get(this.entity_.position_[0], 0, this.entity_.position_[2])[0];
       this.entity_.UpdateGridClient_();
 
       const distance = vec3.distance(this.entity_.position_, this.target_.position_);
 
-      if (distance < 10.0) {
+      if (distance < 10) {
         this.entity_.OnActionAttack();
         this.parent_.SetState(new AIState_WaitAttackDone(this.target_));
-      } else if (distance > 100.0) {
+      } else if (distance > 150) {
         this.parent_.SetState(new AIState_JustSitThere());
       }
     }
 
     Update(timeElapsed) {
       if (!this.target_.Valid || this.target_.Health == 0) {
-        this.parent_.SetState(new AIState_JustSitThere(this.target_));
+        this.parent_.SetState(new AIState_JustSitThere());
         return;
       }
 
@@ -288,6 +435,12 @@ export const world_client = (() => {
     }
 
     Update(_) {
+      // Don't attack dead targets
+      if (!this.target_.Valid || this.target_.Health == 0) {
+        this.parent_.SetState(new AIState_JustSitThere());
+        return;
+      }
+
       this.entity_.state_ = 'attack';
       if (this.entity_.action_) {
         return;
@@ -321,7 +474,7 @@ export const world_client = (() => {
     }
 
     get IsDead() {
-      return this.deathTimer_ >= 30.0;
+      return this.deathTimer_ >= _BODY_REMOVAL_TIME;
     }
 
     OnDeath() {

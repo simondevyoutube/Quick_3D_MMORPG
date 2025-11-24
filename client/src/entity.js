@@ -16,6 +16,7 @@ export const entity = (() => {
     }
 
     Destroy() {
+      console.log('Destroy entity: ' + this._name);
       for (let k in this._components) {
         this._components[k].Destroy();
       }

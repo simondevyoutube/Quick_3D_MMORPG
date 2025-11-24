@@ -3,15 +3,19 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.mod
 import {entity} from './entity.js';
 import {player_entity} from './player-entity.js'
 
-import {defs} from '/shared/defs.mjs';
+import {defs} from '../shared/defs.mjs';
 
 
 export const npc_entity = (() => {
+
+  const _BODY_REMOVAL_TIME = 30.0;  // Seconds before dead body is removed
 
   class NPCController extends entity.Component {
     constructor(params) {
       super();
       this.params_ = params;
+      this.deathTimer_ = 0.0;
+      this.isDead_ = false;
     }
 
     Destroy() {
@@ -72,6 +76,8 @@ export const npc_entity = (() => {
 
     OnDeath_(msg) {
       this.SetState('death');
+      this.isDead_ = true;
+      this.deathTimer_ = 0.0;
     }
 
     OnPosition_(m) {
@@ -164,6 +170,15 @@ export const npc_entity = (() => {
       
       if (this.mixer_) {
         this.mixer_.update(timeInSeconds);
+      }
+      
+      // Handle death timer - remove body after designated time
+      if (this.isDead_) {
+        this.deathTimer_ += timeInSeconds;
+        if (this.deathTimer_ >= _BODY_REMOVAL_TIME) {
+          // Mark entity as dead so it gets cleaned up
+          this.Parent.SetDead();
+        }
       }
     }
   };

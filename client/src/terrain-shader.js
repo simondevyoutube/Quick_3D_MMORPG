@@ -108,7 +108,12 @@ vec4 _TerrainBlend_4_lerp(vec4 samples[4]) {
 
 // Lifted from https://www.shadertoy.com/view/Xtl3zf
 vec4 texture_UV(in sampler2DArray srcTexture, in vec3 x) {
-  float k = texture(TRIPLANAR_noiseMap, 0.0025*x.xy).x; // cheap (cache friendly) lookup
+  // Use explicit gradients for better mipmap selection in VR peripheral vision
+  vec2 uv = 0.0025 * x.xy;
+  vec2 dx = dFdx(uv);
+  vec2 dy = dFdy(uv);
+  
+  float k = textureGrad(TRIPLANAR_noiseMap, uv, dx, dy).x; // cache friendly lookup with gradients
   float l = k*8.0;
   float f = fract(l);
   
@@ -262,7 +267,8 @@ void main() {
 
   const _PS_1 = `
 
-precision mediump sampler2DArray;
+precision highp float;
+precision highp sampler2DArray;
 
 uniform sampler2DArray TRIPLANAR_normalMap;
 uniform sampler2DArray TRIPLANAR_diffuseMap;
@@ -313,7 +319,12 @@ vec4 _TerrainBlend_4_lerp(vec4 samples[4]) {
 
 // Lifted from https://www.shadertoy.com/view/Xtl3zf
 vec4 texture_UV(in sampler2DArray srcTexture, in vec3 x) {
-  float k = texture(TRIPLANAR_noiseMap, 0.0025*x.xy).x; // cheap (cache friendly) lookup
+  // Use explicit gradients for better mipmap selection in VR peripheral vision
+  vec2 uv = 0.0025 * x.xy;
+  vec2 dx = dFdx(uv);
+  vec2 dy = dFdy(uv);
+  
+  float k = textureGrad(TRIPLANAR_noiseMap, uv, dx, dy).x; // cache friendly lookup with gradients
   float l = k*8.0;
   float f = fract(l);
   

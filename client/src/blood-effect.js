@@ -107,12 +107,12 @@ export const blood_effect = (() => {
       this.bloodFX_ = new particle_system.ParticleSystem({
           camera: params.camera,
           parent: params.scene,
-          texture: './resources/textures/whitePuff14.png',
+          texture: '/client/resources/textures/whitePuff14.png',
       });
       this.fireFX_ = new particle_system.ParticleSystem({
           camera: params.camera,
           parent: params.scene,
-          texture: './resources/textures/fire.png',
+          texture: '/client/resources/textures/fire.png',
       });
     }
 
@@ -141,13 +141,16 @@ export const blood_effect = (() => {
         }
 
         // Another hack
-        const hc = e.attacker.GetComponent('HealthComponent');
+        if(e.attacker) {
+          const hc = e.attacker.GetComponent('HealthComponent');
 
-        if (hc.stats_.desc.character.class != 'sorceror') {
-          this.EmitBloodFX_();
-        } else {
-          this.EmitFireFX_();
+          if (hc.stats_.desc.character.class != 'sorceror') {
+            this.EmitBloodFX_();
+          } else {
+            this.EmitFireFX_();
+          }                  
         }
+
       }
     }
 

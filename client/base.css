@@ -38,7 +38,7 @@ body {
   top: 0;
   left: 0;
   font-family: 'IM Fell French Canon', serif;
-  background-image: url('./resources/background-3.png');
+  background-image: url('/client/resources/background-5.png');
   background-size: cover;
 }
 
@@ -111,6 +111,85 @@ body {
   font-size: 2.0em;
   text-shadow: 2px 2px 5px black;
   color: white;
+}
+
+#loading-ui {
+  visibility: hidden;
+  z-index: 1000;
+}
+
+.loading-screen {
+  position: absolute;
+  width: 100%;
+  height: 100%;            
+  top: 0;
+  left: 0;
+  font-family: 'IM Fell French Canon', serif;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(5px);
+}
+
+.loading-screen-layout {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-screen-layout.window {
+  height: 300px;
+  width: 500px;
+  border-radius: 5px;
+  border-color: #4a4a4a;
+  border-style: solid;
+  border-width: 2px;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.loading-title {
+  font-size: 2.5em;
+  text-shadow: 3px 3px 8px black;
+  color: #ffd700;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.loading-message {
+  font-size: 1.3em;
+  text-shadow: 2px 2px 5px black;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: center;
+  min-height: 40px;
+  transition: opacity 0.3s ease;
+}
+
+.loading-bar-container {
+  width: 100%;
+  height: 30px;
+  background: rgba(50, 50, 50, 0.7);
+  border-radius: 15px;
+  border: 2px solid #4a4a4a;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 15px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 
@@ -229,24 +308,60 @@ body {
   position: absolute;
   top: 0px;
   left: 0px;
-  background-image: url('./resources/icons/ui/health-bar.png');
-  width: 500px;
-  height: 300px;
+  background-image: url('/client/resources/icons/ui/health-bar.png');
+  width: 25vw;
+  min-width: 300px;
+  max-width: 500px;
+  height: 15vw;
+  min-height: 180px;
+  max-height: 300px;
   z-index: 1;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
-.health-bar {
-  background: greenyellow;
-  width: 200px;
-  max-width: 200px;
-  height: 40px;
+.bars-container {
   position: relative;
-  top: 215px;
-  left: 260px;
+  top: 43%;
+  left: 52%;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3vw;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+}
+
+.bar-icon {
+  width: 1.5vw;
+  height: 1.5vw;
+  min-width: 15px;
+  min-height: 15px;
+  max-width: 24px;
+  max-height: 24px;
+  flex-shrink: 0;
+}
+
+.health-bar, .stamina-bar {
+  background: greenyellow;
+  width: 100%;
+  max-width: 100%;
+  height: 1vw;
+  min-height: 15px;
+  max-height: 20px;
   border-style: solid;
   border-width: 2px;
   border-color: black;
   border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.stamina-bar {
+  background: #4da6ff;
 }
 
 .stats-tooltip {
@@ -348,7 +463,7 @@ body {
 }
 
 .inventory-character {
-  background-image: url('./resources/icons/ui/inventory-character.png');
+  background-image: url('/client/resources/icons/ui/inventory-character.png');
   background-size: cover;
   width: 200px;
   height: 350px;

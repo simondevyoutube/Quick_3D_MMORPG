@@ -34,7 +34,8 @@ export const network_controller = (() => {
     }
 
     SetupSocket_() {
-      this.socket_ = io('ws://localhost:3000', {
+      this.socket_ = io({
+          path: '/socket.io', 
           reconnection: false,
           transports: ['websocket'],
           timeout: 10000,
@@ -71,6 +72,10 @@ export const network_controller = (() => {
 
     SendInventoryChange_(packet) {
       this.socket_.emit('world.inventory', packet);
+    }
+
+    SendFoodPickup_(amount) {
+      this.socket_.emit('action.heal', amount);
     }
 
     GetEntityID_(serverID) {
@@ -137,12 +142,14 @@ export const network_controller = (() => {
 
           ui.AddEventMessages(events);
 
-          npc.Broadcast({
-              topic: 'network.update',
-              transform: u.transform,
-              stats: u.stats,
-              events: events,
-          });
+          if(npc){
+            npc.Broadcast({
+                topic: 'network.update',
+                transform: u.transform,
+                stats: u.stats,
+                events: events,
+            });
+          }
         }
       } else if (e == 'chat.message') {
         this.FindEntity('ui').GetComponent('UIController').AddChatMessage(d);

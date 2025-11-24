@@ -5,7 +5,7 @@ export const defs = (() => {
   const _CHARACTER_MODELS = {
     paladin: {
       base: 'paladin.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },
@@ -34,9 +34,43 @@ export const defs = (() => {
       },
       name: 'Paladin',
     },
+    /*
+    warrior1: {
+      base: ' warrior1-vr.glb',
+      path: '/client/resources/characters/',
+      anchors: {
+        rightHand: 'RightHandIndex1',
+      },
+      nameOffset: 11,
+      attack: {
+        timing: 0.35,
+        cooldown: 1.0,
+        type: 'melee',
+        range: 10,
+      },
+      scale: 6.0,
+      inventory: {
+        'inventory-1': 'weapon.axe1',
+        'inventory-2': 'weapon.hammer1',
+        'inventory-equip-1': 'weapon.sword1',
+      },
+      stats: {
+        health: 200,
+        maxHealth: 200,
+        strength: 50,
+        wisdomness: 5,
+        benchpress: 20,
+        curl: 100,
+        experience: 0,
+        level: 1,
+      },
+      name: 'Warrior',
+      vr: true
+    },   
+    */ 
     sorceror: {
       base: 'sorceror.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },
@@ -45,7 +79,7 @@ export const defs = (() => {
         timing: 1.0,
         cooldown: 1.5,
         type: 'magic',
-        range: 40,
+        range: 90,
       },
       scale: 4.0,
       inventory: {},
@@ -53,7 +87,7 @@ export const defs = (() => {
         health: 100,
         maxHealth: 100,
         strength: 10,
-        wisdomness: 200,
+        wisdomness: 500,
         benchpress: 3,
         curl: 17,
         experience: 0,
@@ -63,7 +97,7 @@ export const defs = (() => {
     },
     warrok: {
       base: 'warrok.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },
@@ -86,11 +120,11 @@ export const defs = (() => {
         experience: 0,
         level: 1,
       },
-      name: 'Monster Guy',
+      name: 'Xergon',
     },
     zombie: {
       base: 'zombie-guy.glb',
-      path: './resources/characters/',
+      path: '/client/resources/characters/',
       anchors: {
         rightHand: 'RightHandIndex1',
       },
@@ -104,8 +138,8 @@ export const defs = (() => {
       scale: 4.0,
       inventory: {},
       stats: {
-        health: 20,
-        maxHealth: 50,
+        health: 100,
+        maxHealth: 100,
         strength: 25,
         wisdomness: 4,
         benchpress: 3,
@@ -121,7 +155,7 @@ export const defs = (() => {
       'weapon.axe1':
       {
           type: 'weapon',
-          damage: 3,
+          damage: 2,
           renderParams: {
             name: 'Axe',
             scale: 0.125,
@@ -131,7 +165,7 @@ export const defs = (() => {
       'weapon.sword1':
       {
           type: 'weapon',
-          damage: 3,
+          damage: 4,
           renderParams: {
             name: 'Sword',
             scale: 0.125,
@@ -141,7 +175,7 @@ export const defs = (() => {
       'weapon.hammer1':
       {
           type: 'weapon',
-          damage: 3,
+          damage: 1,
           renderParams: {
             name: 'Hammer_Small',
             scale: 0.125,

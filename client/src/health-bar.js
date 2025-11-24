@@ -2,7 +2,8 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.mod
 
 import {entity} from './entity.js';
 
-import {math} from '/shared/math.mjs';
+import {math} from '../shared/math.mjs';
+import {defs} from '../shared/defs.mjs';
 
 
 export const health_bar = (() => {
@@ -28,16 +29,33 @@ void main() {
 }
 `;
 
+  // Offset below the floating name (in world units)
+  const HEALTH_BAR_OFFSET = 0.6;
+  // Default Y position when model data is not available
+  const DEFAULT_Y_OFFSET = 6.0;
+  // Distance check interval (in frames) to optimize performance
+  const DISTANCE_CHECK_INTERVAL = 10;
+
 class HealthBar extends entity.Component {
   constructor(params) {
     super();
     this.params_ = params;
+    this.maxDistance_ = params.maxDistance || 50.0; // Default 50m visibility
+    this.maxDistanceSquared_ = this.maxDistance_ * this.maxDistance_; // Pre-calculate for performance
+    this.frameCount_ = 0;
     this.Initialize_();
   }
 
   Destroy() {
-    this.material_.dispose();
-    this.geometry_.dispose();
+    if (this.material_) {
+      this.material_.dispose();
+    }
+    if (this.geometry_) {
+      this.geometry_.dispose();
+    }
+    if (this.bar_ && this.params_.parent) {
+      this.params_.parent.remove(this.bar_);
+    }
   }
 
   Initialize_() {
@@ -65,16 +83,33 @@ class HealthBar extends entity.Component {
     this.bar_ = new THREE.Mesh(this.geometry_, this.material_);
     this.bar_.frustumCulled = false;
     this.bar_.scale.set(2, 0.125, 1);
+    this.bar_.visible = false; // Start hidden
 
     this.realHealth_ = 1.0;
     this.animHealth_ = 1.0;
+    this.isDead_ = false; // Track death state to prevent flickering
+
+    // Pre-calculate Y offset for positioning (cache for performance)
+    this.yOffset_ = this._CalculateYOffset();
 
     this.params_.parent.add(this.bar_);
     this.GenerateBuffers_();
   }
 
+  _CalculateYOffset() {
+    const desc = this.params_.desc;
+    if (desc && desc.character && desc.character.class) {
+      const modelData = defs.CHARACTER_MODELS[desc.character.class];
+      if (modelData && modelData.nameOffset !== undefined) {
+        return modelData.nameOffset - HEALTH_BAR_OFFSET;
+      }
+    }
+    return DEFAULT_Y_OFFSET;
+  }
+
   InitComponent() {
     this._RegisterHandler('health.update', (m) => { this.OnHealth_(m); });
+    this._RegisterHandler('health.death', (m) => { this.OnDeath_(m); });    
   }
 
   OnHealth_(msg) {
@@ -83,7 +118,21 @@ class HealthBar extends entity.Component {
     this.realHealth_ = healthPercent;
   }
 
+  OnDeath_() {
+    // Hide the health bar immediately on death, but don't destroy it yet
+    // It will be destroyed when the entity is destroyed
+    this.isDead_ = true; // Mark as dead to prevent visibility updates
+    if (this.bar_) {
+      this.bar_.visible = false;
+    }
+  }
+
   Update(timeElapsed) {
+    // Don't update visibility or position if dead
+    if (this.isDead_) {
+      return;
+    }
+
     const t = 1.0 - Math.pow(0.001, timeElapsed);
 
     this.animHealth_ = math.lerp(t, this.animHealth_, this.realHealth_);
@@ -95,9 +144,29 @@ class HealthBar extends entity.Component {
 
     this.material_.uniforms.health.value = this.animHealth_;
     this.material_.uniforms.colour.value = c;
-    this.bar_.position.copy(this.parent_.Position);
-    this.bar_.position.y += 8.0;
-    this.bar_.quaternion.copy(this.params_.camera.quaternion);
+
+    // Check distance only every DISTANCE_CHECK_INTERVAL frames for performance
+    this.frameCount_++;
+    if (this.frameCount_ >= DISTANCE_CHECK_INTERVAL) {
+      this.frameCount_ = 0;
+      
+      // Get player position for distance check
+      const player = this.FindEntity('player');
+      if (player) {
+        // Use distanceToSquared for better performance (avoids sqrt)
+        const distanceSquared = this.parent_.Position.distanceToSquared(player.Position);
+        this.bar_.visible = distanceSquared <= this.maxDistanceSquared_;
+      } else {
+        this.bar_.visible = false;
+      }
+    }
+
+    // Update position below the name
+    if (this.bar_.visible) {
+      this.bar_.position.copy(this.parent_.Position);
+      this.bar_.position.y += this.yOffset_;
+      this.bar_.quaternion.copy(this.params_.camera.quaternion);
+    }
   }
 
   GenerateBuffers_() {

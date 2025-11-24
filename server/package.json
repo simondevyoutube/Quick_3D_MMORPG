@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "gl-matrix": "^3.4.3",
+    "socket.io": "^4.5.1"
+  }
+}
