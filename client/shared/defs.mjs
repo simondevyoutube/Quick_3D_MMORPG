@@ -34,6 +34,40 @@ export const defs = (() => {
       },
       name: 'Paladin',
     },
+    /*
+    warrior1: {
+      base: ' warrior1-vr.glb',
+      path: '/client/resources/characters/',
+      anchors: {
+        rightHand: 'RightHandIndex1',
+      },
+      nameOffset: 11,
+      attack: {
+        timing: 0.35,
+        cooldown: 1.0,
+        type: 'melee',
+        range: 10,
+      },
+      scale: 6.0,
+      inventory: {
+        'inventory-1': 'weapon.axe1',
+        'inventory-2': 'weapon.hammer1',
+        'inventory-equip-1': 'weapon.sword1',
+      },
+      stats: {
+        health: 200,
+        maxHealth: 200,
+        strength: 50,
+        wisdomness: 5,
+        benchpress: 20,
+        curl: 100,
+        experience: 0,
+        level: 1,
+      },
+      name: 'Warrior',
+      vr: true
+    },   
+    */ 
     sorceror: {
       base: 'sorceror.glb',
       path: '/client/resources/characters/',
@@ -86,7 +120,7 @@ export const defs = (() => {
         experience: 0,
         level: 1,
       },
-      name: 'Monster Guy',
+      name: 'Xergon',
     },
     zombie: {
       base: 'zombie-guy.glb',
