@@ -346,15 +346,16 @@ export const scenery_controller = (() => {
       }
 
       // ------- SMALL VEGETATION -------
-      const faunaDensity = 1.0; // smaller = more
+      const faunaDensity = 0.5; // smaller = more sampling
 
       for (let x = -3; x <= 3; x += faunaDensity) {
         for (let y = -3; y <= 3; y += faunaDensity) {
           _P.set(x, 0.0, y);
           _P.add(center);
-          _P.multiplyScalar(50.0);
 
-          // key for small scenery (separate namespace!)
+          // Optionally: finer grid for small veg
+          _P.multiplyScalar(30.0); // was 50.0 – makes them denser around the player
+
           const key = '__scenerySmall__[' + _P.x + '][' + _P.z + ']';
           const obj = this.FindEntity(key);
           if (obj) {
@@ -367,35 +368,36 @@ export const scenery_controller = (() => {
           }
 
           _V.copy(_P);
-          
-          _P.x += (this.noise_.Get(_P.x, 0.0, _P.z) * 2.0 - 1.0) * 25.0;
-          _P.z += (this.noise_.Get(_P.x, 1.0, _P.z) * 2.0 - 1.0) * 25.0;
+
+          // Use different "channels" so we don't mirror tree positions
+          _P.x += (this.noise_.Get(_P.x, 10.0, _P.z) * 2.0 - 1.0) * 25.0;
+          _P.z += (this.noise_.Get(_P.x, 11.0, _P.z) * 2.0 - 1.0) * 25.0;
           _P.y = terrain.GetHeight(_P)[0];
 
           const biome = this.FindBiome_(terrain, _P);
 
-          const roll = this.noise_.Get(_V.x, 2.0, _V.z);
+          // Different channel for density as well
+          const roll = this.noise_.Get(_V.x, 12.0, _V.z);
           if (roll > _BIOMES_SMALL[biome]) {
             continue;
           }
 
           const e = this.SpawnSmallAt_(biome, _P);
-          if (e == null) {
+          if (!e) {
             continue;
           }
 
           this.Manager.Add(e, key);
-
           e.SetPosition(_P);
           e.SetActive(false);
 
-          const veg_position = e.Position.clone();
           this.vegetation_.push({
             Name: key,
-            Position: veg_position,
+            Position: e.Position.clone(),
           });
         }
-      }      
+      }
+      
     }
 
     DestroyVegation_() {
